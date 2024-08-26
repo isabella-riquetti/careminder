@@ -7,9 +7,9 @@ interface Props {
 
 export const SplitPane = ({ children, imageIcon }: Props) => {
     return (
-        <main className="grid grid-cols-2 h-screen w-full gap-1 m-8">
-            <section className="flex items-center justify-center">{children}</section>
-            <aside className="h-full hidden lg:flex max-w-[600px]">
+        <main className="flex h-screen w-full gap-1">
+            <section className="flex w-1/2 items-center justify-center">{children}</section>
+            <aside className="h-full w-1/2 hidden lg:flex max-w-[600px]">
                 {imageIcon}
             </aside>
         </main>
