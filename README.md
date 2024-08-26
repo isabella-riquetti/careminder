@@ -1,5 +1,4 @@
-# Project Name
-Personal Task Manager
+# Personal Task Manager
 
 ## Overview
 This project is a full-stack application structured as a monorepo, consisting of two main workspaces:
