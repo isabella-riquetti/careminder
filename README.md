@@ -1,4 +1,4 @@
-# My Self Care
+# CareMinder
 
 ## Overview
 This project is a full-stack application structured as a monorepo, consisting of two main workspaces:
@@ -30,8 +30,8 @@ Ensure you have the following installed on your machine:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/isabella-riquetti/my-self-care.git
-cd my-self-care
+git clone https://github.com/isabella-riquetti/careminder.git
+cd careminder
 ```
 
 ### 2. Install Dependencies

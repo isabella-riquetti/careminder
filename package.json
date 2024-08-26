@@ -1,5 +1,5 @@
 {
-  "name": "my-self-care",
+  "name": "careminder",
   "version": "0.0.0",
   "scripts": {
     "client": "npm run dev -w client",
