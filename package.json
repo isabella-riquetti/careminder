@@ -1,9 +1,10 @@
 {
   "name": "persona-task-manager",
-  "private": true,
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
-    "dev:client": "cd client && npm run dev"
-  }
+    "client": "npm run dev -w client"
+  },
+  "workspaces": [
+    "client"
+  ]
 }
