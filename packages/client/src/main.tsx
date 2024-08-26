@@ -7,6 +7,8 @@ import "./index.css";
 import { configureStore } from "@reduxjs/toolkit";
 import { api } from "./api";
 import { ClerkProvider } from "@clerk/clerk-react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./components/pages/Login";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
@@ -24,7 +26,24 @@ const store = configureStore({
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
-    <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
+    <ClerkProvider
+      publishableKey={PUBLISHABLE_KEY}
+      signInUrl="/login"
+      signUpUrl="/signup"
+      afterSignOutUrl="/"
+      appearance={{
+        variables: {
+          colorPrimary: "#e96d7b",
+          colorDanger: "#B22424",
+          colorWarning: "#66361F",
+        },
+      }}>
+
+      <BrowserRouter basename="/">
+        <Routes>
+          <Route path="/login" element={<Login />} />
+        </Routes>
+      </BrowserRouter>
       <App />
     </ClerkProvider>
   </Provider>
