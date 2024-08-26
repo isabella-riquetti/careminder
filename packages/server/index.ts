@@ -4,9 +4,9 @@ import cors from 'cors';
 const app = express();
 const port = 3000;
 
-app.use(cors({ origin: 'http://localhost:5173' }));
+app.use(cors({ origin: process.env.CLIENT_ORIGIN }));
 
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
     res.send('Server started!');
 });
 
