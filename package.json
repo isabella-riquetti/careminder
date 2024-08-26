@@ -5,7 +5,7 @@
     "client": "npm run dev -w client"
   },
   "workspaces": [
-    "client"
+    "packages/client"
   ],
   "devDependencies": {
     "@types/node": "^22.5.0",
