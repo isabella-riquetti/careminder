@@ -1,5 +1,5 @@
 {
-  "name": "persona-task-manager",
+  "name": "my-self-care",
   "version": "0.0.0",
   "scripts": {
     "client": "npm run dev -w client",

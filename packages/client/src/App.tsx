@@ -1,6 +1,6 @@
 import './App.css'
 import { useGetQuery } from './api/tasks';
-import { SignedIn, SignedOut, SignIn, SignInButton, UserButton } from "@clerk/clerk-react";
+import { SignIn } from "@clerk/clerk-react";
 
 function App() {
   const { data } = useGetQuery();

@@ -1,9 +1,9 @@
-# Personal Task Manager
+# My Self Care
 
 ## Overview
 This project is a full-stack application structured as a monorepo, consisting of two main workspaces:
 
-- **Client**: A frontend application built with React, Vite, React Testing Library, Vitest, and Playwright.
+- **Client**: A frontend application built with React, Vite, Tailwind, DaisyUI, Clerk, React Testing Library, Vitest, and Playwright.
 - **Server**: A backend application (Technology TBD).
 
 ## Project Structure
@@ -30,8 +30,8 @@ Ensure you have the following installed on your machine:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/your-repo-name.git
-cd your-repo-name
+git clone https://github.com/isabella-riquetti/my-self-care.git
+cd my-self-care
 ```
 
 ### 2. Install Dependencies
@@ -52,7 +52,7 @@ To start the frontend application:
 npm run dev -w client
 ```
 
-The frontend should now be running at `http://localhost:3000`.
+The client should now be running at `http://localhost:5173`.
 
 #### Server (Backend)
 
@@ -61,6 +61,8 @@ The backend setup and start commands are to be determined (TBD). Once defined, y
 ```bash
 npm run dev -w server
 ```
+
+The server should now be running at `http://localhost:3000`.
 
 ## Testing
 
