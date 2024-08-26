@@ -6,6 +6,13 @@ import { Provider } from 'react-redux';
 import "./index.css";
 import { configureStore } from "@reduxjs/toolkit";
 import { api } from "./api";
+import { ClerkProvider } from "@clerk/clerk-react";
+
+const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
+
+if (!PUBLISHABLE_KEY) {
+  throw new Error("Missing Publishable Key")
+}
 
 const store = configureStore({
   reducer: {
@@ -17,6 +24,8 @@ const store = configureStore({
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
-    <App />
+    <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
+      <App />
+    </ClerkProvider>
   </Provider>
 );
