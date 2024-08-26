@@ -7,9 +7,9 @@
         "esModuleInterop": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
+        "baseUrl": ".",
         "outDir": "./dist",
-        "rootDir": "./src"
+        "rootDir": "."
     },
-    "include": ["endpoints"],
-    "exclude": ["node_modules"]
+    "include": ["**/*", "**/*.json"]
 }
