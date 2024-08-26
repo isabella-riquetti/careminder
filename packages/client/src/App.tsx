@@ -1,14 +1,15 @@
 import './App.css'
-import { SignIn } from "@clerk/clerk-react";
-import sidePanel from './assets/side-panel.jpg';
-import { SplitPane } from './components/atoms/SplitPane';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Login from './components/pages/Login';
 
 
 function App() {
   return (
-    <SplitPane imgUrl={sidePanel} alt="Person in a towel login at the mirror">
-      <SignIn />
-    </SplitPane>
+    <BrowserRouter basename="/">
+      <Routes>
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 

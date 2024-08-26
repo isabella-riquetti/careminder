@@ -7,8 +7,6 @@ import "./index.css";
 import { configureStore } from "@reduxjs/toolkit";
 import { api } from "./api";
 import { ClerkProvider } from "@clerk/clerk-react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from "./components/pages/Login";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
@@ -38,12 +36,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           colorWarning: "#66361F",
         },
       }}>
-
-      <BrowserRouter basename="/">
-        <Routes>
-          <Route path="/login" element={<Login />} />
-        </Routes>
-      </BrowserRouter>
       <App />
     </ClerkProvider>
   </Provider>
