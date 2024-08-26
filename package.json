@@ -2,10 +2,12 @@
   "name": "persona-task-manager",
   "version": "0.0.0",
   "scripts": {
-    "client": "npm run dev -w client"
+    "client": "npm run dev -w client",
+    "server": "npm run start -w server"
   },
   "workspaces": [
-    "packages/client"
+    "packages/client",
+    "packages/server"
   ],
   "devDependencies": {
     "@types/node": "^22.5.0",
