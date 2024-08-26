@@ -3,7 +3,7 @@
     "compilerOptions": {
       "rootDir": "./src",
       "outDir": "./dist",
-      "types": ["vitest/globals"],
+      "types": ["vite-plugin-svgr/client", "vitest/globals"],
       "baseUrl": ".",
       "paths": {
           "@/*": ["src/*"]

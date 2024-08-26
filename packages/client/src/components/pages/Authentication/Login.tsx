@@ -1,11 +1,11 @@
 import { SignIn as ClerkLogin } from "@clerk/clerk-react";
-import sidePanel from '@/assets/side-panel.jpg';
 import { SplitPane } from '@/components/atoms/SplitPane';
+import SelfCareIcon from '@/assets/selfcare.svg?react';
 
 function Login() {
   return (
-    <SplitPane imgUrl={sidePanel} alt="Person in a towel login at the mirror">
-      <ClerkLogin />
+    <SplitPane imageIcon={<SelfCareIcon title="Person looking at the mirror" />}>
+      <ClerkLogin />      
     </SplitPane>
   )
 }
