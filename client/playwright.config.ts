@@ -14,7 +14,7 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    command: 'npm run start',
+    command: 'npm run dev',
     port: 5173,
     timeout: 120_000,
     reuseExistingServer: !process.env.CI,
