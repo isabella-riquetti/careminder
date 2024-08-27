@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "description": "",
-  "dependencies": {},
-  "devDependencies": {}
+  "devDependencies": {
+    "zod": "^3.23.8"
+  }
 }

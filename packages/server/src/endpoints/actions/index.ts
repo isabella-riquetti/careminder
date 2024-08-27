@@ -2,7 +2,7 @@ import { createAction } from "./createAction";
 import { Express } from 'express';
 import { getActions } from "./getActions";
 import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
-import { getAction } from "./getAction";
+import { getAction } from "./findAction";
 
 export function createActionsEndpoints(app: Express) {
     app.get('/actions', ClerkExpressRequireAuth(), getActions);

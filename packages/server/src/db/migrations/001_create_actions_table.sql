@@ -1,6 +1,8 @@
 CREATE TABLE IF NOT EXISTS actions (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    frequency VARCHAR(50),
-    estimated_cost DECIMAL(10, 2)
+    category TEXT NOT NULL,
+    name TEXT NOT NULL,
+    suggested_frequency JSONB,
+    estimated_starting_cost DECIMAL(10, 2),
+    estimated_ending_cost DECIMAL(10, 2)
 );
