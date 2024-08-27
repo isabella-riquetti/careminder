@@ -1,10 +1,11 @@
-    import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
+import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
 
     const staggeredBaseQueryWithBailOut = retry(
         fetchBaseQuery({
             baseUrl: import.meta.env.VITE_API_URL,
-            prepareHeaders: async headers => {
-                // Add headers in the future
+            prepareHeaders: async (headers) => {
+                const token = await (window as any).Clerk?.session.getToken();
+                if (token) headers.set("Authorization", `Bearer ${token}`);
                 return headers;
             },
             responseHandler: async response => {
