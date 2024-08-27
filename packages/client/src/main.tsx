@@ -7,6 +7,7 @@ import "./index.css";
 import { configureStore } from "@reduxjs/toolkit";
 import { api } from "./api";
 import { ClerkProvider } from "@clerk/clerk-react";
+import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
@@ -22,6 +23,21 @@ const store = configureStore({
     getDefaultMiddleware().concat(api.middleware),
 });
 
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#e96d7b'
+    },
+    secondary: {
+      main: '#a991f7',
+    },
+  },
+  typography: {
+    fontFamily: 'Roboto, sans-serif', // Customize your font
+  },
+});
+
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
     <ClerkProvider
@@ -36,7 +52,10 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           colorWarning: "#66361F",
         },
       }}>
-      <App />
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <App />
+      </ThemeProvider>
     </ClerkProvider>
   </Provider>
 );

@@ -1,41 +1,41 @@
 import { useGetActionsQuery } from "@/api/actions";
-import { UserButton, useUser } from "@clerk/clerk-react";
+import { formatToCurrency } from "@/utils/currency";
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 
 function Dashboard() {
-    const { data: actions } = useGetActionsQuery();
-    const { user } = useUser();
+    const { data: actions = [] } = useGetActionsQuery();
 
     return (
-        <div className="flex flex-col gap-10 items-center">
-            <div className="flex flex gap-2 items-center justify-center transition-all">
-                <UserButton />
-                <p className="text-lg text-white truncate">{user?.firstName ?? user?.username ?? "User"}</p>
-            </div>
-            <div>
-                <div className="overflow-x-auto">
-                    <table className="table">
-                        <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>Action</th>
-                                <th>Recommended Frequency</th>
-                                <th>Estimated Price</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {actions?.map(a => (
-                                <tr key={a.id}>
-                                    <td>{a.id}</td>
-                                    <td>{a.name}</td>
-                                    <td>{a.frequency}</td>
-                                    <td>{a.estimated_cost}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+        <TableContainer className="rounded-xl shadow shadow-pink-200 h-full">
+            <Table stickyHeader aria-label="sticky table">
+                <TableHead>
+                    <TableRow>
+                        <TableCell className="bg-pink-200 text-pink-950 font-bold">Id</TableCell>
+                        <TableCell className="bg-pink-200 text-pink-950 font-bold">Name</TableCell>
+                        <TableCell className="bg-pink-200 text-pink-950 font-bold">Suggested Frequency</TableCell>
+                        <TableCell className="bg-pink-200 text-pink-950 font-bold">Estimated Price</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {actions
+                        .map((row) => {
+                            return (
+                                <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                                    <TableCell className="border-pink-200 text-pink-950">{row.id}</TableCell>
+                                    <TableCell className="border-pink-200 text-pink-950">{row.name}</TableCell>
+                                    <TableCell className="border-pink-200 text-pink-950">{row.frequency}</TableCell>
+                                    <TableCell className="border-pink-200 text-pink-950">{row.estimated_cost && formatToCurrency(row.estimated_cost, "pt-BR", "BRL")}</TableCell>
+                                </TableRow>
+                            );
+                        })}
+                </TableBody>
+            </Table>
+        </TableContainer>
     )
 }
 
