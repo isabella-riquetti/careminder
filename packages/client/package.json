@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run build -w @careminder/shared && vite build",
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
     "test:ci": "npm run test:unit && npm run test:e2e"
@@ -13,7 +13,8 @@
   "dependencies": {
     "@clerk/clerk-react": "^5.4.2",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "@careminder/shared": "^1.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",

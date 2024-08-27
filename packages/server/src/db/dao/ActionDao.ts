@@ -1,5 +1,5 @@
 import { supabase } from '../SupabaseClient';
-import { Action } from '../types';
+import { Action } from '@careminder/shared/types';
 
 export class ActionDao {
   async create(action: Omit<Action, 'id'>): Promise<Action | null> {

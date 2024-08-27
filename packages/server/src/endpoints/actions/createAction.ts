@@ -1,4 +1,4 @@
-import { Action } from "src/db/types";
+import { Action } from '@careminder/shared/types';
 import { Request, Response } from 'express';
 import { ActionDao } from "../../db/dao/ActionDao";
 
