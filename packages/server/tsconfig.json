@@ -7,9 +7,12 @@
         "esModuleInterop": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
-        "baseUrl": ".",
+        "rootDir": ".",
         "outDir": "./dist",
-        "rootDir": "."
+        "baseUrl": ".",
     },
-    "include": ["**/*", "**/*.json"]
+    "include": [
+        "**/*",
+        "**/*.json"
+    ]
 }

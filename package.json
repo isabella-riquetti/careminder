@@ -11,10 +11,8 @@
   ],
   "devDependencies": {
     "@types/node": "^22.5.0",
+    "@types/pg": "^8.11.6",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4"
-  },
-  "dependencies": {
-    "react-redux": "^9.1.2"
   }
 }
