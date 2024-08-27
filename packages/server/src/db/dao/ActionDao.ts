@@ -49,7 +49,8 @@ export class ActionDao {
   async getAll(): Promise<Action[]> {
     const { data, error } = await supabase
       .from('actions')
-      .select('*');
+      .select('*')
+      .order('id', { ascending: true });
 
     if (error) {
       console.error('Error fetching actions:', error.message);

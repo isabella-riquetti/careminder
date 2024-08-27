@@ -11,6 +11,7 @@ type FrequencyTypeEnum = z.infer<typeof FrequencyTypeEnum>;
 
 export const FrequencySchema = z.object({
     frequency: z.number().optional().nullable(),
+    every: z.number().optional().nullable(),
     frequency_type: FrequencyTypeEnum,
     on: z.array(z.any()),
     on_type: FrequencyTypeEnum,
