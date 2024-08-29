@@ -1,5 +1,5 @@
 import { useGetActionsQuery } from "@/api/actions";
-import { formatToCurrency } from "@/utils/currency";
+import { formatToCurrency, rangeCurrency } from "@/utils/currency";
 import { readableFrequency } from "@/utils/frequency";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -20,8 +20,7 @@ function Dashboard() {
                         <TableCell className="bg-pink-200 text-pink-950 font-bold">Name</TableCell>
                         <TableCell className="bg-pink-200 text-pink-950 font-bold">Dificultity</TableCell>
                         <TableCell className="bg-pink-200 text-pink-950 font-bold">Suggested Frequency</TableCell>
-                        <TableCell className="bg-pink-200 text-pink-950 font-bold">Estimated Starting Price</TableCell>
-                        <TableCell className="bg-pink-200 text-pink-950 font-bold">Estimated Ending Price</TableCell>
+                        <TableCell className="bg-pink-200 text-pink-950 font-bold">Estimated Cost</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -33,8 +32,7 @@ function Dashboard() {
                                     <TableCell className="border-pink-200 text-pink-950">{row.name}</TableCell>
                                     <TableCell className="border-pink-200 text-pink-950">{row.dificultity}</TableCell>
                                     <TableCell className="border-pink-200 text-pink-950">{!row.suggested_frequency ? "As needed" : readableFrequency(row.suggested_frequency)}</TableCell>
-                                    <TableCell className="border-pink-200 text-pink-950">{row.estimated_starting_cost !== null && formatToCurrency(row.estimated_starting_cost, "pt-BR", "BRL")}</TableCell>
-                                    <TableCell className="border-pink-200 text-pink-950">{row.estimated_ending_cost && formatToCurrency(row.estimated_ending_cost, "pt-BR", "BRL")}</TableCell>
+                                    <TableCell className="border-pink-200 text-pink-950">{rangeCurrency(row.estimated_starting_cost, row.estimated_ending_cost)}</TableCell>
                                 </TableRow>
                             );
                         })}

@@ -33,10 +33,10 @@ export const CreateActionSchema = z.object({
     category: z.string(),
     sub_category: z.string(),
     name: z.string(),
-    suggested_frequency: FrequencySchema.optional().nullable(),
-    estimated_starting_cost: z.number().nullable(),
-    estimated_ending_cost: z.number().nullable(),
-    dificultity: DificultityEnum.nullable(),
+    suggested_frequency: FrequencySchema.optional(),
+    estimated_starting_cost: z.number().optional(),
+    estimated_ending_cost: z.number().optional(),
+    dificultity: DificultityEnum.optional(),
 });
 export type CreateAction = z.infer<typeof CreateActionSchema>;
 
