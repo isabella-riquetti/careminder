@@ -1,4 +1,4 @@
-import { Frequency, FrequencyType } from "@careminder/shared/types";
+import { Frequency } from "@careminder/shared/types";
 import pluralize from "pluralize";
 
 export function readableFrequency({ frequency, frequency_type, every, on, on_type, special }: Frequency): string {

@@ -50,6 +50,8 @@ export class ActionDao {
     const { data, error } = await supabase
       .from('actions')
       .select('*')
+      .order('category', { ascending: true })
+      .order('dificultity', { ascending: true })
       .order('id', { ascending: true });
 
     if (error) {
