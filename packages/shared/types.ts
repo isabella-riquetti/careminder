@@ -20,17 +20,18 @@ const FrequencyTypeEnum = z.nativeEnum(FrequencyType);
 type FrequencyTypeEnum = z.infer<typeof FrequencyTypeEnum>;
 
 export const FrequencySchema = z.object({
-    frequency: z.number().optional().nullable(),
-    every: z.number().optional().nullable(),
+    frequency: z.number().optional(),
+    every: z.number().optional(),
     frequency_type: FrequencyTypeEnum,
-    on: z.array(z.any()),
+    on: z.array(z.any()).optional(),
     on_type: FrequencyTypeEnum,
-    special: z.boolean(),
+    special: z.boolean().optional().default(false),
 });
 export type Frequency = z.infer<typeof FrequencySchema>;
 
 export const CreateActionSchema = z.object({
     category: z.string(),
+    sub_category: z.string(),
     name: z.string(),
     suggested_frequency: FrequencySchema.optional().nullable(),
     estimated_starting_cost: z.number().nullable(),
