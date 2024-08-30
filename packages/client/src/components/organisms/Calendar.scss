@@ -1,0 +1,32 @@
+.fc {
+    @apply text-primary font-base;
+
+    .fc-toolbar-title {
+        @apply font-bold ml-1;
+    }
+
+    .fc-dayGridMonth-view {
+        @apply text-pink-600;
+    }
+
+    .fc-button-primary {
+        @apply bg-primary border-0;
+
+        &:hover,
+        &:active {
+            @apply bg-pink-600 border-0;
+        }
+
+        &:disabled {
+            @apply bg-pink-200 opacity-100;
+        }
+
+        &:not(:disabled).fc-button-active {
+            @apply bg-pink-600;
+        }
+    }
+
+    .fc-daygrid-day.fc-day-today {
+        @apply bg-pink-100;
+    }
+}

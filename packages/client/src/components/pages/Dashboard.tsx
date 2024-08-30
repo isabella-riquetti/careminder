@@ -1,4 +1,4 @@
-import Calendar from "../organisms/Calendart";
+import Calendar from "../organisms/Calendar";
 
 function Dashboard() {
     return (

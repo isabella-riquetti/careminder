@@ -20,7 +20,7 @@ const AuthWrapper = () => {
         <UserButton />
       </div>
     </Box>
-    <Box className="w-full">
+    <Box className="main w-full">
       <Outlet />
     </Box>
   </div>
