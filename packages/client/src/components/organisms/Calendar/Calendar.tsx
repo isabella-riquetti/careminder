@@ -23,7 +23,6 @@ export default function Calendar() {
   }, []);
 
   const renderDayHeader = (arg: DayHeaderContentArg) => {
-    console.log(arg)
     if (arg.view.type === "dayGridMonth") return isSmallScreen
       ? <span className='medium'>{arg.date.toLocaleDateString('en-US', { weekday: 'narrow' })}</span> : (
       <span className='medium'>{arg.date.toLocaleDateString('en-US', { weekday: 'short' })}</span>
@@ -63,7 +62,7 @@ export default function Calendar() {
       initialView="dayGridMonth"
       fixedWeekCount={false}
       headerToolbar={{
-        left: 'title',
+        left: 'title today',
         center: 'prev,next',
         right: 'dayGridMonth,timeGridWeek,timeGridDay',
       }}

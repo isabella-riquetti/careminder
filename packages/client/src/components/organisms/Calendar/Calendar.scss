@@ -36,10 +36,14 @@
     }
 
     .fc-header-toolbar {
-        @apply grid grid-cols-[auto,auto] grid-rows-2 gap-4 md:flex md:flex-row;
+        @apply grid grid-cols-[auto,auto] grid-rows-2 gap-4 md:flex md:flex-row md:justify-end;
     
         &>:first-child {
-            @apply col-span-2 text-center md:col-span-1;
+            @apply col-span-2 text-center md:col-span-1 flex w-full;
+
+            >*:first-child {
+                @apply mr-auto;
+            }
         }
     
         &>:last-child {
@@ -47,7 +51,7 @@
         }
 
         &>:not(:last-child):not(:first-child) {
-            @apply md:ml-auto;
+            @apply md:items-end;
         }
     }
 
