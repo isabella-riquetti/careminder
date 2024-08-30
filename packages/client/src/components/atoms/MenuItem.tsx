@@ -13,7 +13,7 @@ function MenuItem({ href, text, icon: Icon, children, className }: MenuItemProps
         <>
             {Icon && <Icon className='w-[30px] h-[30px]' />}
             {children}
-            <div className='lg:ml-2'>
+            <div className='lg:ml-2 truncate max-w-full'>
                 {text}
             </div>
         </>

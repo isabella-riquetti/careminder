@@ -10,7 +10,7 @@
     }
 
     .fc-button-primary {
-        @apply bg-primary border-0;
+        @apply bg-primary border-0 p-1 md:p-3;
 
         &:hover,
         &:active {
