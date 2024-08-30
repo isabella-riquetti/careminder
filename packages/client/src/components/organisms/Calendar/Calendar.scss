@@ -1,4 +1,5 @@
 .fc {
+
     @apply text-primary font-base;
 
     .fc-toolbar-title {
@@ -30,6 +31,10 @@
         @apply bg-pink-100;
     }
 
+    .fc-daygrid-day.fc-day-today, .fc-timegrid-col.fc-day-today:first-of-type {
+        @apply rounded-t-lg;
+    }
+
     .fc-header-toolbar {
         @apply grid grid-cols-[auto,auto] grid-rows-2 gap-4 md:flex md:flex-row;
     
@@ -44,5 +49,76 @@
         &>:not(:last-child):not(:first-child) {
             @apply md:ml-auto;
         }
-    }    
+    }
+
+    .fc-col-header-cell-cushion {
+        .large {
+            @apply font-sans text-4xl text-pale-400 tracking-wider uppercase;
+        }
+
+        .medium {
+            @apply font-sans text-2xl text-pale-400 uppercase;
+        }
+
+        .small {
+            @apply text-xs mt-1;
+        }
+    }
+
+    .fc-dayGridMonth-view {
+        --fc-border-color: #F0E1D7;   
+
+        .fc-scrollgrid {
+            @apply rounded-lg;
+        }
+        .fc-scrollgrid-section-header > th {
+            @apply rounded-t-lg;
+        }
+
+        .fc-scrollgrid-section-body > td {
+            @apply rounded-b-lg;
+        }
+
+        .fc-col-header-cell {
+            @apply bg-pink-200;
+
+            &:first-of-type {
+                @apply rounded-tl-lg;
+            }
+
+            &:last-of-type {
+                @apply rounded-tr-lg;
+            }
+        }
+    }
+
+    .fc-timeGridWeek-view, .fc-timeGridDay-view  {
+        --fc-border-color: transparent;
+
+        .fc-scrollgrid-sync-table col {
+            min-width: fit-content;
+            padding-right: 5px;
+        }
+        .fc-scrollgrid-shrink-cushion {
+            @apply whitespace-nowrap;
+        }
+
+        .fc-day-today .fc-col-header-cell-cushion {
+            .day, .week {
+                @apply text-pink-600;
+            }
+        }
+
+        .fc-cell-shaded {
+            @apply bg-pale-200 border-none h-0;
+        }
+
+        .fc-timegrid-slot-minor {
+            @apply border-t-pale-200;
+        }
+
+        .fc-timegrid-slot-lane, .fc-timegrid-divider, .fc-timegrid-slot {
+            @apply border-pale-200;
+        }
+    }
 }

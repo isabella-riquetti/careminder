@@ -62,7 +62,6 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           color: '#7c3f38',
-          borderColor: '#f2d8d5',
         },
       },
     },
@@ -70,7 +69,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           color: '#7c3f38',
-          borderColor: '#f2d8d5',
+          borderColor: '#f2d8d5'
         },
         head: {
           backgroundColor: '#f2d8d5',

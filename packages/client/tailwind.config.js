@@ -130,8 +130,7 @@ export default {
 
         fontFamily: {
             base: '"Comfortaa", sans-serif',
-            sans: ["Rubik",
-                "sans-serif"],
+            sans: ['"Anton"', "Rubik", "sans-serif"],
         },
     },
 }

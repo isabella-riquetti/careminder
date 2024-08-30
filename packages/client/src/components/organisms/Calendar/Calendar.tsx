@@ -24,19 +24,34 @@ export default function Calendar() {
 
   const renderDayHeader = (arg: DayHeaderContentArg) => {
     console.log(arg)
-    if (!isSmallScreen) return arg.text;
-    if (arg.view.type === "dayGridMonth") return arg.text.substring(0, 1);
-    const day = <span className='w-[25px] h-[25px] rounded-full p-1 bg-pink-200 text-sm '>{arg.date.getDate()}</span>;
-    if (arg.view.type === "timeGridWeek") return (
+    if (arg.view.type === "dayGridMonth") return isSmallScreen
+      ? <span className='medium'>{arg.date.toLocaleDateString('en-US', { weekday: 'narrow' })}</span> : (
+      <span className='medium'>{arg.date.toLocaleDateString('en-US', { weekday: 'short' })}</span>
+    );
+    if (arg.view.type === "timeGridWeek") return isSmallScreen
+    ? (
       <div className='flex flex-col'>
         <span>{arg.date.toLocaleDateString('en-US', { weekday: 'long' }).substring(0, 1)}</span>
-        {day}
-      </div>);
-    if (arg.view.type === "timeGridDay") return (
+        <span className='w-[25px] h-[25px] rounded-full p-1 bg-pink-200 text-sm '>{arg.date.getDate()}</span>
+      </div>)
+    : (
+      <div className='flex flex-col text-pale-400 '>
+        <span className='large'>{arg.date.getDate()}</span>
+        <span className='small'>{arg.date.toLocaleDateString('en-US', { weekday: 'short' })}</span>
+      </div>
+    );
+    if (arg.view.type === "timeGridDay") return  isSmallScreen
+      ? (
       <div className='flex flex-col items-center'>
         <span>{arg.date.toLocaleDateString('en-US', { weekday: 'long' })}</span>
-        {day}
-      </div>);
+        <span className='w-[25px] h-[25px] rounded-full p-1 bg-pink-200 text-sm'>{arg.date.getDate()}</span>
+      </div>)
+      : (
+        <div className='flex flex-col text-pale-400 '>
+          <span className='large'>{arg.date.getDate()}</span>
+          <span className='small'>{arg.date.toLocaleDateString('en-US', { weekday: 'long' })}</span>
+        </div>
+      );
 
     return arg.text;
   };
@@ -46,6 +61,7 @@ export default function Calendar() {
       height={"calc(100vh - 24px)"}
       plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
       initialView="dayGridMonth"
+      fixedWeekCount={false}
       headerToolbar={{
         left: 'title',
         center: 'prev,next',
