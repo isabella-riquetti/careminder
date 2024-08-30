@@ -21,40 +21,44 @@ export default function Calendar() {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
-
+  
   const renderDayHeader = (arg: DayHeaderContentArg) => {
-    console.log(arg)
-    if (arg.view.type === "dayGridMonth") return isSmallScreen
-      ? <span className='medium'>{arg.date.toLocaleDateString('en-US', { weekday: 'narrow' })}</span> : (
-      <span className='medium'>{arg.date.toLocaleDateString('en-US', { weekday: 'short' })}</span>
-    );
-    if (arg.view.type === "timeGridWeek") return isSmallScreen
-    ? (
-      <div className='flex flex-col'>
-        <span>{arg.date.toLocaleDateString('en-US', { weekday: 'long' }).substring(0, 1)}</span>
-        <span className='w-[25px] h-[25px] rounded-full p-1 bg-pink-200 text-sm '>{arg.date.getDate()}</span>
-      </div>)
-    : (
-      <div className='flex flex-col text-pale-400 '>
-        <span className='large'>{arg.date.getDate()}</span>
-        <span className='small'>{arg.date.toLocaleDateString('en-US', { weekday: 'short' })}</span>
+    const { view, date, text } = arg;
+    
+    const dayFormats: { [key: string]: "narrow" | "short" | "long" } = {
+      dayGridMonth: isSmallScreen ? "narrow" : "short",
+      timeGridWeek: isSmallScreen ? "long" : "short",
+      timeGridDay: "long",
+    };
+  
+    const getDayName = (format: "narrow" | "short" | "long") => 
+      date.toLocaleDateString("en-US", { weekday: format });
+  
+    const renderDate = (dayFormat: "narrow" | "short" | "long", sizeClass: string) => (
+      <div className={`flex flex-col ${sizeClass}`}>
+        <span>{getDayName(dayFormat).substring(0, isSmallScreen ? 1 : undefined)}</span>
+        <span className={`w-[25px] h-[25px] rounded-full p-1 bg-pink-200 text-sm ${sizeClass !== '' && 'text-pale-400'}`}>
+          {date.getDate()}
+        </span>
       </div>
     );
-    if (arg.view.type === "timeGridDay") return  isSmallScreen
-      ? (
-      <div className='flex flex-col items-center'>
-        <span>{arg.date.toLocaleDateString('en-US', { weekday: 'long' })}</span>
-        <span className='w-[25px] h-[25px] rounded-full p-1 bg-pink-200 text-sm'>{arg.date.getDate()}</span>
-      </div>)
-      : (
-        <div className='flex flex-col text-pale-400 '>
-          <span className='large'>{arg.date.getDate()}</span>
-          <span className='small'>{arg.date.toLocaleDateString('en-US', { weekday: 'long' })}</span>
-        </div>
-      );
-
-    return arg.text;
+  
+    switch (view.type) {
+      case 'dayGridMonth':
+        return <span className="medium">{getDayName(dayFormats.dayGridMonth)}</span>;
+  
+      case 'timeGridWeek':
+        return renderDate(dayFormats.timeGridWeek, isSmallScreen ? '' : 'text-pale-400');
+  
+      case 'timeGridDay':
+        return renderDate(dayFormats.timeGridDay, isSmallScreen ? 'items-center' : 'text-pale-400');
+  
+      default:
+        return text;
+    }
   };
+  
+  
 
   return (
     <FullCalendar
