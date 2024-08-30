@@ -29,4 +29,20 @@
     .fc-daygrid-day.fc-day-today {
         @apply bg-pink-100;
     }
+
+    .fc-header-toolbar {
+        @apply grid grid-cols-[auto,auto] grid-rows-2 gap-4 md:flex md:flex-row;
+    
+        &>:first-child {
+            @apply col-span-2 text-center md:col-span-1;
+        }
+    
+        &>:last-child {
+            @apply ml-auto md:ml-2;
+        }
+
+        &>:not(:last-child):not(:first-child) {
+            @apply md:ml-auto;
+        }
+    }    
 }

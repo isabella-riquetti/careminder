@@ -23,3 +23,7 @@
     background-color: #ffffff;
   }
 }
+
+#root {
+  overflow: auto;
+}

@@ -12,9 +12,9 @@ export default function Calendar() {
       plugins={[ dayGridPlugin, timeGridPlugin, listPlugin ]}
       initialView="dayGridMonth"
       headerToolbar={{
-        left: 'dayGridMonth,timeGridWeek,timeGridDay',
-        center: 'title',
-        right: 'prev,next',
+        left: 'title',
+        center: 'prev,next',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay',
       }}
     />
   )

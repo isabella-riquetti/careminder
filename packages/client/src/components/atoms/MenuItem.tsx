@@ -23,8 +23,8 @@ function MenuItem({ href, text, icon: Icon, children, className }: MenuItemProps
     const wrapperProps = href ? { href } : {};
 
     return (
-        <div className={`py-2 pl-2 lg:pl-7 pr:1 lg:pr-3 mr-2 lg:mr-4 ${window.location.pathname === href ? "bg-pink-700 text-white rounded-r-lg" : ""} ${className ?? ""}`}>
-            <Wrapper {...wrapperProps} className="flex flex-col lg:flex-row items-center">
+        <div className={`py-1 lg:pl-7 pr:1 lg:pr-3 mr-1 lg:mr-4 ${window.location.pathname === href ? "bg-pink-700 text-white rounded-r-lg" : ""} ${className ?? ""}`}>
+            <Wrapper {...wrapperProps} className="flex flex-col lg:flex-row items-center px-2">
                 {content}
             </Wrapper>
         </div>
