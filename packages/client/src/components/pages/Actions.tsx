@@ -1,16 +1,21 @@
+import { Skeleton } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import { useEffect } from 'react';
 
 import { useGetActionsQuery } from "@/api/actions";
 import { rangeCurrency } from "@/utils/currency";
 import { readableFrequency } from "@/utils/frequency";
 
-function DashboardOld() {
-    const { data: actions = [] } = useGetActionsQuery();
+function Actions() {
+    const queryState = useGetActionsQuery();
+
+    useEffect(() => console.log(queryState), [queryState])
+    const { data: actions, isFetching } = queryState;
 
     return (
         <TableContainer className="rounded-xl shadow shadow-pink-200 h-full">
@@ -25,8 +30,18 @@ function DashboardOld() {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {actions
-                        .map((row) => {
+
+                    {isFetching && Array.from({ length: 50 }).map((value: unknown) => (
+                        <TableRow key={value?.toString()}>
+                            <TableCell><Skeleton width="100px" /></TableCell>
+                            <TableCell><Skeleton width="200px" /></TableCell>
+                            <TableCell><Skeleton width="100px" /></TableCell>
+                            <TableCell><Skeleton width="100px" /></TableCell>
+                            <TableCell><Skeleton width="80px" /></TableCell>
+                        </TableRow>
+                    ))}
+                    {!isFetching && actions
+                        ?.map((row) => {
                             return (
                                 <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                                     <TableCell className="border-pink-200 text-pink-950">{row.category}</TableCell>
@@ -43,4 +58,4 @@ function DashboardOld() {
     )
 }
 
-export default DashboardOld;
+export default Actions;
