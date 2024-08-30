@@ -4,6 +4,7 @@ import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
         fetchBaseQuery({
             baseUrl: import.meta.env.VITE_API_URL,
             prepareHeaders: async (headers) => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const token = await (window as any).Clerk?.session.getToken();
                 if (token) headers.set("Authorization", `Bearer ${token}`);
                 return headers;

@@ -1,5 +1,6 @@
-import { api } from "./index";
 import { Action } from "@careminder/shared/types";
+
+import { api } from "./index";
 
 export const tasksApiSlice = api.injectEndpoints({
     endpoints: builder => ({

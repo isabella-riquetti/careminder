@@ -1,12 +1,13 @@
-import { useGetActionsQuery } from "@/api/actions";
-import { rangeCurrency } from "@/utils/currency";
-import { readableFrequency } from "@/utils/frequency";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+
+import { useGetActionsQuery } from "@/api/actions";
+import { rangeCurrency } from "@/utils/currency";
+import { readableFrequency } from "@/utils/frequency";
 
 function DashboardOld() {
     const { data: actions = [] } = useGetActionsQuery();

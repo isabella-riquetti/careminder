@@ -1,11 +1,13 @@
 import './App.scss'
+
+import { RedirectToSignIn, useAuth, UserButton } from '@clerk/clerk-react';
+import { Box } from '@mui/material';
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
+
+import Icon from "./assets/icon.svg?react";
 import Login from './components/pages/Authentication/Login';
 import SignUp from './components/pages/Authentication/SignUp';
-import { RedirectToSignIn, useAuth, UserButton } from '@clerk/clerk-react';
 import Dashboard from './components/pages/Dashboard';
-import { Box } from '@mui/material';
-import Icon from "./assets/icon.svg?react";
 
 const AuthWrapper = () => {
   const { isSignedIn } = useAuth();

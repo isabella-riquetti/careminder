@@ -1,6 +1,7 @@
 import { SignIn as ClerkLogin } from "@clerk/clerk-react";
-import { SplitPane } from '@/components/atoms/SplitPane';
+
 import SelfCareIcon from '@/assets/selfcare.svg?react';
+import { SplitPane } from '@/components/atoms/SplitPane';
 
 function Login() {
   return (

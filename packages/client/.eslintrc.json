@@ -1,0 +1,40 @@
+{
+    "extends": [
+      "eslint:recommended",
+      "plugin:react/recommended",
+      "plugin:import/errors",
+      "plugin:import/warnings"
+    ],
+    "plugins": ["simple-import-sort", "import"],
+    "rules": {
+      "simple-import-sort/imports": [
+        "error",
+        {
+          "groups": [
+            ["^\\u0000"],
+            ["^@?\\w"],
+            ["^"],
+            ["^\\."]
+          ]
+        }
+      ],
+      "simple-import-sort/exports": "error",
+      "import/order": [
+        "error",
+        {
+          "groups": [
+            ["builtin", "external", "internal"],
+            ["parent", "sibling", "index"]
+          ],
+          "newlines-between": "always",
+          "alphabetize": { "order": "asc", "caseInsensitive": true }
+        }
+      ]
+    },
+    "settings": {
+      "react": {
+        "version": "detect"
+      }
+    }
+  }
+  

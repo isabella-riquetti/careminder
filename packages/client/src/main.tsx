@@ -1,13 +1,13 @@
-import ReactDOM from "react-dom/client";
-
-import App from "./App";
-
-import { Provider } from 'react-redux';
 import "./index.css";
-import { configureStore } from "@reduxjs/toolkit";
-import { api } from "./api";
+
 import { ClerkProvider } from "@clerk/clerk-react";
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
+import { configureStore } from "@reduxjs/toolkit";
+import ReactDOM from "react-dom/client";
+import { Provider } from 'react-redux';
+
+import { api } from "./api";
+import App from "./App";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
