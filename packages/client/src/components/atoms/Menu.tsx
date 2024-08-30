@@ -9,7 +9,7 @@ function Menu() {
     const { user } = useUser();
 
     return (
-        <Box className="flex py-3 flex-col min-w-fit lg:min-w-[230px] bg-pink-200 rounded-xl shadow gap-2">
+        <Box className="flex py-3 flex-col min-w-fit lg:min-w-[230px] bg-pink-200 text-pink-800 rounded-xl shadow gap-2">
             <MenuItem text={user?.firstName ?? "User"}>
                 <UserButton />
             </MenuItem>

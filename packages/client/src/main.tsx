@@ -25,15 +25,54 @@ const store = configureStore({
 
 const theme = createTheme({
   palette: {
-    primary: {
-      main: '#e96d7b'
+    background: {
+      default: "#F8F2ED",
     },
-    secondary: {
-      main: '#a991f7',
+    primary: {
+      main: '#c8756b'
+    },
+    text: {
+      primary: '#c8756b',
     },
   },
   typography: {
-    fontFamily: 'Roboto, sans-serif', // Customize your font
+    fontFamily: '"Confortaa", Roboto, sans-serif',
+  },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          margin: 0,
+          color: '#c8756b',
+          backgroundColor: '#F8F2ED',
+          fontFamily: '"Confortaa", Roboto, sans-serif',
+          fontWeight: 400,
+          fontSize: '1rem',
+          lineHeight: 1.5,
+        },
+      },
+    },
+    MuiTable: {
+      styleOverrides: {
+        root: {
+          color: '#7c3f38',
+          borderColor: '#f2d8d5',
+        },
+      },
+    },
+    MuiTableCell: {
+      styleOverrides: {
+        root: {
+          color: '#7c3f38',
+          borderColor: '#f2d8d5',
+        },
+        head: {
+          backgroundColor: '#f2d8d5',
+          color: '#7c3f38',
+          fontWeight: 700,
+        },
+      },
+    },
   },
 });
 

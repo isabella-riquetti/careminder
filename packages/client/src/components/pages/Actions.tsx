@@ -40,21 +40,21 @@ const Actions = () => {
     const renderTableRow = (row: Action) => (
         <React.Fragment key={row.id}>
             <TableRow hover role="checkbox" tabIndex={-1}>
-                <TableCell className="border-pink-200 text-pink-950">{row.category}</TableCell>
-                <TableCell className="border-pink-200 text-pink-950">{row.name}</TableCell>
+                <TableCell>{row.category}</TableCell>
+                <TableCell>{row.name}</TableCell>
                 {!isMobile ? (
                     <>
-                        <TableCell className="border-pink-200 text-pink-950">{row.dificultity}</TableCell>
-                        <TableCell className="border-pink-200 text-pink-950">
+                        <TableCell>{row.dificultity}</TableCell>
+                        <TableCell>
                             {row.suggested_frequency ? readableFrequency(row.suggested_frequency) : "As needed"}
                         </TableCell>
-                        <TableCell className="border-pink-200 text-pink-950">
+                        <TableCell>
                             {rangeCurrency(row.estimated_starting_cost, row.estimated_ending_cost)}
                         </TableCell>
                     </>
                 ) : (
                     <TableCell align="center">
-                        <IconButton onClick={() => handleToggle(row.id)}>
+                        <IconButton onClick={() => handleToggle(row.id)} className='text-pink-800'>
                             {openRow === row.id ? <RemoveIcon /> : <AddIcon />}
                         </IconButton>
                     </TableCell>
@@ -69,13 +69,13 @@ const Actions = () => {
             <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={3}>
                 <Collapse in={openRow === row.id} timeout="auto" unmountOnExit>
                     <Box margin={1}>
-                        <Typography variant="body2" className="text-pink-950">
+                        <Typography variant="body2">
                             <strong>Difficulty:</strong> {row.dificultity}
                         </Typography>
-                        <Typography variant="body2" className="text-pink-950">
+                        <Typography variant="body2">
                             <strong>Suggested Frequency:</strong> {row.suggested_frequency ? readableFrequency(row.suggested_frequency) : "As needed"}
                         </Typography>
-                        <Typography variant="body2" className="text-pink-950">
+                        <Typography variant="body2">
                             <strong>Estimated Cost:</strong> {rangeCurrency(row.estimated_starting_cost, row.estimated_ending_cost)}
                         </Typography>
                     </Box>
@@ -89,17 +89,17 @@ const Actions = () => {
             <Table stickyHeader aria-label="sticky table">
                 <TableHead>
                     <TableRow>
-                        <TableCell className="bg-pink-200 text-pink-950 font-bold">Category</TableCell>
-                        <TableCell className="bg-pink-200 text-pink-950 font-bold">Name</TableCell>
+                        <TableCell>Category</TableCell>
+                        <TableCell>Name</TableCell>
                         {!isMobile && (
                             <>
-                                <TableCell className="bg-pink-200 text-pink-950 font-bold">Difficulty</TableCell>
-                                <TableCell className="bg-pink-200 text-pink-950 font-bold">Suggested Frequency</TableCell>
-                                <TableCell className="bg-pink-200 text-pink-950 font-bold">Estimated Cost</TableCell>
+                                <TableCell>Difficulty</TableCell>
+                                <TableCell>Suggested Frequency</TableCell>
+                                <TableCell>Estimated Cost</TableCell>
                             </>
                         )}
                         {isMobile && (
-                            <TableCell className="bg-pink-200 text-pink-950 font-bold" align="center">More</TableCell>
+                            <TableCell align="center">More</TableCell>
                         )}
                     </TableRow>
                 </TableHead>
