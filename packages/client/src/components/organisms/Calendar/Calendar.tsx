@@ -23,12 +23,20 @@ export default function Calendar() {
   }, []);
 
   const renderDayHeader = (arg: DayHeaderContentArg) => {
+    console.log(arg)
     if (!isSmallScreen) return arg.text;
     if (arg.view.type === "dayGridMonth") return arg.text.substring(0, 1);
-    if (arg.view.type === "timeGridWeek") return <div className='flex flex-col'>
-      <span>{arg.date.toLocaleDateString('en-US', { weekday: 'long' }).substring(0, 1)}</span>
-      <span className='w-[25px] h-[25px] rounded-full p-1 bg-pink-200 text-sm'>{arg.date.getDate()}</span>
-    </div>;
+    const day = <span className='w-[25px] h-[25px] rounded-full p-1 bg-pink-200 text-sm '>{arg.date.getDate()}</span>;
+    if (arg.view.type === "timeGridWeek") return (
+      <div className='flex flex-col'>
+        <span>{arg.date.toLocaleDateString('en-US', { weekday: 'long' }).substring(0, 1)}</span>
+        {day}
+      </div>);
+    if (arg.view.type === "timeGridDay") return (
+      <div className='flex flex-col items-center'>
+        <span>{arg.date.toLocaleDateString('en-US', { weekday: 'long' })}</span>
+        {day}
+      </div>);
 
     return arg.text;
   };
