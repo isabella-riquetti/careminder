@@ -42,6 +42,12 @@ const theme = createTheme({
     MuiCssBaseline: {
       styleOverrides: {
         body: {
+          '@media (max-width:72px)': {
+            fontSize: '0.875rem',
+          },
+          '@media (max-width:500px)': {
+            fontSize: '0.75rem',
+          },
           margin: 0,
           color: '#c8756b',
           backgroundColor: '#F8F2ED',
