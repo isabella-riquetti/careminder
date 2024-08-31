@@ -3,6 +3,7 @@ import "./index.css";
 import { ClerkProvider } from "@clerk/clerk-react";
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import { configureStore } from "@reduxjs/toolkit";
+import { PrimeReactProvider } from 'primereact/api';
 import ReactDOM from "react-dom/client";
 import { Provider } from 'react-redux';
 
@@ -98,7 +99,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       }}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <App />
+        <PrimeReactProvider>
+          <App />
+        </PrimeReactProvider>
       </ThemeProvider>
     </ClerkProvider>
   </Provider>

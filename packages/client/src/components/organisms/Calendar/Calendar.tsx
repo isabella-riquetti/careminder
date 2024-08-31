@@ -2,12 +2,17 @@ import './Calendar.scss';
 
 import { DayHeaderContentArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction'; 
 import listPlugin from '@fullcalendar/list';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-export default function Calendar() {
+interface CalendarProps {
+  setIsAddModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+
+}
+export default function Calendar({ setIsAddModalOpen }: CalendarProps) {
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
@@ -55,10 +60,17 @@ export default function Calendar() {
     return arg.text;
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleDateClick = (arg: any) => {
+    setIsAddModalOpen(true);
+    console.log(arg)
+    // You can perform other actions here, like opening a modal, creating an event, etc.
+  };
+
   return (
     <FullCalendar
       height={"calc(100vh - 24px)"}
-      plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
+      plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
       initialView="dayGridMonth"
       fixedWeekCount={false}
       headerToolbar={{
@@ -66,6 +78,11 @@ export default function Calendar() {
         center: 'prev,next',
         right: 'dayGridMonth,timeGridWeek,timeGridDay',
       }}
+      nowIndicator={true}
+      dateClick={handleDateClick}
+      select={handleDateClick}
+      selectable={true}
+      events="https://fullcalendar.io/api/demo-feeds/events.json"
       dayHeaderContent={renderDayHeader}
     />
   )

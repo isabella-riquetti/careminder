@@ -1,0 +1,15 @@
+.p-dropdown-panel, .p-dropdown-filter, .p-dropdown  {
+    @apply bg-white p-2;
+}
+
+.p-dropdown {
+    @apply rounded-md shadow border border-pink-300;
+}
+
+.p-dropdown-filter {
+    @apply bg-pink-100 rounded-md;
+}
+
+.p-dropdown-panel {
+    @apply shadow-2xl;
+}
