@@ -41,6 +41,7 @@ const style = {
     height: '80%',
     transform: 'translate(-50%, -50%)',
     width: 600,
+    maxWidth: "95%",
     boxShadow: 24,  
 };
 
