@@ -1,15 +1,53 @@
-.p-dropdown-panel, .p-dropdown-filter, .p-dropdown  {
+.p-calendar, .p-datepicker, .p-dropdown-filter, .p-dropdown  {
     @apply bg-white p-2;
 }
 
-.p-dropdown {
+.p-dropdown-panel {
+    @apply bg-white py-2 pl-2 rounded-b-lg;
+}
+
+.p-dropdown:not(.p-focus) .p-dropdown-trigger {
+    @apply hidden;
+}
+.p-dropdown.p-focus, .p-calendar.p-focus, .p-datepicker {
+    .p-dropdown-trigger {
+        @apply block;
+    }
     @apply rounded-md shadow border border-pink-300;
 }
 
 .p-dropdown-filter {
-    @apply bg-pink-100 rounded-md;
+    @apply bg-pale-50 rounded-md;
+}
+
+.p-dropdown-filter-icon {
+    @apply right-3;
 }
 
 .p-dropdown-panel {
     @apply shadow-2xl;
+}
+
+.p-datepicker {
+    @apply my-2;
+}
+
+.p-datepicker-title {
+    @apply flex gap-4;
+}
+
+.p-datepicker-header {
+    @apply p-2 bg-pale-50 rounded-lg;
+}
+
+.p-datepicker-calendar-container {
+    @apply p-2 ;
+}
+
+.p-timepicker {
+    @apply flex gap-2 text-lg bg-pale-50 rounded-lg p-1;
+}
+
+.p-datepicker-calendar th {
+    @apply text-pale-300;
 }

@@ -51,7 +51,7 @@ export class ActionDao {
       .from('actions')
       .select('*')
       .order('category', { ascending: true })
-      .order('sub_category', { ascending: true })
+      .order('sub_category', { ascending: false })
       .order('dificultity', { ascending: true })
       .order('id', { ascending: true });
 

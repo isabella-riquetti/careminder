@@ -30,7 +30,6 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route element={<AuthWrapper />}>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/add" element={<Actions />} />
           <Route path="/actions" element={<Actions />} />
         </Route>
       </Routes>

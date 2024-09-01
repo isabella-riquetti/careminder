@@ -1,18 +1,20 @@
 import './Calendar.scss';
 
-import { DayHeaderContentArg } from '@fullcalendar/core';
+import { DateSelectArg, DayHeaderContentArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction'; 
+import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction'; 
 import listPlugin from '@fullcalendar/list';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
+import { endOfDay } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 
 interface CalendarProps {
   setIsAddModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-
+  setStartDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
+  setEndDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
 }
-export default function Calendar({ setIsAddModalOpen }: CalendarProps) {
+export default function Calendar({ setIsAddModalOpen, setStartDate, setEndDate }: CalendarProps) {
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
@@ -60,11 +62,16 @@ export default function Calendar({ setIsAddModalOpen }: CalendarProps) {
     return arg.text;
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleDateClick = (arg: any) => {
+  const handleDateClick = (arg: DateClickArg) => {
+    setStartDate(arg.date);
+    setEndDate(endOfDay(arg.date));
     setIsAddModalOpen(true);
-    console.log(arg)
-    // You can perform other actions here, like opening a modal, creating an event, etc.
+  };
+
+  const handleDateRangeSelect = (arg: DateSelectArg) => {
+    setStartDate(arg.start);
+    setEndDate(arg.end);
+    setIsAddModalOpen(true);
   };
 
   return (
@@ -80,7 +87,7 @@ export default function Calendar({ setIsAddModalOpen }: CalendarProps) {
       }}
       nowIndicator={true}
       dateClick={handleDateClick}
-      select={handleDateClick}
+      select={handleDateRangeSelect}
       selectable={true}
       events="https://fullcalendar.io/api/demo-feeds/events.json"
       dayHeaderContent={renderDayHeader}

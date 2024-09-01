@@ -1,7 +1,6 @@
 import { UserButton, useUser } from '@clerk/clerk-react';
 import { Box } from '@mui/material';
 
-import AddIcon from "../../assets/icons/sidebar/add.svg?react";
 import Icon from "../../assets/icons/sidebar/icon.svg?react";
 import SelectOptionIcon from "../../assets/icons/sidebar/selectOption.svg?react";
 import MenuItem from './MenuItem';
@@ -18,7 +17,6 @@ function Menu() {
                 <hr className='border-pink-400' />
             </div>
             <MenuItem text="My Minders" mobileText="Minders" href="/" icon={Icon} />
-            <MenuItem text="Add Minder" mobileText="Add" href="/actions" icon={AddIcon} />
             <MenuItem text="Actions" href="/actions" icon={SelectOptionIcon} />
         </Box>
     )
