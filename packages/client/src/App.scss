@@ -2,6 +2,6 @@ body {
     @apply bg-pink-50;
 }
 
-input {
-    @apply focus-visible:outline-none;
+:focus-visible {
+    @apply outline-none;
 }

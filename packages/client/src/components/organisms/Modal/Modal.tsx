@@ -1,8 +1,8 @@
 import "./Modal.scss";
 
 import { Action } from '@careminder/shared/types';
-import { CloseOutlined } from "@mui/icons-material";
-import { Box, Modal } from '@mui/material';
+import { CloseOutlined, TrendingFlat } from "@mui/icons-material";
+import { Box, Button, Modal } from '@mui/material';
 import { isSameDay, isToday } from "date-fns";
 import _ from "lodash";
 import { Calendar, CalendarDateTemplateEvent } from "primereact/calendar";
@@ -38,11 +38,11 @@ const style = {
     position: 'absolute',
     top: '50%',
     left: '50%',
-    height: '80%',
+    height: '50%',
     transform: 'translate(-50%, -50%)',
     width: 600,
     maxWidth: "95%",
-    boxShadow: 24,  
+    boxShadow: 24,
 };
 
 const CATEGORY_ORDER = [
@@ -56,14 +56,14 @@ const CATEGORY_ORDER = [
 export default function AddNewReminderModal({ isAddModalOpen, setIsAddModalOpen, startDate, endDate }: AddNewReminderModalProps) {
     const { data: actions } = useGetActionsQuery();
     const groupedActions = useMemo(() => _(actions)
-          .groupBy('category')
-          .toPairs()
-          .sortBy(([category]) => CATEGORY_ORDER.indexOf(category))
-          .map(([category, items]) => ({
+        .groupBy('category')
+        .toPairs()
+        .sortBy(([category]) => CATEGORY_ORDER.indexOf(category))
+        .map(([category, items]) => ({
             label: category,
             items: items,
-          }))
-          .value(), [actions]);
+        }))
+        .value(), [actions]);
 
     const [selectedAction, setSelectedActions] = useState<Action | undefined>();
     const [selectedStartDate, setSelectedStartDate] = useState<Nullable<(Date | null)>>(startDate);
@@ -166,13 +166,17 @@ export default function AddNewReminderModal({ isAddModalOpen, setIsAddModalOpen,
                             onChange={(e) => setSelectedStartDate(e.value)}
                             dateTemplate={(e) => dateTemplate(e, selectedStartDate)}
                             showTime />
-                        <span className="hidden md:block">-</span>
+                        <span className="hidden md:block"><TrendingFlat /></span>
                         <Calendar
                             value={selectedEndDate}
                             dateFormat="DD, M dd yy"
                             onChange={(e) => setSelectedEndDate(e.value)}
                             dateTemplate={(e) => dateTemplate(e, selectedEndDate)}
                             showTime />
+                    </div>
+                    <div className="h-[150px] flex items-end ml-auto col-span-2">
+                        <Button variant="contained" onClick={() => console.log('Save')}>Create</Button>
+
                     </div>
                 </div>
             </Box>
