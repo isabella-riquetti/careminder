@@ -159,14 +159,14 @@ export default function AddNewReminderModal({ isAddModalOpen, setIsAddModalOpen,
                         className="w-full"
                         placeholder="Select Minder" />
                     <DurationIcon className="w-6 h-6" />
-                    <div className="grid grid-cols-[1fr,auto,1fr] items-center gap-1 w-full">
+                    <div className="grid grid-cols-1 md:grid-cols-[1fr,auto,1fr] items-center md:gap-1 w-full">
                         <Calendar
                             value={selectedStartDate}
                             dateFormat="DD, M dd yy"
                             onChange={(e) => setSelectedStartDate(e.value)}
                             dateTemplate={(e) => dateTemplate(e, selectedStartDate)}
                             showTime />
-                        -
+                        <span className="hidden md:block">-</span>
                         <Calendar
                             value={selectedEndDate}
                             dateFormat="DD, M dd yy"

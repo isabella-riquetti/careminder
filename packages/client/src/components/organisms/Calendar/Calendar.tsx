@@ -6,7 +6,7 @@ import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import { endOfDay } from 'date-fns';
+import { addMinutes, endOfDay } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 
 interface CalendarProps {
@@ -63,8 +63,9 @@ export default function Calendar({ setIsAddModalOpen, setStartDate, setEndDate }
   };
 
   const handleDateClick = (arg: DateClickArg) => {
+    const end = arg.view.type === "dayGridMonth" ? endOfDay(arg.date) : addMinutes(arg.date, 30);
     setStartDate(arg.date);
-    setEndDate(endOfDay(arg.date));
+    setEndDate(end);
     setIsAddModalOpen(true);
   };
 
