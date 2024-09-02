@@ -8,7 +8,7 @@
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "typeRoots": ["./node_modules/@types", "./src/types"],
-        "types": ["node", "express", "@clerk/clerk-sdk-node"],
+        "types": ["express"],
         "rootDir": ".",
         "outDir": "./dist",
         "baseUrl": ".",
