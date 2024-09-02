@@ -1,4 +1,7 @@
-.p-calendar, .p-datepicker, .p-dropdown-filter, .p-dropdown  {
+.p-calendar,
+.p-datepicker,
+.p-dropdown-filter,
+.p-dropdown {
     @apply bg-white p-2;
 }
 
@@ -9,10 +12,14 @@
 .p-dropdown:not(.p-focus) .p-dropdown-trigger {
     @apply hidden;
 }
-.p-dropdown.p-focus, .p-calendar.p-focus, .p-datepicker {
+
+.p-dropdown.p-focus,
+.p-calendar.p-focus,
+.p-datepicker {
     .p-dropdown-trigger {
         @apply block;
     }
+
     @apply rounded-md shadow border border-pink-300;
 }
 
@@ -28,8 +35,15 @@
     @apply shadow-2xl;
 }
 
+.p-datepicker-calendar {
+    .p-highlight {
+        @apply bg-pale-100;
+    }
+}
+
 .p-datepicker {
     @apply my-2;
+
 }
 
 .p-datepicker-title {
@@ -41,7 +55,7 @@
 }
 
 .p-datepicker-calendar-container {
-    @apply p-2 ;
+    @apply p-2;
 }
 
 .p-timepicker {

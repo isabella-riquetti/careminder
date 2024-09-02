@@ -44,3 +44,22 @@ export const ActionSchema = CreateActionSchema.extend({
     id: z.number(),
 });
 export type Action = z.infer<typeof ActionSchema>;
+
+export const CreateUserActionSchema = z.object({
+    action_id: z.number(),
+    start_at: z.date(),
+    end_at: z.date(),
+    all_day: z.boolean(),
+});
+export type CreateUserAction = z.infer<typeof CreateUserActionSchema>;
+
+export const UserActionSchema = CreateUserActionSchema.extend({
+    id: z.number(),
+    user_id: z.string(),
+    group_id: z.string(),
+});
+export type UserAction = z.infer<typeof UserActionSchema>;
+
+export const UserActionRetrieveSchema = UserActionSchema.extend({
+    action_name: z.string(),
+});

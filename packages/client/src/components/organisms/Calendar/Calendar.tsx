@@ -6,15 +6,29 @@ import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import { addMinutes, endOfDay } from 'date-fns';
-import React, { useEffect, useState } from 'react';
+import { addMinutes } from 'date-fns';
+import React, { useEffect, useMemo, useState } from 'react';
+
+import { useGetUserActionsQuery } from '@/api/userActions';
 
 interface CalendarProps {
   setIsAddModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setStartDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
   setEndDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
+  setAllDay: React.Dispatch<React.SetStateAction<boolean>>;
 }
-export default function Calendar({ setIsAddModalOpen, setStartDate, setEndDate }: CalendarProps) {
+export default function Calendar({ setIsAddModalOpen, setStartDate, setEndDate, setAllDay }: CalendarProps) {
+  const { data: userActions } = useGetUserActionsQuery();
+
+  const parsedEvents = useMemo(() => userActions?.map(u => ({
+    id: u.id.toString(),
+    start: u.start_at,
+    end: u.end_at,
+    textColor: "#005f4b",
+    backgroundColor: "#bfe3d2",
+    borderColor: "#bfe3d2"
+  })), [userActions]);
+
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
@@ -63,15 +77,18 @@ export default function Calendar({ setIsAddModalOpen, setStartDate, setEndDate }
   };
 
   const handleDateClick = (arg: DateClickArg) => {
-    const end = arg.view.type === "dayGridMonth" ? endOfDay(arg.date) : addMinutes(arg.date, 30);
+    const end = arg.view.type !== "dayGridMonth" ? addMinutes(arg.date, 30) : arg.date;
+    setAllDay(arg.view.type === "dayGridMonth");
     setStartDate(arg.date);
     setEndDate(end);
     setIsAddModalOpen(true);
   };
 
   const handleDateRangeSelect = (arg: DateSelectArg) => {
+    const end = arg.view.type !== "dayGridMonth" ? addMinutes(arg.end, 30) : arg.end;
+    setAllDay(arg.view.type === "dayGridMonth");
     setStartDate(arg.start);
-    setEndDate(arg.end);
+    setEndDate(end);
     setIsAddModalOpen(true);
   };
 
@@ -90,7 +107,7 @@ export default function Calendar({ setIsAddModalOpen, setStartDate, setEndDate }
       dateClick={handleDateClick}
       select={handleDateRangeSelect}
       selectable={true}
-      events="https://fullcalendar.io/api/demo-feeds/events.json"
+      events={parsedEvents}
       dayHeaderContent={renderDayHeader}
     />
   )
