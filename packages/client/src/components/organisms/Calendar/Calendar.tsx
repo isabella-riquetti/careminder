@@ -22,6 +22,7 @@ export default function Calendar({ setIsAddModalOpen, setStartDate, setEndDate, 
 
   const parsedEvents = useMemo(() => userActions?.map(u => ({
     id: u.id.toString(),
+    title: u.actions.name,
     start: u.start_at,
     end: u.end_at,
     textColor: "#005f4b",

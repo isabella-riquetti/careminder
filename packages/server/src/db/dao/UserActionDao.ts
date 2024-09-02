@@ -1,5 +1,5 @@
 import { supabase } from '../SupabaseClient';
-import { CreateUserAction, UserAction } from '@careminder/shared/types';
+import { CreateUserAction, UserAction, UserActionDisplay } from '@careminder/shared/types';
 import { generateUniqueId } from "@careminder/shared/utils/id";
 
 export class UserActionDao {
@@ -51,10 +51,16 @@ export class UserActionDao {
     return data;
   }
 
-  async getAllFromUser(user_id: string): Promise<UserAction[]> {
+  async getAllFromUser(user_id: string): Promise<UserActionDisplay[]> {
     const { data, error } = await supabase
       .from('user_actions')
-      .select('*')
+      .select(`
+      *,
+      actions (
+        name,
+        category
+      )
+    `)
       .eq('user_id', user_id);
 
     if (error) {
@@ -62,7 +68,7 @@ export class UserActionDao {
       return [];
     }
 
-    return data as UserAction[];
+    return data as UserActionDisplay[];
   }
 
   async delete(id: number): Promise<boolean> {

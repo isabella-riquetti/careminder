@@ -9,8 +9,8 @@ export const getUserActions = async (req: Request<{}, {}, {}>, res: Response<Use
     const userId = req.auth?.userId;
     if (!userId) throw new UnauthorizedError();
 
-    const createdAction = await dao.getAllFromUser(userId);
-    if (!createdAction) throw new NotFoundError("UserAction");
+    const allUserActions = await dao.getAllFromUser(userId);
+    if (!allUserActions) throw new NotFoundError("UserAction");
 
-    return res.status(200).json(createdAction);
+    return res.status(200).json(allUserActions);
 }

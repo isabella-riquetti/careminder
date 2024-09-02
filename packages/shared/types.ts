@@ -60,6 +60,12 @@ export const UserActionSchema = CreateUserActionSchema.extend({
 });
 export type UserAction = z.infer<typeof UserActionSchema>;
 
-export const UserActionRetrieveSchema = UserActionSchema.extend({
-    action_name: z.string(),
+export const BasicActionDisplay = z.object({
+    name: z.string(),
+    category: z.string(),
+})
+export const UserActionDisplaySchema = z.object({
+    actions: BasicActionDisplay,
+    ...UserActionSchema.shape
 });
+export type UserActionDisplay = z.infer<typeof UserActionDisplaySchema>;

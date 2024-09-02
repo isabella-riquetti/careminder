@@ -1,10 +1,10 @@
-import { CreateUserAction, UserAction } from "@careminder/shared/types";
+import { CreateUserAction, UserAction, UserActionDisplay } from "@careminder/shared/types";
 
 import { api } from "./index";
 
 export const tasksApiSlice = api.injectEndpoints({
     endpoints: builder => ({
-        getUserActions: builder.query<UserAction[], void>({
+        getUserActions: builder.query<UserActionDisplay[], void>({
             query: () => {
                 return "/user/actions";
             },
