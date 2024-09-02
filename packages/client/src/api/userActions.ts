@@ -8,6 +8,7 @@ export const tasksApiSlice = api.injectEndpoints({
             query: () => {
                 return "/user/actions";
             },
+            providesTags: ["actions"],
         }),
         createUserAction: builder.mutation<UserAction, CreateUserAction>({
             query: (body) => ({
@@ -15,6 +16,7 @@ export const tasksApiSlice = api.injectEndpoints({
                 method: "POST",
                 body,
             }),
+            invalidatesTags: ["actions"]
         }),
     }),
 });

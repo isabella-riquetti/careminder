@@ -24,6 +24,6 @@ import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
         baseQuery: staggeredBaseQueryWithBailOut,
         refetchOnFocus: false,
         reducerPath: "api",
-        tagTypes: [],
+        tagTypes: ["actions", "userActions"],
         endpoints: () => ({}),
     });

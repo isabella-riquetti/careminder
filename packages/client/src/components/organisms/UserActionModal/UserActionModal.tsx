@@ -65,7 +65,6 @@ export default function UserActionModal({ isAddModalOpen, setIsAddModalOpen, sta
     useEffect(() => setSelectedAllDay(allDay), [allDay]);
 
     const handleAllDayChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(event.target.checked)
         setSelectedAllDay(event.target.checked);
     };
 
@@ -154,20 +153,18 @@ export default function UserActionModal({ isAddModalOpen, setIsAddModalOpen, sta
         createUserActionMutation(req).unwrap();
 
     const callCreateUserAction = async () => {
-        console.log(selectedDates)
         if(!selectedDates) return;
 
         const [start, end] = selectedDates;
-        console.log(start, selectedAction)
         if (start && selectedAction?.id) {
-            const newAction = await createUserAction({
+            await createUserAction({
                 start_at: start,
                 end_at: end ?? start,
                 action_id: selectedAction.id,
                 all_day: selectedAllDay
             });
-
-            console.log(newAction);
+            
+            setIsAddModalOpen(false);            
         }
     }
 

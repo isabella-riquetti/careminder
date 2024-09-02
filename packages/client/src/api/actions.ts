@@ -8,6 +8,7 @@ export const tasksApiSlice = api.injectEndpoints({
             query: () => {
                 return "/actions";
             },
+            providesTags: ["actions"],
         }),
     }),
 });

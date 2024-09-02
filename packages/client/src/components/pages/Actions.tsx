@@ -4,7 +4,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import {
     Box, Collapse, IconButton, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, useMediaQuery
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { useGetActionsQuery } from "@/api/actions";
 import { rangeCurrency } from "@/utils/currency";
@@ -14,8 +14,6 @@ const Actions = () => {
     const { data: actions, isFetching } = useGetActionsQuery();
     const [openRow, setOpenRow] = useState<number | undefined>();
     const isMobile = useMediaQuery('(max-width:720px)');
-
-    useEffect(() => console.log(actions), [actions]);
 
     const handleToggle = (rowId: number) => {
         setOpenRow(prev => (prev === rowId ? undefined : rowId));
