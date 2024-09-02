@@ -1,8 +1,8 @@
 import './Calendar.scss';
 
-import { DateSelectArg, DayHeaderContentArg } from '@fullcalendar/core';
+import { DateSelectArg, DayHeaderContentArg, EventContentArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction'; 
+import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -10,6 +10,9 @@ import { addMinutes } from 'date-fns';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { useGetUserActionsQuery } from '@/api/userActions';
+import CalendarHeader from '@/components/molecules/CalendarHeader';
+import EventContent from '@/components/molecules/EventContent';
+import { getEventColor } from '@/utils/category';
 
 interface CalendarProps {
   setIsAddModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -25,9 +28,11 @@ export default function Calendar({ setIsAddModalOpen, setStartDate, setEndDate, 
     title: u.actions.name,
     start: u.start_at,
     end: u.end_at,
-    textColor: "#005f4b",
-    backgroundColor: "#bfe3d2",
-    borderColor: "#bfe3d2"
+    textColor: "#4c4c4c",
+    allDay: u.all_day,
+    backgroundColor: getEventColor(u.actions.category),
+    borderColor: getEventColor(u.actions.category),
+    extendedProps: u
   })), [userActions]);
 
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 768);
@@ -44,37 +49,12 @@ export default function Calendar({ setIsAddModalOpen, setStartDate, setEndDate, 
     };
   }, []);
 
-  const renderDayHeader = (arg: DayHeaderContentArg) => {
-    if (arg.view.type === "dayGridMonth") return isSmallScreen
-      ? <span className='medium'>{arg.date.toLocaleDateString('en-US', { weekday: 'narrow' })}</span> : (
-      <span className='medium'>{arg.date.toLocaleDateString('en-US', { weekday: 'short' })}</span>
-    );
-    if (arg.view.type === "timeGridWeek") return isSmallScreen
-    ? (
-      <div className='flex flex-col'>
-        <span>{arg.date.toLocaleDateString('en-US', { weekday: 'long' }).substring(0, 1)}</span>
-        <span className='w-[25px] h-[25px] rounded-full p-1 bg-pink-200 text-sm '>{arg.date.getDate()}</span>
-      </div>)
-    : (
-      <div className='flex flex-col text-pale-400 '>
-        <span className='large'>{arg.date.getDate()}</span>
-        <span className='small'>{arg.date.toLocaleDateString('en-US', { weekday: 'short' })}</span>
-      </div>
-    );
-    if (arg.view.type === "timeGridDay") return  isSmallScreen
-      ? (
-      <div className='flex flex-col items-center'>
-        <span>{arg.date.toLocaleDateString('en-US', { weekday: 'long' })}</span>
-        <span className='w-[25px] h-[25px] rounded-full p-1 bg-pink-200 text-sm'>{arg.date.getDate()}</span>
-      </div>)
-      : (
-        <div className='flex flex-col text-pale-400 '>
-          <span className='large'>{arg.date.getDate()}</span>
-          <span className='small'>{arg.date.toLocaleDateString('en-US', { weekday: 'long' })}</span>
-        </div>
-      );
+  const renderDayHeader = (dayHeaderContent: DayHeaderContentArg) => {
+    return <CalendarHeader isSmallScreen={isSmallScreen} dayHeaderContent={dayHeaderContent} />;
+  };
 
-    return arg.text;
+  const renderEventContent = (eventInfo: EventContentArg) => {
+    return <EventContent isSmallScreen={isSmallScreen} eventInfo={eventInfo} />;
   };
 
   const handleDateClick = (arg: DateClickArg) => {
@@ -105,11 +85,12 @@ export default function Calendar({ setIsAddModalOpen, setStartDate, setEndDate, 
         right: 'dayGridMonth,timeGridWeek,timeGridDay',
       }}
       nowIndicator={true}
-      dateClick={handleDateClick}
-      select={handleDateRangeSelect}
       selectable={true}
       events={parsedEvents}
+      dateClick={handleDateClick}
+      select={handleDateRangeSelect}
       dayHeaderContent={renderDayHeader}
+      eventContent={renderEventContent}
     />
   )
 }

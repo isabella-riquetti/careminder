@@ -19,6 +19,16 @@ export enum FrequencyType {
 const FrequencyTypeEnum = z.nativeEnum(FrequencyType);
 type FrequencyTypeEnum = z.infer<typeof FrequencyTypeEnum>;
 
+export enum Category {
+    HAIR = "Hair Care",
+    SKIN = "Skin Care",
+    BODY = "Body Care",
+    NAIL = "Nail Care",
+    MIND = "Mind Care"
+}
+const CategoryEnum = z.nativeEnum(Category);
+type CategoryEnum = z.infer<typeof CategoryEnum>;
+
 export const FrequencySchema = z.object({
     frequency: z.number().optional(),
     every: z.number().optional(),
@@ -30,7 +40,7 @@ export const FrequencySchema = z.object({
 export type Frequency = z.infer<typeof FrequencySchema>;
 
 export const CreateActionSchema = z.object({
-    category: z.string(),
+    category: CategoryEnum,
     sub_category: z.string(),
     name: z.string(),
     suggested_frequency: FrequencySchema.optional(),
@@ -62,7 +72,7 @@ export type UserAction = z.infer<typeof UserActionSchema>;
 
 export const BasicActionDisplay = z.object({
     name: z.string(),
-    category: z.string(),
+    category: CategoryEnum,
 })
 export const UserActionDisplaySchema = z.object({
     actions: BasicActionDisplay,

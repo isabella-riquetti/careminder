@@ -12,8 +12,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import { useGetActionsQuery } from '@/api/actions';
 import { useCreateUserActionMutation } from "@/api/userActions";
+import { getColoredIcon, getPlainIcon } from "@/utils/category";
 
-import { BodyCareIcon, BodyCarePlainIcon, HairCareIcon, HairCarePlainIcon, MindCareIcon, MindCarePlainIcon, NailCareIcon, NailCarePlainIcon, SelfCareIcon, SelfCarePlainIcon, SkinCareIcon, SkinCarePlainIcon } from '../../../assets/icons/categories';
 import { ActionIconComponent, DurationIconComponent } from '../../../assets/icons/form';
 
 interface AddNewReminderModalProps {
@@ -68,43 +68,10 @@ export default function UserActionModal({ isAddModalOpen, setIsAddModalOpen, sta
         setSelectedAllDay(event.target.checked);
     };
 
-    const getCategoryIcon = (category: string) => {
-        switch (category) {
-            case "Body Care":
-                return BodyCareIcon;
-            case "Hair Care":
-                return HairCareIcon;
-            case "Mind Care":
-                return MindCareIcon;
-            case "Nail Care":
-                return NailCareIcon;
-            case "Skin Care":
-                return SkinCareIcon;
-            default:
-                return SelfCareIcon;
-        }
-    }
-    const getIcon = (category: string) => {
-        switch (category) {
-            case "Body Care":
-                return BodyCarePlainIcon;
-            case "Hair Care":
-                return HairCarePlainIcon;
-            case "Mind Care":
-                return MindCarePlainIcon;
-            case "Nail Care":
-                return NailCarePlainIcon;
-            case "Skin Care":
-                return SkinCarePlainIcon;
-            default:
-                return SelfCarePlainIcon;
-        }
-    }
-
     const groupedItemTemplate = (option: { label: string }) => {
         return (
             <div className="flex align-items-center gap-1 py-2 px-1 border-t border-pink-100">
-                <img className="max-w-6" alt={option.label} src={getCategoryIcon(option.label)} />
+                <img className="max-w-6" alt={option.label} src={getColoredIcon(option.label)} />
                 <div>{option.label}</div>
             </div>
         );
@@ -113,7 +80,7 @@ export default function UserActionModal({ isAddModalOpen, setIsAddModalOpen, sta
     const itemTemplate = (option: Action) => {
         return (
             <div className="flex align-items-center gap-1 py-2 px-1 border-t border-pink-100">
-                <div className="w-6 h-6 flex items-center justify-center"><img className="max-w-4" alt={option.name} src={getIcon(option.category)} /></div>
+                <div className="w-6 h-6 flex items-center justify-center"><img className="max-w-4" alt={option.name} src={getPlainIcon(option.category)} /></div>
                 <div>{option.name}</div>
             </div>
         );

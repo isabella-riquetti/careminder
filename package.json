@@ -11,7 +11,8 @@
     "packages/shared"
   ],
   "devDependencies": {
-    "@types/node": "^22.5.0",
+    "@clerk/clerk-sdk-node": "^5.0.33",
+    "@types/node": "^22.5.2",
     "@types/pg": "^8.11.6",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4"

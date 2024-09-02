@@ -2,6 +2,7 @@ body {
     @apply bg-pink-50;
 }
 
-:focus-visible {
-    @apply outline-none;
+:focus-visible, :focus {
+    outline: none !important;
+    box-shadow: none !important;
 }
