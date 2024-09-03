@@ -6,15 +6,22 @@ export const tasksApiSlice = api.injectEndpoints({
     endpoints: builder => ({
         getUserActions: builder.query<UserActionDisplay[], void>({
             query: () => {
-                return "/user/actions";
+                return "/actions/user";
             },
             providesTags: ["actions"],
         }),
         createUserAction: builder.mutation<UserAction, CreateUserAction>({
             query: (body) => ({
-                url: "/user/actions",
+                url: "/actions/user",
                 method: "POST",
                 body,
+            }),
+            invalidatesTags: ["actions"]
+        }),
+        deleteUserAction: builder.mutation<void, number>({
+            query: (id) => ({
+                url: `/actions/user/${id}`,
+                method: "DELETE",
             }),
             invalidatesTags: ["actions"]
         }),
@@ -23,5 +30,6 @@ export const tasksApiSlice = api.injectEndpoints({
 
 export const {
     useGetUserActionsQuery,
+    useDeleteUserActionMutation,
     useCreateUserActionMutation,
 } = tasksApiSlice;
