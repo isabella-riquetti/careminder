@@ -3,15 +3,15 @@ import "./UserActionModal.scss";
 import { Action, Category, CreateUserAction, UserAction } from '@careminder/shared/types';
 import { CloseOutlined, DeleteOutline } from "@mui/icons-material";
 import { Box, Button, Checkbox, FormControlLabel, FormGroup, Modal, Rating } from '@mui/material';
-import { isSameDay, isToday, isWithinInterval } from "date-fns";
+import { addDays, endOfDay, isBefore, isEqual, set } from "date-fns";
 import _ from "lodash";
-import { Calendar, CalendarDateTemplateEvent } from "primereact/calendar";
 import { Dropdown } from 'primereact/dropdown';
-import { Nullable } from "primereact/ts-helpers";
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { useGetActionsQuery } from '@/api/actions';
 import { useCreateUserActionMutation, useDeleteUserActionMutation, useUpdateUserActionMutation } from "@/api/userActions";
+import FocusDatePicker from "@/components/atoms/FocusDatePicker";
+import FocusTimePicker from "@/components/atoms/FocusTimePicker";
 import { getColoredIcon, getPlainIcon } from "@/utils/category";
 
 import { ActionIconComponent, DurationIconComponent } from '../../../assets/icons/form';
@@ -26,7 +26,7 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 600,
+    width: 540,
     maxWidth: "95%",
     boxShadow: 24,
 };
@@ -54,15 +54,25 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
     const { action_id, start_at, end_at, all_day } = userAction;
     const [selectedAction, setSelectedActions] = useState<Action | undefined>();
     const [selectedAllDay, setSelectedAllDay] = useState<boolean>(!!all_day);
-    const [selectedDates, setSelectedDates] = useState<Nullable<(Date | null)[]>>(null);
+    const [selectedStartDate, setSelectedStartDate] = useState<Date | undefined | null>(start_at);
+    const [selectedEndDate, setSelectedEndDate] = useState<Date | undefined | null>(end_at);
 
-    useEffect(() => {
-        if (start_at && end_at) setSelectedDates([start_at, end_at])
-    }, [start_at, end_at]);
+    useEffect(() => setSelectedStartDate(start_at), [start_at]);
+    useEffect(() => setSelectedEndDate(end_at), [end_at]);
     useEffect(() => setSelectedAllDay(!!all_day), [all_day]);
     useEffect(() => {
         if (action_id && actions) setSelectedActions(actions.find(a => a.id === action_id));
     }, [actions, action_id]);
+
+    useEffect(() => {
+        if (selectedStartDate && selectedEndDate && isBefore(selectedEndDate, selectedStartDate)) {
+            setSelectedEndDate(set(addDays(selectedStartDate, 1), {
+                hours: selectedEndDate.getHours(),
+                minutes: selectedEndDate.getMinutes(),
+                seconds: selectedEndDate.getSeconds(),
+            }));
+        }
+    }, [selectedStartDate, selectedEndDate]);
 
     const groupedItemTemplate = (option: { label: Category }) => {
         const Icon = getColoredIcon(option.label);
@@ -87,47 +97,17 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
         );
     };
 
-    const dateTemplate = (event: CalendarDateTemplateEvent) => {
-        const classes = ["w-7 h-7 flex items-center justify-center rounded-full"];
-        const date = new Date(event.year, event.month, event.day);
-        if (isToday(date)) classes.push("border border-pale-200");
-
-        if (selectedDates) {
-            const [start, end] = selectedDates;
-            if ((start && end && isWithinInterval(date, { start, end })) || (start && isSameDay(date, start))) classes.push("bg-pale-100");
-        }
-        return (
-            <div
-                className={classes.join(" ")}>
-                {event.day}
-            </div>);
-    }
-
-    const formatDateTime = (date: Date): string => {
-        const userLocale = navigator.language || 'en-US';
-        const options: Intl.DateTimeFormatOptions = {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        };
-
-        const formattedDate = new Intl.DateTimeFormat(userLocale, options).format(date);
-        return formattedDate;
-    }
-
     const [createUserActionMutation] = useCreateUserActionMutation();
     const createUserAction = async (req: CreateUserAction): Promise<UserAction> =>
         createUserActionMutation(req).unwrap();
 
     const callCreateUserAction = async () => {
-        if (!selectedDates) return;
+        if (!selectedStartDate) return;
 
-        const [start, end] = selectedDates;
-        if (start && selectedAction?.id) {
+        if (selectedStartDate && selectedAction?.id) {
             await createUserAction({
-                start_at: start,
-                end_at: end ?? start,
+                start_at: selectedStartDate,
+                end_at: selectedEndDate ?? selectedStartDate,
                 action_id: selectedAction.id,
                 all_day: selectedAllDay
             });
@@ -150,14 +130,13 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
         updateUserActionMutation(req).unwrap();
 
     const callUpdateUserAction = async () => {
-        if (!selectedDates) return;
+        if (!selectedStartDate) return;
 
-        const [start, end] = selectedDates;
-        if (start && selectedAction?.id) {
+        if (selectedStartDate && selectedAction?.id) {
             await updateUserAction({
                 id: userAction.id!,
-                start_at: start,
-                end_at: end ?? start,
+                start_at: selectedStartDate,
+                end_at: selectedEndDate ?? selectedStartDate,
                 action_id: selectedAction.id,
                 all_day: selectedAllDay
             });
@@ -166,10 +145,14 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
     };
 
     const handleSaveButton = async () => {
-        if (selectedAction?.id) await callUpdateUserAction();
+        if (userAction?.id) await callUpdateUserAction();
         else await callCreateUserAction();
     }
 
+    const handleAllDayChange = (checked: boolean) => {
+        if (!checked && selectedStartDate && selectedEndDate && isEqual(selectedStartDate, selectedEndDate)) setSelectedEndDate(endOfDay(selectedEndDate));
+        setSelectedAllDay(checked);
+    }
 
     return (
         <Modal
@@ -190,7 +173,7 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
                             <CloseOutlined onClick={() => setIsAddModalOpen(false)} className="ml-auto cursor-pointer hover:text-red-200" />
                         </div>
                     </div>
-                    <div className="p-4 grid grid-cols-[25px,calc(100%-25px-0.75rem)] grid-rows-[auto,auto,auto] items-center justify-start gap-2">
+                    <div className="form p-4 grid grid-cols-[25px,calc(100%-25px-0.75rem)] grid-rows-[auto,auto,auto] items-center justify-start gap-2">
                         <ActionIconComponent className="w-6 h-6" />
                         <Dropdown
                             value={selectedAction}
@@ -204,25 +187,31 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
                             className="w-full"
                             placeholder="Select Minder" />
                         <DurationIconComponent className="w-6 h-6" />
-                        <Calendar
-                            value={selectedDates}
-                            dateFormat="DD, dd/mm/yy"
-                            onChange={(e) => setSelectedDates(e.value)}
-                            selectionMode="range"
-                            readOnlyInput
-                            hideOnRangeSelection
-                            showTime={!selectedAllDay}
-                            stepMinute={5}
-                            dateTemplate={dateTemplate}
-                            formatDateTime={formatDateTime}
-                        />
+                        <div className="flex gap-2 dates">
+                            <FocusDatePicker
+                                value={selectedStartDate}
+                                setValue={setSelectedStartDate}
+                            />
+                            {!selectedAllDay && <>
+                                <FocusTimePicker
+                                    value={selectedStartDate}
+                                    setValue={setSelectedStartDate} />
+                                <FocusTimePicker
+                                    value={selectedEndDate}
+                                    setValue={setSelectedEndDate} />
+                            </>}
+                            <FocusDatePicker
+                                value={selectedEndDate}
+                                setValue={setSelectedEndDate}
+                            />
+                        </div>
                         <div></div>
                         <FormControlLabel
-                            className="mt-[-10px]"
+                            className="mt-[-10px] max-w-fit text-primary"
                             control={<Checkbox
-                                className="ml-2"
+                                className="ml-1"
                                 checked={selectedAllDay}
-                                onChange={(event) => setSelectedAllDay(event.target.checked)}
+                                onChange={(event) => handleAllDayChange(event.target.checked)}
                             />}
                             label="All Day" />
                         <div className="flex items-end ml-auto col-span-2 mt-4">

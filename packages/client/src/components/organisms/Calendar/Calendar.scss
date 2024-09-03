@@ -137,3 +137,7 @@
 .fc-timegrid-event-harness {
     @apply max-w-[90%];
 }
+
+.MuiDateRangeCalendar-root:first-child>:not(.MuiDateRangeCalendar-monthContainer) {
+    display: none; //TEMP WHILE I TEST
+}

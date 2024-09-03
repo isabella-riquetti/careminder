@@ -2,8 +2,8 @@ import "./index.css";
 
 import { ClerkProvider } from "@clerk/clerk-react";
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
-import { LocalizationProvider } from '@mui/x-date-pickers-pro';
-import { AdapterDateFns } from '@mui/x-date-pickers-pro/AdapterDateFnsV3'
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3'
 import { configureStore } from "@reduxjs/toolkit";
 import { PrimeReactProvider } from 'primereact/api';
 import ReactDOM from "react-dom/client";
