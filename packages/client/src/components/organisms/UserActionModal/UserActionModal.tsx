@@ -1,6 +1,6 @@
 import "./UserActionModal.scss";
 
-import { Action, CreateUserAction, UserAction } from '@careminder/shared/types';
+import { Action, Category, CreateUserAction, UserAction } from '@careminder/shared/types';
 import { CloseOutlined } from "@mui/icons-material";
 import { Box, Button, Checkbox, FormControlLabel, FormGroup, Modal } from '@mui/material';
 import { isSameDay, isToday, isWithinInterval } from "date-fns";
@@ -68,19 +68,23 @@ export default function UserActionModal({ isAddModalOpen, setIsAddModalOpen, sta
         setSelectedAllDay(event.target.checked);
     };
 
-    const groupedItemTemplate = (option: { label: string }) => {
+    const groupedItemTemplate = (option: { label: Category }) => {
+        const Icon = getColoredIcon(option.label);
         return (
             <div className="flex align-items-center gap-1 py-2 px-1 border-t border-pink-100">
-                <img className="max-w-6" alt={option.label} src={getColoredIcon(option.label)} />
+                <Icon className="max-w-6 max-h-6" />
                 <div>{option.label}</div>
             </div>
         );
     };
 
     const itemTemplate = (option: Action) => {
+        const Icon = getPlainIcon(option.category);
         return (
             <div className="flex align-items-center gap-1 py-2 px-1 border-t border-pink-100">
-                <div className="w-6 h-6 flex items-center justify-center"><img className="max-w-4" alt={option.name} src={getPlainIcon(option.category)} /></div>
+                <div className="w-6 h-6 flex items-center justify-center">
+                    <Icon className="max-w-4 max-h-4" />
+                </div>
                 <div>{option.name}</div>
             </div>
         );
