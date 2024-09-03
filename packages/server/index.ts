@@ -8,7 +8,7 @@ const port = 3000;
 
 const corsOptions = {
     origin: process.env.CLIENT_ORIGIN,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowedHeaders: [
         'Content-Type',
         'Authorization',

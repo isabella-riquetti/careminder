@@ -11,7 +11,7 @@ import { Nullable } from "primereact/ts-helpers";
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { useGetActionsQuery } from '@/api/actions';
-import { useCreateUserActionMutation, useDeleteUserActionMutation } from "@/api/userActions";
+import { useCreateUserActionMutation, useDeleteUserActionMutation, useUpdateUserActionMutation } from "@/api/userActions";
 import { getColoredIcon, getPlainIcon } from "@/utils/category";
 
 import { ActionIconComponent, DurationIconComponent } from '../../../assets/icons/form';
@@ -138,11 +138,37 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
     const [deleteUserActionMutation] = useDeleteUserActionMutation();
     const deleteUserAction = async (req: number): Promise<void> =>
         deleteUserActionMutation(req).unwrap();
-    
+
     const callDeleteUserAction = async () => {
         await deleteUserAction(userAction.id!);
         setIsAddModalOpen(false);
     };
+
+    const [updateUserActionMutation] = useUpdateUserActionMutation();
+    const updateUserAction = async (req: Partial<UserAction>): Promise<UserAction> =>
+        updateUserActionMutation(req).unwrap();
+
+    const callUpdateUserAction = async () => {
+        if (!selectedDates) return;
+
+        const [start, end] = selectedDates;
+        if (start && selectedAction?.id) {
+            await updateUserAction({
+                id: userAction.id!,
+                start_at: start,
+                end_at: end ?? start,
+                action_id: selectedAction.id,
+                all_day: selectedAllDay
+            });
+            setIsAddModalOpen(false);
+        }
+    };
+
+    const handleSaveButton = async () => {
+        if (selectedAction?.id) await callUpdateUserAction();
+        else await callCreateUserAction();
+    }
+
 
     return (
         <Modal
@@ -199,7 +225,7 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
                             />}
                             label="All Day" />
                         <div className="flex items-end ml-auto col-span-2 mt-4">
-                            <Button variant="contained" onClick={callCreateUserAction}>Create</Button>
+                            <Button variant="contained" onClick={handleSaveButton}>Save</Button>
                         </div>
                     </div>
                 </FormGroup>

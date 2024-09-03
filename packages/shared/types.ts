@@ -63,6 +63,11 @@ export const CreateUserActionSchema = z.object({
 });
 export type CreateUserAction = z.infer<typeof CreateUserActionSchema>;
 
+export const UpdateUserActionSchema = CreateUserActionSchema.extend({
+    id: z.number(),
+});
+export type UpdateUserAction = z.infer<typeof UpdateUserActionSchema>;
+
 export const UserActionSchema = CreateUserActionSchema.extend({
     id: z.number(),
     user_id: z.string(),

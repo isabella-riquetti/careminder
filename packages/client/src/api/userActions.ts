@@ -25,6 +25,14 @@ export const tasksApiSlice = api.injectEndpoints({
             }),
             invalidatesTags: ["actions"]
         }),
+        updateUserAction: builder.mutation<UserAction, Partial<UserAction>>({
+            query: ({ id, ...body}) => ({
+                url: `/actions/user/${id}`,
+                method: "PATCH",
+                body
+            }),
+            invalidatesTags: ["actions"]
+        }),
     }),
 });
 
@@ -32,4 +40,5 @@ export const {
     useGetUserActionsQuery,
     useDeleteUserActionMutation,
     useCreateUserActionMutation,
+    useUpdateUserActionMutation,
 } = tasksApiSlice;
