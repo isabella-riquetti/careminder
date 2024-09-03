@@ -39,15 +39,15 @@ export const getPlainIcon = (category: Category) => {
 export const getEventColor = (category: Category) => {
     switch (category) {
         case Category.BODY:
-            return "#BDFCC9";
+            return "#cde7d3";
         case Category.HAIR:
-            return "#FFD1BA";
+            return "#ffd8c4";
         case Category.MIND:
-            return "#ADD8E6";
+            return "#e7e7e7";
         case Category.NAIL:
-            return "#E6E6FA";
+            return "#d0d9f7";
         case Category.SKIN:
-            return "#e5b8cb";
+            return "#f3d4e1";
         default:
             return "#F8F2ED";
     }
