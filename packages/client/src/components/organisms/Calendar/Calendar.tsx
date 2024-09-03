@@ -7,7 +7,7 @@ import interactionPlugin, { DateClickArg, EventResizeDoneArg } from '@fullcalend
 import listPlugin from '@fullcalendar/list';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import { addMilliseconds, addMinutes, isSameDay } from 'date-fns';
+import { addMilliseconds, addMinutes, format, isSameDay, startOfDay } from 'date-fns';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { useGetUserActionsQuery, useUpdateUserActionMutation } from '@/api/userActions';
@@ -122,11 +122,15 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
     }
   };
 
+  const now = new Date();
+  const scrollTime = now.getHours() > 1 ? addMinutes(new Date(), -30) : startOfDay(now);
+
   return (
     <FullCalendar
       height={"calc(100vh - 24px)"}
       plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
       initialView="timeGridDay"
+      scrollTime={format(scrollTime, 'p')}
       fixedWeekCount={false}
       headerToolbar={{
         left: 'title today',
