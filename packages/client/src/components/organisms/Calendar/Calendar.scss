@@ -130,3 +130,7 @@
 .fc-daygrid-dot-event:hover {
     background: transparent;
 }
+
+.fc-timegrid-event-harness {
+    @apply max-w-[90%];
+}
