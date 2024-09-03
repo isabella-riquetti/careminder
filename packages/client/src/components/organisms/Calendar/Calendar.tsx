@@ -1,16 +1,16 @@
 import './Calendar.scss';
 
 import { UserAction } from '@careminder/shared/types';
-import { DateSelectArg, DayHeaderContentArg, EventClickArg, EventContentArg } from '@fullcalendar/core';
+import { DateSelectArg, DayHeaderContentArg, EventClickArg, EventContentArg, EventDropArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
+import interactionPlugin, { DateClickArg, EventResizeDoneArg } from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import { addMilliseconds, addMinutes, isSameDay } from 'date-fns';
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { useGetUserActionsQuery } from '@/api/userActions';
+import { useGetUserActionsQuery, useUpdateUserActionMutation } from '@/api/userActions';
 import CalendarHeader from '@/components/molecules/CalendarHeader';
 import EventContent from '@/components/molecules/EventContent';
 import { getEventColor } from '@/utils/category';
@@ -96,6 +96,31 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
    });
     setTimeout(() => setIsAddModalOpen(true), 200);
   }
+  const [updateUserActionMutation] = useUpdateUserActionMutation();
+  const updateUserAction = async (req: Partial<UserAction>): Promise<UserAction> =>
+    updateUserActionMutation(req).unwrap();
+
+  const callUpdateUserAction = async (id: number, newStart: Date, newEnd: Date) => {
+    await updateUserAction({
+      id,
+      start_at: newStart,
+      end_at: newEnd,
+    });
+  };
+
+  const handleEventDrop = (arg: EventDropArg): void => {
+    const { start, end, id } = arg.event;
+    if (start) {
+      callUpdateUserAction(Number(id), start, end || start);
+    }
+  };
+
+  const handleEventResize = (arg: EventResizeDoneArg): void => {
+    const { start, end, id } = arg.event;
+    if (start && end) {
+      callUpdateUserAction(Number(id), start, end);
+    }
+  };
 
   return (
     <FullCalendar
@@ -110,7 +135,14 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
       }}
       nowIndicator={true}
       selectable={true}
+      editable={true}
+      droppable={true}
+      eventStartEditable={true}
+      eventResizableFromStart={true}
+      eventDurationEditable={true}
       events={parsedEvents}
+      eventDrop={handleEventDrop}
+      eventResize={handleEventResize}
       dateClick={handleDateClick}
       select={handleDateRangeSelect}
       dayHeaderContent={renderDayHeader}

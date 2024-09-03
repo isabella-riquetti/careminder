@@ -1,6 +1,6 @@
 import { EventContentArg } from '@fullcalendar/core';
 import cn from "classnames";
-import { format, isSameDay } from 'date-fns';
+import { differenceInMinutes, format, isSameDay } from 'date-fns';
 
 import { getColoredIcon, getEventColor } from '@/utils/category';
 
@@ -14,6 +14,7 @@ export default function EventContent({ isSmallScreen, eventInfo }: EventContentP
   const { actions, start_at, end_at, all_day } = event.extendedProps;
 
   const singleDay = isSameDay(start_at, end_at);
+  const smallDiffInMinutes = differenceInMinutes(end_at, start_at) < 60;
 
   const date: string[] = [];
   if (!all_day) date.push(format(start_at, 'p'));
@@ -36,8 +37,11 @@ export default function EventContent({ isSmallScreen, eventInfo }: EventContentP
       backgroundColor: getEventColor(actions.category),
       color: "#4c4c4c"
     }}>
-      {!isSmallScreen && <Icon className='min-w-7 min-h-7 max-w-7 max-h-7 mr-1' />}
-      <div className='flex flex-col overflow-hidden'>
+      {!isSmallScreen && !smallDiffInMinutes && <Icon className='min-w-7 min-h-7 max-w-7 max-h-7 mr-1' />}
+      <div className={cn('flex  overflow-hidden', {
+        'flex-row-reverse items-center gap-2': smallDiffInMinutes,
+        'flex-col': !smallDiffInMinutes
+      })}>
         <span className={cn("font-bold text-wrap", {
           "text-xs": isSmallScreen,
           "text-md": !isSmallScreen
