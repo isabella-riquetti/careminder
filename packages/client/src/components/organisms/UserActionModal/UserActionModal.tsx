@@ -2,7 +2,7 @@ import "./UserActionModal.scss";
 
 import { Action, Category, CreateUserAction, UserAction } from '@careminder/shared/types';
 import { CloseOutlined, DeleteOutline } from "@mui/icons-material";
-import { Box, Button, Checkbox, FormControlLabel, FormGroup, Modal } from '@mui/material';
+import { Box, Button, Checkbox, FormControlLabel, FormGroup, Modal, Rating } from '@mui/material';
 import { isSameDay, isToday, isWithinInterval } from "date-fns";
 import _ from "lodash";
 import { Calendar, CalendarDateTemplateEvent } from "primereact/calendar";
@@ -82,6 +82,7 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
                     <Icon className="max-w-4 max-h-4" />
                 </div>
                 <div>{option.name}</div>
+                <Rating className="ml-auto text-pink-400" name="size-small" value={option.dificultity ?? 1} readOnly size="small" />
             </div>
         );
     };

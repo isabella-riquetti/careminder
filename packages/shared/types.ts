@@ -1,15 +1,5 @@
 import { z } from "zod";
 
-export enum Dificultity {
-    TRIVIAL = "trivial",
-    EASY = "easy",
-    MODERATE = "moderate",
-    HARD = "hard",
-    HEROIC = "heroic"
-}
-const DificultityEnum = z.nativeEnum(Dificultity);
-type DificultityEnum = z.infer<typeof DificultityEnum>;
-
 export enum FrequencyType {
     DAY = "day",
     WEEK = "week",
@@ -46,7 +36,7 @@ export const CreateActionSchema = z.object({
     suggested_frequency: FrequencySchema.optional(),
     estimated_starting_cost: z.number().optional(),
     estimated_ending_cost: z.number().optional(),
-    dificultity: DificultityEnum.optional(),
+    dificultity: z.number(),
 });
 export type CreateAction = z.infer<typeof CreateActionSchema>;
 
