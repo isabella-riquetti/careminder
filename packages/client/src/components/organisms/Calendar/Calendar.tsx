@@ -6,7 +6,7 @@ import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import { addMinutes } from 'date-fns';
+import { addMilliseconds, addMinutes, isSameDay } from 'date-fns';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { useGetUserActionsQuery } from '@/api/userActions';
@@ -58,14 +58,22 @@ export default function Calendar({ setIsAddModalOpen, setStartDate, setEndDate, 
   };
 
   const handleDateClick = (arg: DateClickArg) => {
-    const end = arg.view.type !== "dayGridMonth" ? addMinutes(arg.date, 30) : arg.date;
-    setAllDay(arg.view.type === "dayGridMonth");
-    setStartDate(arg.date);
-    setEndDate(end);
-    setIsAddModalOpen(true);
+    const targetElement = arg.jsEvent.target as HTMLElement;
+    if (targetElement?.classList.contains("fc-daygrid-day-number")) {
+      const calendarApi = arg.view.calendar;
+      calendarApi.changeView('timeGridDay', arg.dateStr);
+    } else {
+      const end = arg.view.type !== "dayGridMonth" ? addMinutes(arg.date, 30) : arg.date;
+      setAllDay(arg.view.type === "dayGridMonth");
+      setStartDate(arg.date);
+      setEndDate(end);
+      setIsAddModalOpen(true);
+    }
   };
 
   const handleDateRangeSelect = (arg: DateSelectArg) => {
+    if (arg.view.type === "dayGridMonth" && isSameDay(arg.start, addMilliseconds(arg.end, -1))) return;
+
     const end = arg.view.type !== "dayGridMonth" ? addMinutes(arg.end, 30) : arg.end;
     setAllDay(arg.view.type === "dayGridMonth");
     setStartDate(arg.start);
@@ -82,7 +90,7 @@ export default function Calendar({ setIsAddModalOpen, setStartDate, setEndDate, 
       headerToolbar={{
         left: 'title today',
         center: 'prev,next',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
       }}
       nowIndicator={true}
       selectable={true}

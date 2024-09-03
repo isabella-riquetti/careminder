@@ -1,4 +1,5 @@
 import { EventContentArg } from '@fullcalendar/core';
+import cn from "classnames";
 import { format, isSameDay } from 'date-fns';
 
 import { getColoredIcon, getEventColor } from '@/utils/category';
@@ -37,7 +38,10 @@ export default function EventContent({ isSmallScreen, eventInfo }: EventContentP
     }}>
       {!isSmallScreen && <Icon className='min-w-7 min-h-7 max-w-7 max-h-7 mr-1' />}
       <div className='flex flex-col overflow-hidden'>
-        <span className={`${isSmallScreen ? "text-xs" : "text-md"} font-bold text-wrap`} title={actions.name}>{actions.name}</span>
+        <span className={cn("font-bold text-wrap", {
+          "text-xs": isSmallScreen,
+          "text-md": !isSmallScreen
+        })} title={actions.name}>{actions.name}</span>
         <span className='text-xs'>{date.join(" - ")}</span>
       </div>
     </div>

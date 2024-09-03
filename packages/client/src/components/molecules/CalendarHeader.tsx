@@ -1,4 +1,5 @@
 import { DayHeaderContentArg } from '@fullcalendar/core';
+import cn from "classnames";
 
 interface CalendarHeaderProps {
   dayHeaderContent: DayHeaderContentArg;
@@ -6,8 +7,12 @@ interface CalendarHeaderProps {
 }
 
 export default function CalendarHeader({ isSmallScreen, dayHeaderContent }: CalendarHeaderProps) {
+  const { view: { type }, date, dateStr, text } = dayHeaderContent;
 
-  const { view: { type }, date, text } = dayHeaderContent;
+  const goToDay = () => {
+    const calendarApi = dayHeaderContent.view.calendar;
+    calendarApi.changeView('timeGridDay', dateStr);
+  }
 
   const renderDateInfo = (
     formatKey: 'narrow' | 'short' | 'long',
@@ -17,15 +22,18 @@ export default function CalendarHeader({ isSmallScreen, dayHeaderContent }: Cale
     const contents = [
       (<span key="top" className={isSmallScreen && showDayNumber ? 'w-[25px] h-[25px] rounded-full p-1 bg-pink-200 text-sm' : 'large'}>{date.getDate()}</span>),
       (<span key="bottom" className={fontSize}>
-        { date.toLocaleDateString('en-US', { weekday: formatKey })}
+        {date.toLocaleDateString('en-US', { weekday: formatKey })}
       </span>)
 
     ];
     const contentOrders = isSmallScreen && showDayNumber ? contents.reverse() : contents;
-    return (<div className={`flex flex-col ${!isSmallScreen && 'text-pale-400'} items-center`}>
-      {showDayNumber && contentOrders[0]}
-      {contentOrders[1]}
-    </div>);
+    return (
+      <div onClick={goToDay} className={cn("flex flex-col curor-pointer text-pale-400", {
+        "text-pale-400": isSmallScreen
+      })}>
+        {showDayNumber && contentOrders[0]}
+        {contentOrders[1]}
+      </div>);
   };
 
   switch (type) {

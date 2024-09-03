@@ -1,6 +1,9 @@
 .fc {
-
     @apply text-primary font-base;
+
+    .fc-day {
+        @apply cursor-pointer;
+    }
 
     .fc-toolbar-title {
         @apply font-bold ml-1;
