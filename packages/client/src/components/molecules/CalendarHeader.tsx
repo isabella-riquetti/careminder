@@ -12,7 +12,7 @@ export default function CalendarHeader({ isSmallScreen, dayHeaderContent }: Cale
   const renderDateInfo = (
     formatKey: 'narrow' | 'short' | 'long',
     showDayNumber = false,
-    fontSize = isSmallScreen ? 'medium' : 'small'
+    fontSize = 'small'
   ) => {
     const contents = [
       (<span key="top" className={isSmallScreen && showDayNumber ? 'w-[25px] h-[25px] rounded-full p-1 bg-pink-200 text-sm' : 'large'}>{date.getDate()}</span>),
@@ -33,7 +33,7 @@ export default function CalendarHeader({ isSmallScreen, dayHeaderContent }: Cale
       return renderDateInfo(isSmallScreen ? 'narrow' : 'short', false, 'medium');
     case 'timeGridWeek':
     case 'timeGridDay':
-      return renderDateInfo(isSmallScreen ? 'short' : 'long', true);
+      return renderDateInfo(isSmallScreen ? 'short' : 'short', true);
     default:
       return text;
   }
