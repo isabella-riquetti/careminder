@@ -36,20 +36,20 @@ export const getPlainIcon = (category: Category) => {
     }
 }
 
-export const getEventColor = (category: Category) => {
+export const getEventColor = (category?: Category) => {
     switch (category) {
         case Category.BODY:
-            return "#cde7d3";
+            return "var(--body-care)";
         case Category.HAIR:
-            return "#ffd8c4";
+            return "var(--hair-care)";
         case Category.MIND:
-            return "#e7e7e7";
+            return "var(--mind-care)";
         case Category.NAIL:
-            return "#d0d9f7";
+            return "var(--nail-care)";
         case Category.SKIN:
-            return "#f3d4e1";
+            return "var(--skin-care)";
         default:
-            return "#F8F2ED";
+            return "var(--self-care)";
     }
 
 }

@@ -1,49 +1,64 @@
+.form-icon:has(+.p-focus) {
+    @apply text-green-400;
+}
+
+:root {
+    @apply text-pale-400;
+}
+
 .p-calendar,
 .p-datepicker,
 .p-dropdown-filter,
 .p-dropdown {
-    @apply bg-white p-2 border-b border-pink-400 w-fit;
+    @apply bg-white p-2 border-b border-pale-300 w-fit;
 }
 
-.p-dropdown-panel {
-    @apply bg-white py-2 pl-2 rounded-b-lg;
+.p-placeholder {
+    @apply text-pale-200;
 }
 
-.p-dropdown:not(.p-focus) .p-dropdown-trigger {
-    @apply hidden;
+.p-dropdown-label {
+    @apply text-pale-500;
 }
 
 .p-dropdown.p-focus,
+.p-dropdown.p-inputwrapper-focus,
 .p-calendar.p-focus,
 .p-datepicker {
     .p-dropdown-trigger {
-        @apply block;
+        @apply flex text-pink-500;
     }
 
-    @apply border-b-2 border-pink-500;
+    @apply border-pink-400;
+}
+
+.p-dropdown-filter,
+.p-dropdown-filter-container {
+    @apply border-none;
 }
 
 .p-dropdown-filter {
-    @apply bg-pale-50 rounded-md;
+    @apply bg-pale-50 rounded-md w-[98%] mb-2;
 }
 
 .p-dropdown-filter-icon {
-    @apply right-3;
+    @apply right-5 top-5;
 }
 
 .p-dropdown-panel {
-    @apply shadow-2xl;
-}
+    @apply shadow-2xl bg-white py-2 pl-2 rounded-b-lg;
 
-.p-datepicker-calendar {
-    .p-highlight {
-        @apply bg-pale-100;
+
+    .p-dropdown-item-label {
+
+        .MuiRating-root {
+            @apply mr-2;
+        }
     }
 }
 
 .p-datepicker {
     @apply my-2;
-
 }
 
 .p-datepicker-title {
@@ -51,7 +66,7 @@
 }
 
 .p-datepicker-header {
-    @apply p-2 bg-pale-50 rounded-lg;
+    @apply p-2 rounded-lg;
 }
 
 .p-datepicker-calendar-container {
@@ -59,7 +74,7 @@
 }
 
 .p-timepicker {
-    @apply flex gap-2 text-lg bg-pale-50 rounded-lg p-1;
+    @apply flex gap-2 text-lg rounded-lg p-1;
 }
 
 .p-datepicker-calendar th {
@@ -70,23 +85,33 @@
     @apply text-primary p-2 shadow-none ml-[-5px];
 }
 
+.MuiFormControlLabel-root {
+    .MuiButtonBase-root {
+        .MuiSvgIcon-root {
+            @apply text-pale-300;
+        }
+
+        &.Mui-checked .MuiSvgIcon-root {
+            @apply text-pale-400;
+        }
+    }
+
+    .MuiTypography-root {
+        @apply text-pale-400;
+    }
+}
+
 .dates .MuiFormControl-root {
     @apply pt-1 rounded-t-md;
 
-    &:has([inputmode="text"]) {
-        @apply focus-within:bg-pale-100 focus-within:text-pink-500;
-    }
-
     .MuiInputBase-root {
-        &:hover .MuiOutlinedInput-notchedOutline {
-            @apply border-b-2 border-pink-300;
-        }
+        @apply text-pale-500;
 
         &.Mui-focused {
             .MuiOutlinedInput-notchedOutline {
-                @apply border-t-0 border-x-0 border-b-2 border-pink-400;
+                @apply border-t-0 border-x-0 border-pink-400;
             }
-    
+
             .MuiSvgIcon-root {
                 @apply text-pink-500;
             }
@@ -101,7 +126,13 @@
         }
 
         .MuiOutlinedInput-notchedOutline {
-            @apply border-t-0 border-x-0 border-b rounded-none border-pink-300;
+            @apply border-t-0 border-x-0 border-b rounded-none border-pale-300;
         }
+    }
+}
+
+.action-form {
+    .MuiButtonBase-root.Mui-disabled {
+        @apply bg-pale-50 text-pale-300;
     }
 }

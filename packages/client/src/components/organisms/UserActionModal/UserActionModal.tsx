@@ -12,9 +12,9 @@ import { useGetActionsQuery } from '@/api/actions';
 import { useCreateUserActionMutation, useDeleteUserActionMutation, useUpdateUserActionMutation } from "@/api/userActions";
 import FocusDatePicker from "@/components/atoms/FocusDatePicker";
 import FocusTimePicker from "@/components/atoms/FocusTimePicker";
-import { getColoredIcon, getPlainIcon } from "@/utils/category";
+import { getColoredIcon, getEventColor, getPlainIcon } from "@/utils/category";
 
-import { ActionIconComponent, DurationIconComponent } from '../../../assets/icons/form';
+import { DurationColoredIconComponent, DurationIconComponent } from '../../../assets/icons/form';
 
 interface AddNewReminderModalProps {
     setIsAddModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -40,7 +40,7 @@ const CATEGORY_ORDER = [
 ]
 
 export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNewReminderModalProps) {
-    const { data: actions } = useGetActionsQuery();
+    const { data: actions, isLoading } = useGetActionsQuery();
     const groupedActions = useMemo(() => _(actions)
         .groupBy('category')
         .toPairs()
@@ -52,7 +52,7 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
         .value(), [actions]);
 
     const { action_id, start_at, end_at, all_day } = userAction;
-    const [selectedAction, setSelectedActions] = useState<Action | undefined>();
+    const [selectedAction, setSelectedAction] = useState<Action | undefined>();
     const [selectedAllDay, setSelectedAllDay] = useState<boolean>(!!all_day);
     const [selectedStartDate, setSelectedStartDate] = useState<Date | undefined | null>(start_at);
     const [selectedEndDate, setSelectedEndDate] = useState<Date | undefined | null>(end_at);
@@ -61,7 +61,7 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
     useEffect(() => setSelectedEndDate(end_at), [end_at]);
     useEffect(() => setSelectedAllDay(!!all_day), [all_day]);
     useEffect(() => {
-        if (action_id && actions) setSelectedActions(actions.find(a => a.id === action_id));
+        if (action_id && actions) setSelectedAction(actions.find(a => a.id === action_id));
     }, [actions, action_id]);
 
     useEffect(() => {
@@ -77,8 +77,8 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
     const groupedItemTemplate = (option: { label: Category }) => {
         const Icon = getColoredIcon(option.label);
         return (
-            <div className="flex align-items-center gap-1 py-2 px-1 border-t border-pink-100">
-                <Icon className="max-w-6 max-h-6" />
+            <div className="flex align-items-center gap-2 py-2 px-1 border-b border-pink-100 text-pale-400">
+                <Icon className="max-w-7 max-h-7" />
                 <div>{option.label}</div>
             </div>
         );
@@ -87,9 +87,9 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
     const itemTemplate = (option: Action) => {
         const Icon = getPlainIcon(option.category);
         return (
-            <div className="flex align-items-center gap-1 py-2 px-1 border-t border-pink-100">
-                <div className="w-6 h-6 flex items-center justify-center">
-                    <Icon className="max-w-4 max-h-4" />
+            <div className="flex items-center gap-2 py-2 px-1 border-b border-pink-100 text-pale-400">
+                <div className="w-7 h-7 flex items-center justify-center">
+                    <Icon className="max-w-full max-h-full" style={{ color: getEventColor(option.category) }} />
                 </div>
                 <div>{option.name}</div>
                 <Rating className="ml-auto text-pink-400" name="size-small" value={option.dificultity ?? 1} readOnly size="small" />
@@ -154,6 +154,15 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
         setSelectedAllDay(checked);
     }
 
+    const SelectedActionIcon = useMemo(() => {
+        if(!selectedAction?.category) return <div></div>;
+        
+        const Icon = getColoredIcon(selectedAction.category);
+        return (<Icon className="w-6 h-6 form-icon" />);
+    }, [selectedAction]);
+
+    const disabledSave = useMemo(() => !selectedStartDate || !selectedEndDate || !selectedAction, [selectedStartDate, selectedEndDate, selectedAction]);
+
     return (
         <Modal
             style={{
@@ -161,6 +170,7 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
             }}
             open={true}
             onClose={() => setIsAddModalOpen(false)}
+            className="action-form"
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
         >
@@ -173,21 +183,27 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
                             <CloseOutlined onClick={() => setIsAddModalOpen(false)} className="ml-auto cursor-pointer hover:text-red-200" />
                         </div>
                     </div>
-                    <div className="form p-4 grid grid-cols-[25px,calc(100%-25px-0.75rem)] grid-rows-[auto,auto,auto] items-center justify-start gap-2">
-                        <ActionIconComponent className="w-6 h-6" />
+                    <div className="form p-4 grid grid-cols-[25px,calc(100%-25px-0.75rem)] grid-rows-[auto,auto,auto] items-center justify-start gap-x-2 gap-y-4">
+                        {SelectedActionIcon}
                         <Dropdown
                             value={selectedAction}
-                            onChange={(e) => setSelectedActions(e.value)}
+                            onChange={(e) => setSelectedAction(e.value)}
                             options={groupedActions}
                             optionLabel="name"
                             optionGroupLabel="label"
                             optionGroupChildren="items"
+                            filterBy="name"
+                            filter
+                            loading={isLoading}
+                            filterInputAutoFocus
                             itemTemplate={itemTemplate}
                             optionGroupTemplate={groupedItemTemplate}
                             className="w-full"
                             placeholder="Select Minder" />
-                        <DurationIconComponent className="w-6 h-6" />
-                        <div className="flex gap-2 dates">
+                        {(selectedStartDate && selectedEndDate) ?
+                            <DurationColoredIconComponent className="w-6 h-6" />
+                            : <DurationIconComponent className="w-6 h-6" />}
+                        <div className="flex gap-2 dates items-center">
                             <FocusDatePicker
                                 value={selectedStartDate}
                                 setValue={setSelectedStartDate}
@@ -196,6 +212,7 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
                                 <FocusTimePicker
                                     value={selectedStartDate}
                                     setValue={setSelectedStartDate} />
+                                    —
                                 <FocusTimePicker
                                     value={selectedEndDate}
                                     setValue={setSelectedEndDate} />
@@ -215,7 +232,7 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
                             />}
                             label="All Day" />
                         <div className="flex items-end ml-auto col-span-2 mt-4">
-                            <Button variant="contained" onClick={handleSaveButton}>Save</Button>
+                            <Button disabled={disabledSave} variant="contained" onClick={handleSaveButton}>Save</Button>
                         </div>
                     </div>
                 </FormGroup>

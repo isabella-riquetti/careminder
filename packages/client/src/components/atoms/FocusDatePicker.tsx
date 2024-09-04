@@ -15,7 +15,7 @@ export default function FocusDatePicker({ value, setValue }: FocusDatePickerProp
             value={value}
             onChange={setValue}
             format='PP'
-            className='w-[130px]'
+            className='w-[125px]'
             open={isPickerOpen}
             onOpen={() => setIsPickerOpen(true)}
             onClose={() => setIsPickerOpen(false)}
