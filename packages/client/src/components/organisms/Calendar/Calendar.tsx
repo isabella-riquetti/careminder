@@ -137,6 +137,21 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
         center: 'prev,next',
         right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
       }}
+      views={{
+        dayGridMonth: {
+          buttonText: 'Month'
+        },
+        timeGridWeek: {
+          buttonText: 'Week'
+        },
+        timeGridDay: {
+          buttonText: 'Day'
+        },
+        listWeek: {
+          buttonText: 'List'
+        }
+      }}
+      slotDuration='00:10'
       nowIndicator={true}
       selectable={true}
       editable={true}

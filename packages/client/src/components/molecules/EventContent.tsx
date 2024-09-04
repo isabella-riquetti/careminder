@@ -32,7 +32,11 @@ export default function EventContent({ isSmallScreen, eventInfo }: EventContentP
     </div>
   )
 
-  const renderWeekView = () => (
+  const renderWeekView = (short = false) => {
+    const duration = differenceInMinutes(end_at, start_at);
+    const shortCuttoff = short ? 15 : 5;
+    const shortEvent = duration <= shortCuttoff;
+    return (
     <div className="flex gap-1 items-start overflow-hidden w-full" style={{
       backgroundColor: getEventColor(actions.category),
       color: "#4c4c4c"
@@ -42,19 +46,25 @@ export default function EventContent({ isSmallScreen, eventInfo }: EventContentP
         'flex-row-reverse items-center gap-2': smallDiffInMinutes,
         'flex-col': !smallDiffInMinutes
       })}>
-        <span className={cn("font-bold text-wrap", {
-          "text-xs": isSmallScreen,
-          "text-md": !isSmallScreen
+        <span className={cn("font-bold", {
+          "text-[10px] leading-3 truncate": shortEvent,
+          "text-wrap": !shortEvent,
+          "text-xs": !shortEvent && isSmallScreen,
+          "text-md": !shortEvent && !isSmallScreen
         })} title={actions.name}>{actions.name}</span>
-        <span className='text-xs'>{date.join(" - ")}</span>
+        <span className={cn({
+          'text-[10px] leading-3 whitespace-nowrap': shortEvent,
+          'text-xs': !shortEvent,
+        })}>{date.join(" - ")}</span>
       </div>
-    </div>
-  )
+    </div>)
+  }
 
   switch (type) {
     case 'dayGridMonth':
       return renderMonthView();
     case 'timeGridWeek':
+      return renderWeekView(true);
     case 'timeGridDay':
       return renderWeekView();
     default:
