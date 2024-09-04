@@ -112,36 +112,6 @@
         @apply text-pink-500 font-semibold;
     }
 }
-.dates .MuiFormControl-root {
-    @apply pt-1 rounded-t-md;
-
-    .MuiInputBase-root {
-        @apply text-pale-500;
-
-        &.Mui-focused {
-            .MuiOutlinedInput-notchedOutline {
-                @apply border-t-0 border-x-0 border-pink-500;
-            }
-
-            .MuiSvgIcon-root {
-                @apply text-pink-500;
-            }
-        }
-
-        .MuiInputBase-input {
-            @apply p-1;
-        }
-
-        .MuiSvgIcon-root {
-            @apply text-pink-400;
-        }
-
-        .MuiOutlinedInput-notchedOutline {
-            @apply border-t-0 border-x-0 border-b rounded-none border-pale-300;
-        }
-    }
-}
-
 .action-form {
     .MuiButtonBase-root.Mui-disabled {
         @apply bg-pale-50 text-pale-300;

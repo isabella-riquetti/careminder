@@ -1,7 +1,7 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
-      "rootDir": "./src",
+      "rootDir": "./",
       "outDir": "./dist",
       "types": ["vite-plugin-svgr/client", "vitest/globals"],
       "baseUrl": ".",
@@ -9,6 +9,6 @@
           "@/*": ["src/*"]
       },
     },
-    "include": ["src"],
+    "include": ["src", "tailwind.config.ts"],
   }
   

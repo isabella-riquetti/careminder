@@ -26,7 +26,7 @@ export default function FocusTimePicker({ value, setValue }: FocusDatePickerProp
     return (
         <TimePicker
             value={value}
-            className="w-[90px]"
+            className="w-[95px]"
             open={isPickerOpen}
             onOpen={() => setIsPickerOpen(true)}
             onClose={() => setIsPickerOpen(false)}

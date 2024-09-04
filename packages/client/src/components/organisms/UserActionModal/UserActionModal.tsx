@@ -1,15 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import "./UserActionModal.scss";
 
-import { Action, Category, CreateUserAction, UserAction } from '@careminder/shared/types';
+import { Action, Category, CreateUserAction, FrequencyType, UserAction, UserActionFrequency } from '@careminder/shared/types';
 import { CloseOutlined, DeleteOutline } from "@mui/icons-material";
-import { Box, Button, Checkbox, FormControlLabel, FormGroup, Modal, Rating } from '@mui/material';
+import { Box, Button, Checkbox, FormControlLabel, FormGroup, Input, MenuItem, Modal, Rating, Select, SelectChangeEvent, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { addDays, endOfDay, isBefore, isEqual, set } from "date-fns";
-import _ from "lodash";
+import _, { set as setObj } from "lodash";
+import pluralize from "pluralize";
 import { Dropdown } from 'primereact/dropdown';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { useGetActionsQuery } from '@/api/actions';
 import { useCreateUserActionMutation, useDeleteUserActionMutation, useUpdateUserActionMutation } from "@/api/userActions";
+import { DayIcon, NightIcon } from "@/assets/icons/frequency";
 import FocusDatePicker from "@/components/atoms/FocusDatePicker";
 import FocusTimePicker from "@/components/atoms/FocusTimePicker";
 import { getColoredIcon, getEventColor, getPlainIcon } from "@/utils/category";
@@ -26,7 +29,7 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 540,
+    width: 550,
     maxWidth: "95%",
     boxShadow: 24,
 };
@@ -56,6 +59,8 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
     const [selectedAllDay, setSelectedAllDay] = useState<boolean>(!!all_day);
     const [selectedStartDate, setSelectedStartDate] = useState<Date | undefined | null>(start_at);
     const [selectedEndDate, setSelectedEndDate] = useState<Date | undefined | null>(end_at);
+    const [selectedReocurrence, setSelectedReocurrence] = useState<string | undefined>();
+    const [selectedFrequency, setSelectedFrequency] = useState<UserActionFrequency>();
 
     useEffect(() => setSelectedStartDate(start_at), [start_at]);
     useEffect(() => setSelectedEndDate(end_at), [end_at]);
@@ -63,6 +68,17 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
     useEffect(() => {
         if (action_id && actions) setSelectedAction(actions.find(a => a.id === action_id));
     }, [actions, action_id]);
+
+    useEffect(() => {
+        if (selectedAction) {
+            if (!selectedReocurrence) setSelectedReocurrence(selectedAction?.suggested_frequency ? 'habit' : 'task');
+            if (!selectedFrequency) setSelectedFrequency(selectedAction.suggested_frequency);
+        }
+    }, [selectedReocurrence, selectedAction, selectedFrequency]);
+
+    useEffect(() => {
+        console.log(selectedFrequency)
+    }, [selectedFrequency])
 
     useEffect(() => {
         if (selectedStartDate && selectedEndDate && isBefore(selectedEndDate, selectedStartDate)) {
@@ -154,15 +170,33 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
         setSelectedAllDay(checked);
     }
 
+    const handleReocurrenceChange = (
+        _1: React.MouseEvent<HTMLElement>,
+        reocurrence: string | undefined,
+    ) => {
+        setSelectedReocurrence(reocurrence);
+    };
+
+    const handleFrequencyChange = (path: string, value: any) => {
+        setSelectedFrequency((prev?: any) => {
+            const newItem = { ...prev };
+            setObj(newItem ?? {}, path, value);
+            return newItem;
+        });
+    }
+
     const SelectedActionIcon = useMemo(() => {
-        if(!selectedAction?.category) return <div></div>;
-        
+        if (!selectedAction?.category) return <div></div>;
+
         const Icon = getColoredIcon(selectedAction.category);
         return (<Icon className="w-6 h-6 form-icon" />);
     }, [selectedAction]);
 
     const disabledSave = useMemo(() => !selectedStartDate || !selectedEndDate || !selectedAction, [selectedStartDate, selectedEndDate, selectedAction]);
 
+    useEffect(() => {
+        console.log(selectedFrequency?.every)
+    }, [selectedFrequency?.every]);
     return (
         <Modal
             style={{
@@ -212,7 +246,7 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
                                 <FocusTimePicker
                                     value={selectedStartDate}
                                     setValue={setSelectedStartDate} />
-                                    —
+                                —
                                 <FocusTimePicker
                                     value={selectedEndDate}
                                     setValue={setSelectedEndDate} />
@@ -223,14 +257,63 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
                             />
                         </div>
                         <div></div>
-                        <FormControlLabel
-                            className="mt-[-10px] max-w-fit text-primary"
-                            control={<Checkbox
-                                className="ml-1"
-                                checked={selectedAllDay}
-                                onChange={(event) => handleAllDayChange(event.target.checked)}
-                            />}
-                            label="All Day" />
+                        <div className="flex">
+                            <FormControlLabel
+                                className="mt-[-10px] max-w-fit text-primary"
+                                control={<Checkbox
+                                    className="ml-1"
+                                    checked={selectedAllDay}
+                                    onChange={(event) => handleAllDayChange(event.target.checked)}
+                                />}
+                                label="All Day" />
+
+                            <ToggleButtonGroup
+                                className="ml-auto"
+                                exclusive
+                                aria-label="roocurrence"
+                                value={selectedReocurrence}
+                                onChange={handleReocurrenceChange}
+                            >
+                                <ToggleButton value="task" aria-label="task">Task</ToggleButton>
+                                <ToggleButton value="habit" aria-label="habit">Habit</ToggleButton>
+                            </ToggleButtonGroup>
+                        </div>
+                        <div></div>
+                        <div className="flex flex-col gap-3">
+                            <div className="flex gap-2 items-center">
+                                {selectedReocurrence === "habit" &&
+                                    <>
+                                        <span className="ml-2 text-pale-400">Every: </span>
+                                        <Input
+                                            value={selectedFrequency?.every}
+                                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleFrequencyChange('every', Number(event.target.value))}
+                                            type="number"
+                                            className="w-12"
+                                            inputProps={{ min: 0 }}
+                                        />
+                                        <Select
+                                            value={selectedFrequency?.frequency_type ?? FrequencyType.DAY}
+                                            onChange={(event: SelectChangeEvent<FrequencyType>) => handleFrequencyChange('frequency_type', event.target.value as FrequencyType)}
+                                        >
+                                            <MenuItem value={FrequencyType.HOUR}>{pluralize("Hour", selectedFrequency?.every)}</MenuItem>
+                                            <MenuItem value={FrequencyType.DAY}>{pluralize("Day", selectedFrequency?.every)}</MenuItem>
+                                            <MenuItem value={FrequencyType.WEEK}>{pluralize("Week", selectedFrequency?.every)}</MenuItem>
+                                            <MenuItem value={FrequencyType.MONTH}>{pluralize("Month", selectedFrequency?.every)}</MenuItem>
+                                            <MenuItem value={FrequencyType.YEAR}>{pluralize("Year", selectedFrequency?.every)}</MenuItem>
+                                        </Select>
+                                    </>
+                                }
+                            </div>
+                            <div className="flex gap-3 items-center">
+                                {(selectedFrequency?.frequency_type === FrequencyType.HOUR || selectedFrequency?.frequency_type === FrequencyType.DAY) && <>
+                                    <span className="ml-2 text-pale-400">During: </span>
+                                    <div className="flex gap-2">
+                                        <DayIcon className="w-7 h-7" />
+                                        <NightIcon className="w-7 h-7"  />
+                                    </div>
+                                </>}
+                            </div>
+                        </div>
                         <div className="flex items-end ml-auto col-span-2 mt-4">
                             <Button disabled={disabledSave} variant="contained" onClick={handleSaveButton}>Save</Button>
                         </div>
