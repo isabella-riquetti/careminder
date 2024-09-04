@@ -116,4 +116,20 @@
     .MuiButtonBase-root.Mui-disabled {
         @apply bg-pale-50 text-pale-300;
     }
+
+    .p-inputnumber {
+        @apply rounded-md;
+
+        .p-inputnumber-input {
+            @apply bg-pale-100 text-pale-400 rounded-l-md px-2 w-[45px];
+        }
+
+        .p-inputnumber-button-group {
+            @apply bg-pink-100 text-pale-500 rounded-r-md; 
+        }
+    }
+
+    .MuiSvgIcon-root {
+        @apply text-current;
+    }
 }

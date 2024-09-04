@@ -7,7 +7,6 @@ interface FocusDatePickerProps {
 }
 
 export default function FocusDatePicker({ value, setValue }: FocusDatePickerProps) {
-    console.log(value)
     const [isPickerOpen, setIsPickerOpen] = useState(false);
 
     return (
