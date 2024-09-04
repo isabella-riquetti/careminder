@@ -12,9 +12,15 @@ interface EventContentProps {
 export default function EventContent({ isSmallScreen, eventInfo }: EventContentProps) {
   const { view: { type }, event } = eventInfo;
   const { actions, start_at, end_at, all_day } = event.extendedProps;
+  const dayView = type === "timeGridDay";
+  const timeView = type !== "dayGridMonth";
 
   const singleDay = isSameDay(start_at, end_at);
-  const smallDiffInMinutes = differenceInMinutes(end_at, start_at) < 60;
+  const durationInMinutes = differenceInMinutes(end_at, start_at);
+  const smallTextDuration = timeView ? 15 : 5;
+  const hideIconDuration = timeView ? 30 : 15;
+  const smallText = durationInMinutes < smallTextDuration;
+  const hideIcon = durationInMinutes < hideIconDuration;
 
   const date: string[] = [];
   if (!all_day) date.push(format(start_at, 'p'));
@@ -32,29 +38,26 @@ export default function EventContent({ isSmallScreen, eventInfo }: EventContentP
     </div>
   )
 
-  const renderWeekView = (short = false) => {
-    const duration = differenceInMinutes(end_at, start_at);
-    const shortCuttoff = short ? 15 : 5;
-    const shortEvent = duration <= shortCuttoff;
+  const renderWeekView = () => {
     return (
     <div className="flex gap-1 items-start overflow-hidden w-full" style={{
       backgroundColor: getEventColor(actions.category),
       color: "#4c4c4c"
     }}>
-      {!isSmallScreen && !smallDiffInMinutes && <Icon className='min-w-7 min-h-7 max-w-7 max-h-7 mr-1' />}
+      {!isSmallScreen && !hideIcon && <Icon className='min-w-7 min-h-7 max-w-7 max-h-7 mr-1' />}
       <div className={cn('flex  overflow-hidden', {
-        'flex-row-reverse items-center gap-2': smallDiffInMinutes,
-        'flex-col': !smallDiffInMinutes
+        'flex-row-reverse items-center gap-2': !timeView || smallText || dayView,
+        'flex-col': timeView && !smallText && !dayView
       })}>
         <span className={cn("font-bold", {
-          "text-[10px] leading-3 truncate": shortEvent,
-          "text-wrap": !shortEvent,
-          "text-xs": !shortEvent && isSmallScreen,
-          "text-md": !shortEvent && !isSmallScreen
+          "text-[10px] leading-3 truncate": smallText,
+          "text-wrap": !smallText,
+          "text-xs": !smallText && isSmallScreen,
+          "text-md": !smallText && !isSmallScreen
         })} title={actions.name}>{actions.name}</span>
         <span className={cn({
-          'text-[10px] leading-3 whitespace-nowrap': shortEvent,
-          'text-xs': !shortEvent,
+          'text-[10px] leading-3 whitespace-nowrap': smallText,
+          'text-xs': !smallText,
         })}>{date.join(" - ")}</span>
       </div>
     </div>)
@@ -64,7 +67,6 @@ export default function EventContent({ isSmallScreen, eventInfo }: EventContentP
     case 'dayGridMonth':
       return renderMonthView();
     case 'timeGridWeek':
-      return renderWeekView(true);
     case 'timeGridDay':
       return renderWeekView();
     default:
