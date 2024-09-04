@@ -1,5 +1,5 @@
 .form-icon:has(+.p-focus) {
-    @apply text-green-400;
+    @apply text-pink-400;
 }
 
 :root {
@@ -29,7 +29,7 @@
         @apply flex text-pink-500;
     }
 
-    @apply border-pink-400;
+    @apply border-pink-500;
 }
 
 .p-dropdown-filter,
@@ -101,6 +101,17 @@
     }
 }
 
+.MuiPickersLayout-contentWrapper, .MuiDialogActions-root {
+    @apply bg-pale-50;
+
+    .MuiSvgIcon-root {
+        @apply text-pink-400;
+    }
+
+    .MuiDayCalendar-weekDayLabel {
+        @apply text-pink-500 font-semibold;
+    }
+}
 .dates .MuiFormControl-root {
     @apply pt-1 rounded-t-md;
 
@@ -109,7 +120,7 @@
 
         &.Mui-focused {
             .MuiOutlinedInput-notchedOutline {
-                @apply border-t-0 border-x-0 border-pink-400;
+                @apply border-t-0 border-x-0 border-pink-500;
             }
 
             .MuiSvgIcon-root {
