@@ -26,7 +26,7 @@ const theme: ThemeOptions = createTheme({
       styleOverrides: {
         root: {
           height: 'fit-content',
-          padding: '3px 8px !important',
+          padding: '3px 4px !important',
         }
       }
     },
@@ -132,7 +132,7 @@ const theme: ThemeOptions = createTheme({
     MuiSwitch: {
       styleOverrides: {
         root: {
-          padding: 0,
+          padding: "0px !important",
         },
         track: {
           background: colors.pale[400]

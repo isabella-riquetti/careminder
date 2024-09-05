@@ -7,21 +7,20 @@ import { InputNumber, InputNumberValueChangeEvent } from "primereact/inputnumber
 import React from 'react';
 
 import { DayIcon, DayPlainIcon, NightIcon, NightPlainIcon } from "@/assets/icons/frequency";
-
-import { SwitchTextTrack } from '../UserActionModal/UserActionModal';
+import HabitSwitch from '@/components/atoms/HabitSwitch';
 
 interface FrequencySelectorProps {
     isHabit: boolean;
     setIsHabit: React.Dispatch<React.SetStateAction<boolean>>;
-    selectedStartDate: Date;
-    selectedEndDate?: Date;
-    selectedFrequency?: UserActionFrequency;
-    setSelectedFrequency: React.Dispatch<React.SetStateAction<UserActionFrequency | undefined>>;
+    startDate: Date;
+    endDate?: Date;
+    frequency?: UserActionFrequency;
+    setFrequency: React.Dispatch<React.SetStateAction<UserActionFrequency | undefined>>;
 }
 
-export default function FrequencySelector({ selectedFrequency, setSelectedFrequency, isHabit, setIsHabit }: FrequencySelectorProps) {
+export default function FrequencySelector({ frequency, setFrequency, isHabit, setIsHabit }: FrequencySelectorProps) {
     const handleFrequencyChange = (path: string, value: any) => {
-        setSelectedFrequency((prev?: any) => {
+        setFrequency((prev?: any) => {
             const newItem = { ...prev };
             setObj(newItem ?? {}, path, value);
             return newItem;
@@ -29,11 +28,11 @@ export default function FrequencySelector({ selectedFrequency, setSelectedFreque
     }
 
     const hasOnFrequency = (value: OnDayHour) => {
-        return selectedFrequency?.on?.includes(value);
+        return frequency?.on?.includes(value);
     }
 
     const toggleOnFrequency = (value: OnDayHour) => {
-        setSelectedFrequency((prev?: any) => ({
+        setFrequency((prev?: any) => ({
             ...prev,
             on: prev?.on?.includes(value) ? without(prev?.on ?? [], value) : [...prev?.on ?? [], value]
         }));
@@ -42,15 +41,15 @@ export default function FrequencySelector({ selectedFrequency, setSelectedFreque
     return (
         <>
             <div className="flex gap-3 ">
-                <SwitchTextTrack
-                    checked={isHabit}
-                    onChange={(event) => setIsHabit(event.target.checked)} />
-                {isHabit && <>
+                <HabitSwitch
+                    isHabit={isHabit}
+                    setIsHabit={setIsHabit} />
+                {isHabit && frequency && <>
                     <div className='flex flex-col gap-4'>
                         <div className="flex gap-2 items-center">
                             <span className=" text-pale-400">Every: </span>
                             <InputNumber
-                                value={selectedFrequency?.frequency}
+                                value={frequency?.frequency}
                                 onValueChange={(e: InputNumberValueChangeEvent) => handleFrequencyChange('frequency', Number(e.value))}
                                 mode="decimal"
                                 showButtons
@@ -58,17 +57,17 @@ export default function FrequencySelector({ selectedFrequency, setSelectedFreque
                                 max={999}
                             />
                             <Select
-                                value={selectedFrequency?.frequency_type}
+                                value={frequency?.frequency_type}
                                 onChange={(event: SelectChangeEvent<FrequencyType>) => handleFrequencyChange('frequency_type', event.target.value as FrequencyType)}
                             >
-                                <MenuItem value={FrequencyType.DAY}>{pluralize("Day", selectedFrequency?.frequency)}</MenuItem>
-                                <MenuItem value={FrequencyType.WEEK}>{pluralize("Week", selectedFrequency?.frequency)}</MenuItem>
-                                <MenuItem value={FrequencyType.MONTH}>{pluralize("Month", selectedFrequency?.frequency)}</MenuItem>
-                                <MenuItem value={FrequencyType.YEAR}>{pluralize("Year", selectedFrequency?.frequency)}</MenuItem>
+                                <MenuItem value={FrequencyType.DAY}>{pluralize("Day", frequency?.frequency)}</MenuItem>
+                                <MenuItem value={FrequencyType.WEEK}>{pluralize("Week", frequency?.frequency)}</MenuItem>
+                                <MenuItem value={FrequencyType.MONTH}>{pluralize("Month", frequency?.frequency)}</MenuItem>
+                                <MenuItem value={FrequencyType.YEAR}>{pluralize("Year", frequency?.frequency)}</MenuItem>
                             </Select>
                         </div>
 
-                        {(selectedFrequency?.frequency_type === FrequencyType.DAY) &&
+                        {(frequency?.frequency_type === FrequencyType.DAY) &&
                             <div className="flex gap-3 items-center">
                                 <span className="text-pale-400">During: </span>
                                 <div className="flex gap-2 cursor-pointer">

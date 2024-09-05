@@ -1,9 +1,8 @@
 import "./UserActionModal.scss";
 
 import { Action, CreateUserAction, FrequencyType, UserAction, UserActionFrequency, UserActionType } from '@careminder/shared/types';
-import styled from "@emotion/styled";
 import { CloseOutlined, DeleteOutline } from "@mui/icons-material";
-import { Box, Button, Checkbox, FormControlLabel, FormGroup, Modal, Switch, switchClasses, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { Box, Button, Checkbox, FormControlLabel, FormGroup, Modal, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { endOfDay, isEqual } from "date-fns";
 import React, { useEffect, useMemo, useState } from 'react';
 
@@ -19,103 +18,33 @@ interface AddNewReminderModalProps {
     initialUserAction: Partial<UserAction>;
 }
 
-
-import resolveConfig from "tailwindcss/resolveConfig";
-
-import tailwindConfig from "../../../../tailwind.config";
-
-const twConfig = resolveConfig(tailwindConfig);
-const colors = twConfig.theme.colors;
-export const SwitchTextTrack = styled(Switch)({
-    width: 100,
-    height: 32,
-    padding: "0 4px",
-    [`& .${switchClasses.switchBase}`]: {
-        color: "#ff6a00",
-    },
-    [`& .${switchClasses.thumb}`]: {
-        width: 25,
-        height: 25,
-        borderRadius: 4,
-        backgroundColor: "#fff",
-    },
-    [`& .${switchClasses.track}`]: {
-        background: colors.pale[300],
-        opacity: "1 !important",
-        borderRadius: 5,
-        position: "relative",
-        "&:before, &:after": {
-            display: "inline-block",
-            position: "absolute",
-            top: "50%",
-            width: "50%",
-            transform: "translateY(-50%)",
-            color: "#fff",
-            textAlign: "center",
-            fontSize: "0.75rem",
-            fontWeight: 500,
-        },
-        "&:before": {
-            content: '"HABIT"',
-            left: 4,
-            opacity: 0,
-        },
-        "&:after": {
-            content: '"1 TIME"',
-            right: 4,
-        },
-    },
-    [`& .${switchClasses.checked}`]: {
-        [`&.${switchClasses.switchBase}`]: {
-            color: "#185a9d",
-            transform: "translateX(59px)",
-            "&:hover": {
-                backgroundColor: "rgba(24,90,257,0.08)",
-            },
-        },
-        [`& .${switchClasses.thumb}`]: {
-            backgroundColor: "#fff",
-        },
-        [`& + .${switchClasses.track}`]: {
-            background: colors.pink[400],
-            "&:before": {
-                opacity: 1,
-            },
-            "&:after": {
-                opacity: 0,
-            },
-        },
-    },
-});
-
 export default function UserActionModal({ setIsAddModalOpen, initialUserAction }: AddNewReminderModalProps) {
-    const [selectedAction, setSelectedAction] = useState<Action | undefined>();
-    const [selectedType, setSelectedType] = useState<UserActionType>(initialUserAction.type ?? UserActionType.REMINDER);
-    const [selectedAllDay, setSelectedAllDay] = useState<boolean>(!!initialUserAction.all_day);
+    const [action, setAction] = useState<Action | undefined>();
+    const [type, setType] = useState<UserActionType>(initialUserAction.type ?? UserActionType.REMINDER);
+    const [isAllDay, setIsAllDay] = useState<boolean>(!!initialUserAction.all_day);
     const [isHabit, setIsHabit] = useState<boolean>(!!initialUserAction.recurrence);
 
-    const [selectedStartDate, setSelectedStartDate] = useState<Date>(initialUserAction.start_at ?? new Date());
-    const [selectedEndDate, setSelectedEndDate] = useState<Date | undefined>(initialUserAction.end_at);
+    const [startDate, setStartDate] = useState<Date>(initialUserAction.start_at ?? new Date());
+    const [endDate, setEndDate] = useState<Date | undefined>(initialUserAction.end_at);
 
-    const [selectedFrequency, setSelectedFrequency] = useState<UserActionFrequency>();
+    const [frequency, setFrequency] = useState<UserActionFrequency>();
 
     useEffect(() => {
-        if (selectedAction && selectedAction.suggested_frequency) {
-            setSelectedType(UserActionType.REMINDER);
+        if (action && action.suggested_frequency) {
+            setType(UserActionType.REMINDER);
             setIsHabit(true);
-            setSelectedFrequency(selectedAction.suggested_frequency);
+            setFrequency(action.suggested_frequency);
         }
-    }, [selectedAction]);
+    }, [action]);
 
     useEffect(() => {
         if (isHabit) {
-
-            if (selectedAction && selectedAction.suggested_frequency && isHabit) {
-                setSelectedType(UserActionType.REMINDER);
+            if (action && action.suggested_frequency) {
+                setType(UserActionType.REMINDER);
                 setIsHabit(true);
-                setSelectedFrequency(selectedAction.suggested_frequency);
-            } else {
-                setSelectedFrequency({
+                setFrequency(action.suggested_frequency);
+            } else if(!frequency) {
+                setFrequency({
                     frequency: 1,
                     frequency_type: FrequencyType.DAY,
                 });
@@ -128,16 +57,16 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
         createUserActionMutation(req).unwrap();
 
     const callCreateUserAction = async () => {
-        if (!selectedStartDate) return;
+        if (!startDate) return;
 
-        if (selectedStartDate && selectedAction?.id) {
+        if (startDate && action?.id) {
             await createUserAction({
-                type: selectedType,
-                start_at: selectedStartDate,
-                end_at: selectedType === UserActionType.TASK && selectedEndDate ? selectedStartDate : undefined,
-                action_id: selectedAction.id,
-                all_day: selectedAllDay,
-                frequency: selectedFrequency,
+                type: type,
+                start_at: startDate,
+                end_at: type === UserActionType.TASK && endDate ? startDate : undefined,
+                action_id: action.id,
+                all_day: isAllDay,
+                frequency: frequency,
                 recurrence: isHabit
             });
 
@@ -161,15 +90,15 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
         updateUserActionMutation(req).unwrap();
 
     const callUpdateUserAction = async () => {
-        if (!selectedStartDate) return;
+        if (!startDate) return;
 
-        if (selectedStartDate && selectedAction?.id && initialUserAction.id) {
+        if (startDate && action?.id && initialUserAction.id) {
             await updateUserAction({
                 id: initialUserAction.id,
-                start_at: selectedStartDate,
-                end_at: selectedType === UserActionType.TASK && selectedEndDate ? selectedStartDate : undefined,
-                action_id: selectedAction.id,
-                all_day: selectedAllDay
+                start_at: startDate,
+                end_at: type === UserActionType.TASK && endDate ? startDate : undefined,
+                action_id: action.id,
+                all_day: isAllDay
             });
             setIsAddModalOpen(false);
         }
@@ -181,44 +110,32 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
     }
 
     const handleAllDayChange = (checked: boolean) => {
-        if (!checked && selectedStartDate && selectedEndDate && isEqual(selectedStartDate, selectedEndDate)) setSelectedEndDate(endOfDay(selectedEndDate));
-        setSelectedAllDay(checked);
+        if (!checked && startDate && endDate && isEqual(startDate, endDate)) setEndDate(endOfDay(endDate));
+        setIsAllDay(checked);
     }
 
     const handleRecurrenceChange = (
         _: React.MouseEvent<HTMLElement>,
         recurrence: UserActionType,
     ) => {
-        if (recurrence !== null) setSelectedType(recurrence);
-        if (!selectedFrequency) {
-            setSelectedFrequency({
+        if (recurrence !== null) setType(recurrence);
+        if (!frequency) {
+            setFrequency({
                 frequency: 1,
                 frequency_type: FrequencyType.DAY,
             })
         }
     };
-    const disabledSave = useMemo(() => !selectedStartDate || !selectedEndDate || !selectedAction, [selectedStartDate, selectedEndDate, selectedAction]);
+    const disabledSave = useMemo(() => !startDate || !endDate || !action, [startDate, endDate, action]);
     return (
         <Modal
-            style={{
-                zIndex: 1000,
-            }}
             open={true}
             onClose={() => setIsAddModalOpen(false)}
-            className="action-form"
+            className="action-form z-10"
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
         >
-            <Box sx={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: 550,
-                height: 500,
-                maxWidth: "95%",
-                boxShadow: 24,
-            }} className="rounded-xl bg-white">
+            <Box className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[550px] h-[500px] max-w-[95%] shadow-2xl rounded-xl bg-white">
                 <FormGroup className="h-full">
                     <div className="w-full rounded-t-xl bg-pale-50 flex px-4 py-2">
                         <span className="text-pale-500 font-bold uppercase">New Minder</span>
@@ -230,14 +147,14 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
                     <div className="form p-4 content-start grid grid-cols-[25px,calc(100%-25px-0.75rem)] grid-rows-[auto,auto,auto,auto] items-center justify-start gap-x-2 gap-y-4">
                         <ActionSelector
                             action_id={initialUserAction.action_id}
-                            selectedAction={selectedAction}
-                            setSelectedAction={setSelectedAction}
+                            action={action}
+                            setAction={setAction}
                         />
                         <div className="flex col-start-2 flex-wrap">
                             <ToggleButtonGroup
                                 exclusive
                                 aria-label="recurrence"
-                                value={selectedType}
+                                value={type}
                                 onChange={handleRecurrenceChange}
                                 className="grid grid-cols-2"
                             >
@@ -248,31 +165,31 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
                                 className="ml-auto max-w-fit text-primary"
                                 control={<Checkbox
                                     className="ml-1"
-                                    checked={selectedAllDay}
+                                    checked={isAllDay}
                                     onChange={(event) => handleAllDayChange(event.target.checked)}
                                 />}
                                 label="All Day" />
                         </div>
 
-                        <DurationIcon className="w-6 h-6 self-baseline" />
+                        <DurationIcon className="w-6 h-6" />
                         <div className="flex gap-2 dates items-center">
                             <EventTimeSelector
-                                type={selectedType}
-                                start={selectedStartDate}
-                                setStart={setSelectedStartDate}
-                                end={selectedEndDate}
-                                setEnd={setSelectedEndDate}
-                                allDay={selectedAllDay}
+                                type={type}
+                                start={startDate}
+                                setStart={setStartDate}
+                                end={endDate}
+                                setEnd={setEndDate}
+                                allDay={isAllDay}
                             />
                         </div>
-                        <RecurrenceIcon className="w-6 h-6 self-baseline" />
+                        <RecurrenceIcon className="w-6 h-6 self-baseline mt-1" />
                         <FrequencySelector
                             isHabit={isHabit}
                             setIsHabit={setIsHabit}
-                            selectedStartDate={selectedStartDate}
-                            selectedEndDate={selectedEndDate}
-                            selectedFrequency={selectedFrequency}
-                            setSelectedFrequency={setSelectedFrequency}
+                            startDate={startDate}
+                            endDate={endDate}
+                            frequency={frequency}
+                            setFrequency={setFrequency}
                         />
                     </div>
                     <div className="flex items-end ml-auto col-span-2 mt-auto p-6">

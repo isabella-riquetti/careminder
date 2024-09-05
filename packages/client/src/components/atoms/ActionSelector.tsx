@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Action, Category } from '@careminder/shared/types';
+import { SettingsAccessibilityOutlined } from '@mui/icons-material';
 import { Rating } from '@mui/material';
 import cn from "classnames";
 import _ from "lodash";
@@ -11,8 +12,8 @@ import { getColoredIcon, getEventColor, getPlainIcon } from "@/utils/category";
 
 interface ActionSelectorProps {
     action_id?: number;
-    selectedAction: Action | undefined;
-    setSelectedAction: React.Dispatch<React.SetStateAction<Action | undefined>>;
+    action: Action | undefined;
+    setAction: React.Dispatch<React.SetStateAction<Action | undefined>>;
 }
 
 const CATEGORY_ORDER = [
@@ -23,7 +24,7 @@ const CATEGORY_ORDER = [
     "Mind Care",
 ]
 
-export default function ActionSelector({ action_id, selectedAction, setSelectedAction }: ActionSelectorProps) {
+export default function ActionSelector({ action_id, action, setAction }: ActionSelectorProps) {
     const { data: actions, isLoading } = useGetActionsQuery();
     const groupedActions = useMemo(() => _(actions)
         .groupBy('category')
@@ -38,7 +39,7 @@ export default function ActionSelector({ action_id, selectedAction, setSelectedA
     useEffect(() => { 
         if(action_id && actions?.length) {
             const currentAction = actions.find(g => g.id === action_id);
-            if(currentAction) setSelectedAction(currentAction);
+            if(currentAction) setAction(currentAction);
         }
     }, [action_id, actions]);
 
@@ -66,18 +67,18 @@ export default function ActionSelector({ action_id, selectedAction, setSelectedA
     };
 
     const SelectedActionIcon = useMemo(() => {
-        if (!selectedAction?.category) return <></>;
+        if (!action?.category) return <></>;
 
-        const Icon = getColoredIcon(selectedAction.category);
+        const Icon = getColoredIcon(action.category);
         return (<Icon className="w-6 h-6 form-icon" />);
-    }, [selectedAction]);
+    }, [action]);
 
     return (
         <>
             {SelectedActionIcon}
             <Dropdown
-                value={selectedAction}
-                onChange={(e) => setSelectedAction(e.value)}
+                value={action}
+                onChange={(e) => SettingsAccessibilityOutlined(e.value)}
                 options={groupedActions}
                 optionLabel="name"
                 optionGroupLabel="label"
@@ -88,7 +89,7 @@ export default function ActionSelector({ action_id, selectedAction, setSelectedA
                 filterInputAutoFocus
                 itemTemplate={itemTemplate}
                 optionGroupTemplate={groupedItemTemplate}
-                className={cn("w-full", { 'col-start-2': !selectedAction })}
+                className={cn("w-full", { 'col-start-2': !action })}
                 placeholder="Select Minder" />
         </>
     )
