@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FrequencyType, OnDayHour, UserActionFrequency } from '@careminder/shared/types';
 import { MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import { addDays, format, startOfWeek } from 'date-fns';
 import { set as setObj, without } from "lodash";
 import pluralize from "pluralize";
 import { InputNumber, InputNumberValueChangeEvent } from "primereact/inputnumber";
@@ -38,6 +39,8 @@ export default function FrequencySelector({ frequency, setFrequency, isHabit, se
         }));
     }
 
+    const start = startOfWeek(new Date(), { weekStartsOn: 0 });
+
     return (
         <>
             <div className="flex gap-3 ">
@@ -60,6 +63,7 @@ export default function FrequencySelector({ frequency, setFrequency, isHabit, se
                                 value={frequency?.frequency_type}
                                 onChange={(event: SelectChangeEvent<FrequencyType>) => handleFrequencyChange('frequency_type', event.target.value as FrequencyType)}
                             >
+                                <MenuItem value={FrequencyType.HOUR}>{pluralize("Hour", frequency?.frequency)}</MenuItem>
                                 <MenuItem value={FrequencyType.DAY}>{pluralize("Day", frequency?.frequency)}</MenuItem>
                                 <MenuItem value={FrequencyType.WEEK}>{pluralize("Week", frequency?.frequency)}</MenuItem>
                                 <MenuItem value={FrequencyType.MONTH}>{pluralize("Month", frequency?.frequency)}</MenuItem>
@@ -77,6 +81,18 @@ export default function FrequencySelector({ frequency, setFrequency, isHabit, se
                                     {hasOnFrequency(OnDayHour.NIGHT)
                                         ? <NightIcon className="w-6 h-6" onClick={() => toggleOnFrequency(OnDayHour.NIGHT)} />
                                         : <NightPlainIcon className="w-6 h-6" onClick={() => toggleOnFrequency(OnDayHour.NIGHT)} />}
+                                </div>
+                            </div>}
+
+                        {(frequency?.frequency_type === FrequencyType.WEEK) &&
+                            <div className="flex gap-3 items-center">
+                                <span className="text-pale-400">On: </span>
+                                <div className="flex gap-2 cursor-pointer">
+                                    {Array.from({ length: 7 }, (_, i) => (
+                                        <div key={i} className='rounded-full border border-pale-400 w-6 h-6 justify-center items-center flex'>
+                                            {format(addDays(start, i), 'EEEEE')}
+                                        </div>
+                                    ))}
                                 </div>
                             </div>}
                     </div>
