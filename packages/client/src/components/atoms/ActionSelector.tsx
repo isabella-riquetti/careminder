@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Action, Category } from '@careminder/shared/types';
-import { SettingsAccessibilityOutlined } from '@mui/icons-material';
 import { Rating } from '@mui/material';
 import cn from "classnames";
 import _ from "lodash";
@@ -78,7 +77,7 @@ export default function ActionSelector({ action_id, action, setAction }: ActionS
             {SelectedActionIcon}
             <Dropdown
                 value={action}
-                onChange={(e) => SettingsAccessibilityOutlined(e.value)}
+                onChange={(e) => setAction(e.value)}
                 options={groupedActions}
                 optionLabel="name"
                 optionGroupLabel="label"
