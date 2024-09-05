@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FrequencyType, OnDayHour, UserActionFrequency } from '@careminder/shared/types';
+import { FrequencyType, OnDayHour, OnWeekDay, UserActionFrequency } from '@careminder/shared/types';
 import { MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import cn from 'classnames';
 import { addDays, format, startOfWeek } from 'date-fns';
 import { set as setObj, without } from "lodash";
 import pluralize from "pluralize";
@@ -28,11 +29,11 @@ export default function FrequencySelector({ frequency, setFrequency, isHabit, se
         });
     }
 
-    const hasOnFrequency = (value: OnDayHour) => {
+    const hasOnFrequency = (value: OnDayHour | OnWeekDay) => {
         return frequency?.on?.includes(value);
     }
 
-    const toggleOnFrequency = (value: OnDayHour) => {
+    const toggleOnFrequency = (value: OnDayHour | OnWeekDay) => {
         setFrequency((prev?: any) => ({
             ...prev,
             on: prev?.on?.includes(value) ? without(prev?.on ?? [], value) : [...prev?.on ?? [], value]
@@ -71,7 +72,7 @@ export default function FrequencySelector({ frequency, setFrequency, isHabit, se
                             </Select>
                         </div>
 
-                        {(frequency?.frequency_type === FrequencyType.DAY) &&
+                        {(frequency?.frequency_type === FrequencyType.HOUR || frequency?.frequency_type === FrequencyType.DAY) &&
                             <div className="flex gap-3 items-center">
                                 <span className="text-pale-400">During: </span>
                                 <div className="flex gap-2 cursor-pointer">
@@ -88,9 +89,14 @@ export default function FrequencySelector({ frequency, setFrequency, isHabit, se
                             <div className="flex gap-3 items-center">
                                 <span className="text-pale-400">On: </span>
                                 <div className="flex gap-2 cursor-pointer">
-                                    {Array.from({ length: 7 }, (_, i) => (
-                                        <div key={i} className='rounded-full border border-pale-400 w-6 h-6 justify-center items-center flex'>
-                                            {format(addDays(start, i), 'EEEEE')}
+                                    {Object.values(OnWeekDay).map((i) => (
+                                        <div
+                                            key={i}
+                                            className={cn('rounded-full border border-pale-400 w-6 h-6 justify-center items-center flex', {
+                                                'bg-pink-500 text-white': hasOnFrequency(i as OnWeekDay)
+                                            })}
+                                            onClick={() => toggleOnFrequency(i as OnWeekDay)} >
+                                            {format(addDays(start, Number(i)), 'EEEEE')}
                                         </div>
                                     ))}
                                 </div>

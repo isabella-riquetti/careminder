@@ -7,6 +7,18 @@ export enum OnDayHour {
 const OnDayHourEnum = z.nativeEnum(OnDayHour);
 type OnDayHourEnum = z.infer<typeof OnDayHourEnum>;
 
+export enum OnWeekDay {
+    SUNDAY = 0,
+    MONDAY = 1,
+    TUESDAY = 2,
+    WEDNESDAY = 3,
+    THURSDAY = 4,
+    FRIDAY = 5,
+    SATURDAY = 6,
+}
+const OnWeekDayEnum = z.nativeEnum(OnWeekDay);
+type OnWeekDayEnum = z.infer<typeof OnWeekDayEnum>;
+
 export enum UserActionType {
     REMINDER = "reminder",
     TASK = "task"
@@ -45,7 +57,7 @@ export type Frequency = z.infer<typeof FrequencySchema>;
 export const UserActionFrequencySchema = z.object({
     frequency: z.number(),
     frequency_type: FrequencyTypeEnum,
-    on: z.array(OnDayHourEnum).optional(),
+    on: z.array(OnDayHourEnum.or(OnWeekDayEnum)).optional(),
     for: z.number().optional(),
     until: z.date().optional(),
 });

@@ -13,7 +13,7 @@ export default function FocusDatePicker({ value, setValue }: FocusDatePickerProp
         <DatePicker
             value={value}
             onChange={(value) => {
-                if(value) setValue(value)
+                if (value) setValue(value)
             }}
             format='PP'
             className='w-[125px] self-baseline'
