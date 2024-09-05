@@ -1,13 +1,13 @@
 import './Calendar.scss';
 
-import { UserAction } from '@careminder/shared/types';
+import { UserAction, UserActionType } from '@careminder/shared/types';
 import { DateSelectArg, DayHeaderContentArg, EventClickArg, EventContentArg, EventDropArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin, { DateClickArg, EventResizeDoneArg } from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import { addMilliseconds, addMinutes, format, isSameDay, startOfDay } from 'date-fns';
+import { addMinutes, differenceInMinutes, format, startOfDay } from 'date-fns';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { useGetUserActionsQuery, useUpdateUserActionMutation } from '@/api/userActions';
@@ -56,32 +56,34 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
     return <EventContent isSmallScreen={isSmallScreen} eventInfo={eventInfo} />;
   };
 
+  const handleDateRangeSelect = (arg: DateSelectArg) => {
+    if(arg?.jsEvent?.target) {
+      const targetElement = arg.jsEvent.target as HTMLElement;
+      if (targetElement?.classList.contains("fc-daygrid-day-number")) {
+        const calendarApi = arg.view.calendar;
+        calendarApi.changeView('timeGridDay', arg.startStr);
+        return;
+      }
+    }
+
+    const expectedClickDifference = arg.view.type === "dayGridMonth" ? (24*60) : 10;
+    const isSimpleClick = differenceInMinutes(arg.end, arg.start) === expectedClickDifference;
+
+    setUserAction({
+      start_at: arg.start,
+      end_at: arg.end,
+      all_day: arg.view.type === "dayGridMonth",
+      type: isSimpleClick ? UserActionType.REMINDER : UserActionType.TASK,
+    });
+    setIsAddModalOpen(true);
+  };
+
   const handleDateClick = (arg: DateClickArg) => {
     const targetElement = arg.jsEvent.target as HTMLElement;
     if (targetElement?.classList.contains("fc-daygrid-day-number")) {
       const calendarApi = arg.view.calendar;
       calendarApi.changeView('timeGridDay', arg.dateStr);
-    } else {
-      const end = arg.view.type !== "dayGridMonth" ? addMinutes(arg.date, 30) : arg.date;
-      setUserAction({
-        start_at: arg.date,
-        end_at: end,
-        all_day: arg.view.type === "dayGridMonth",
-      });
-      setIsAddModalOpen(true);
     }
-  };
-
-  const handleDateRangeSelect = (arg: DateSelectArg) => {
-    if (arg.view.type === "dayGridMonth" && isSameDay(arg.start, addMilliseconds(arg.end, -1))) return;
-
-    const end = arg.view.type !== "dayGridMonth" ? addMinutes(arg.end, 30) : arg.end;
-    setUserAction({
-      start_at: arg.start,
-      end_at: end,
-      all_day: arg.view.type === "dayGridMonth",
-    });
-    setIsAddModalOpen(true);
   };
 
   function handleEventClick(arg: EventClickArg): void {
@@ -124,7 +126,6 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
 
   const now = new Date();
   const scrollTime = now.getHours() > 1 ? addMinutes(new Date(), -30) : startOfDay(now);
-
   return (
     <FullCalendar
       height={"calc(100vh - 24px)"}
@@ -151,6 +152,7 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
           buttonText: 'List'
         }
       }}
+      defaultTimedEventDuration='00:10'
       slotDuration='00:10'
       nowIndicator={true}
       selectable={true}
@@ -160,9 +162,9 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
       eventResizableFromStart={true}
       eventDurationEditable={true}
       events={parsedEvents}
+      dateClick={handleDateClick}
       eventDrop={handleEventDrop}
       eventResize={handleEventResize}
-      dateClick={handleDateClick}
       select={handleDateRangeSelect}
       dayHeaderContent={renderDayHeader}
       eventContent={renderEventContent}

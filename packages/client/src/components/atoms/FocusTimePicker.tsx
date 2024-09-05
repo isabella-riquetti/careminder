@@ -3,15 +3,15 @@ import { set } from 'date-fns';
 import React, { useState } from 'react';
 
 interface FocusDatePickerProps {
-    setValue: React.Dispatch<React.SetStateAction<Date | null | undefined>>;
-    value: Date | null | undefined;
+    setValue: (newDate: Date) => void;
+    value: Date;
 }
 
 export default function FocusTimePicker({ value, setValue }: FocusDatePickerProps) {
     const [isPickerOpen, setIsPickerOpen] = useState(false);
 
-    const getNewDate = (date: Date | null | undefined, newTime: Date | null) => {
-        if (!newTime) return null;
+    const getNewDate = (date: Date | null, newTime: Date | null) => {
+        if (!newTime) return value;
 
         if (!date) return newTime;
 

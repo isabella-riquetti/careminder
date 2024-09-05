@@ -10,7 +10,7 @@ function Dashboard() {
 
     return (
         <>
-            {isAddModalOpen && <UserActionModal setIsAddModalOpen={setIsAddModalOpen} userAction={userAction} />}
+            {isAddModalOpen && userAction && <UserActionModal setIsAddModalOpen={setIsAddModalOpen} initialUserAction={userAction} />}
             <Calendar setIsAddModalOpen={setIsAddModalOpen} setUserAction={setUserAction} />
         </>
     )

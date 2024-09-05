@@ -1,15 +1,13 @@
-import ActionIcon from '../../../assets/icons/form/action.svg';
-import ActionIconComponent from '../../../assets/icons/form/action.svg?react';
-import DurationIcon from '../../../assets/icons/form/duration.svg';
-import DurationIconComponent from '../../../assets/icons/form/duration.svg?react';
-import DurationColoredIcon from '../../../assets/icons/form/duration-colored.svg';
-import DurationColoredIconComponent from '../../../assets/icons/form/duration-colored.svg?react';
+import ActionIcon from '../../../assets/icons/form/action.svg?react';
+import DurationIcon from '../../../assets/icons/form/duration.svg?react';
+import DurationPlainIcon from '../../../assets/icons/form/duration-plain.svg?react';
+import RecurrenceIcon from '../../../assets/icons/form/recurrence.svg?react';
+import RecurrencePlainIcon from '../../../assets/icons/form/recurrence-plain.svg?react';
 
 export {
     ActionIcon,
-    ActionIconComponent,
-    DurationColoredIcon,
-    DurationColoredIconComponent,
     DurationIcon,
-    DurationIconComponent,
+    DurationPlainIcon,
+    RecurrenceIcon,
+    RecurrencePlainIcon,
 }

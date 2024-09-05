@@ -86,16 +86,6 @@
 }
 
 .MuiFormControlLabel-root {
-    .MuiButtonBase-root {
-        .MuiSvgIcon-root {
-            @apply text-pale-300;
-        }
-
-        &.Mui-checked .MuiSvgIcon-root {
-            @apply text-pale-400;
-        }
-    }
-
     .MuiTypography-root {
         @apply text-pale-400;
     }

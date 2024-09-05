@@ -13,10 +13,10 @@ export default function EventContent({ isSmallScreen, eventInfo }: EventContentP
   const { view: { type }, event } = eventInfo;
   const { actions, start_at, end_at, all_day } = event.extendedProps;
   const dayView = type === "timeGridDay";
-  const timeView = type !== "dayGridMonth";
+  const timeView = type === "timeGridDay" || type === "timeGridWeek";
 
   const singleDay = isSameDay(start_at, end_at);
-  const durationInMinutes = differenceInMinutes(end_at, start_at);
+  const durationInMinutes = !all_day && !end_at ? 0 : differenceInMinutes(end_at, start_at);
   const smallTextDuration = timeView ? 15 : 5;
   const hideIconDuration = timeView ? 30 : 15;
   const smallText = durationInMinutes < smallTextDuration;

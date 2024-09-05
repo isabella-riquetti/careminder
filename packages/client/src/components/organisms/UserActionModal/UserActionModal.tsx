@@ -1,114 +1,127 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import "./UserActionModal.scss";
 
-import { Action, Category, CreateUserAction, FrequencyType, UserAction, UserActionFrequency } from '@careminder/shared/types';
+import { Action, CreateUserAction, FrequencyType, UserAction, UserActionFrequency, UserActionType } from '@careminder/shared/types';
+import styled from "@emotion/styled";
 import { CloseOutlined, DeleteOutline } from "@mui/icons-material";
-import { Box, Button, Checkbox, FormControlLabel, FormGroup, MenuItem, Modal, Rating, Select, SelectChangeEvent, ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { addDays, endOfDay, isBefore, isEqual, set } from "date-fns";
-import _, { set as setObj, without } from "lodash";
-import pluralize from "pluralize";
-import { Dropdown } from 'primereact/dropdown';
-import { InputNumber, InputNumberValueChangeEvent } from "primereact/inputnumber";
+import { Box, Button, Checkbox, FormControlLabel, FormGroup, Modal, Switch, switchClasses, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { endOfDay, isEqual } from "date-fns";
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { useGetActionsQuery } from '@/api/actions';
 import { useCreateUserActionMutation, useDeleteUserActionMutation, useUpdateUserActionMutation } from "@/api/userActions";
-import { DayIcon, DayPlainIcon, NightIcon, NightPlainIcon } from "@/assets/icons/frequency";
-import FocusDatePicker from "@/components/atoms/FocusDatePicker";
-import FocusTimePicker from "@/components/atoms/FocusTimePicker";
-import { getColoredIcon, getEventColor, getPlainIcon } from "@/utils/category";
+import ActionSelector from "@/components/atoms/ActionSelector";
+import EventTimeSelector from "@/components/molecules/EventTimeSelector";
 
-import { DurationColoredIconComponent, DurationIconComponent } from '../../../assets/icons/form';
+import { DurationIcon, RecurrenceIcon } from '../../../assets/icons/form';
+import FrequencySelector from "../Frequency/FrequencySelector";
 
 interface AddNewReminderModalProps {
     setIsAddModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    userAction: Partial<UserAction>;
+    initialUserAction: Partial<UserAction>;
 }
 
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 550,
-    maxWidth: "95%",
-    boxShadow: 24,
-};
 
-const CATEGORY_ORDER = [
-    "Skin Care",
-    "Hair Care",
-    "Body Care",
-    "Nail Care",
-    "Mind Care",
-]
+import resolveConfig from "tailwindcss/resolveConfig";
 
-export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNewReminderModalProps) {
-    const { data: actions, isLoading } = useGetActionsQuery();
-    const groupedActions = useMemo(() => _(actions)
-        .groupBy('category')
-        .toPairs()
-        .sortBy(([category]) => CATEGORY_ORDER.indexOf(category))
-        .map(([category, items]) => ({
-            label: category,
-            items: items,
-        }))
-        .value(), [actions]);
+import tailwindConfig from "../../../../tailwind.config";
 
-    const { action_id, start_at, end_at, all_day } = userAction;
+const twConfig = resolveConfig(tailwindConfig);
+const colors = twConfig.theme.colors;
+export const SwitchTextTrack = styled(Switch)({
+    width: 100,
+    height: 32,
+    padding: "0 4px",
+    [`& .${switchClasses.switchBase}`]: {
+        color: "#ff6a00",
+    },
+    [`& .${switchClasses.thumb}`]: {
+        width: 25,
+        height: 25,
+        borderRadius: 4,
+        backgroundColor: "#fff",
+    },
+    [`& .${switchClasses.track}`]: {
+        background: colors.pale[300],
+        opacity: "1 !important",
+        borderRadius: 5,
+        position: "relative",
+        "&:before, &:after": {
+            display: "inline-block",
+            position: "absolute",
+            top: "50%",
+            width: "50%",
+            transform: "translateY(-50%)",
+            color: "#fff",
+            textAlign: "center",
+            fontSize: "0.75rem",
+            fontWeight: 500,
+        },
+        "&:before": {
+            content: '"HABIT"',
+            left: 4,
+            opacity: 0,
+        },
+        "&:after": {
+            content: '"1 TIME"',
+            right: 4,
+        },
+    },
+    [`& .${switchClasses.checked}`]: {
+        [`&.${switchClasses.switchBase}`]: {
+            color: "#185a9d",
+            transform: "translateX(59px)",
+            "&:hover": {
+                backgroundColor: "rgba(24,90,257,0.08)",
+            },
+        },
+        [`& .${switchClasses.thumb}`]: {
+            backgroundColor: "#fff",
+        },
+        [`& + .${switchClasses.track}`]: {
+            background: colors.pink[400],
+            "&:before": {
+                opacity: 1,
+            },
+            "&:after": {
+                opacity: 0,
+            },
+        },
+    },
+});
+
+export default function UserActionModal({ setIsAddModalOpen, initialUserAction }: AddNewReminderModalProps) {
     const [selectedAction, setSelectedAction] = useState<Action | undefined>();
-    const [selectedAllDay, setSelectedAllDay] = useState<boolean>(!!all_day);
-    const [selectedStartDate, setSelectedStartDate] = useState<Date | undefined | null>(start_at);
-    const [selectedEndDate, setSelectedEndDate] = useState<Date | undefined | null>(end_at);
-    const [selectedReocurrence, setSelectedReocurrence] = useState<string | undefined>();
+    const [selectedType, setSelectedType] = useState<UserActionType>(initialUserAction.type ?? UserActionType.REMINDER);
+    const [selectedAllDay, setSelectedAllDay] = useState<boolean>(!!initialUserAction.all_day);
+    const [isHabit, setIsHabit] = useState<boolean>(!!initialUserAction.recurrence);
+
+    const [selectedStartDate, setSelectedStartDate] = useState<Date>(initialUserAction.start_at ?? new Date());
+    const [selectedEndDate, setSelectedEndDate] = useState<Date | undefined>(initialUserAction.end_at);
+
     const [selectedFrequency, setSelectedFrequency] = useState<UserActionFrequency>();
 
-    useEffect(() => setSelectedStartDate(start_at), [start_at]);
-    useEffect(() => setSelectedEndDate(end_at), [end_at]);
-    useEffect(() => setSelectedAllDay(!!all_day), [all_day]);
     useEffect(() => {
-        if (action_id && actions) setSelectedAction(actions.find(a => a.id === action_id));
-    }, [actions, action_id]);
-
-    useEffect(() => {
-        if (selectedAction) {
-            if (!selectedReocurrence) setSelectedReocurrence(selectedAction?.suggested_frequency ? 'habit' : 'task');
-            if (selectedAction.suggested_frequency) setSelectedFrequency(selectedAction.suggested_frequency);
+        if (selectedAction && selectedAction.suggested_frequency) {
+            setSelectedType(UserActionType.REMINDER);
+            setIsHabit(true);
+            setSelectedFrequency(selectedAction.suggested_frequency);
         }
-    }, [selectedReocurrence, selectedAction, selectedFrequency]);
+    }, [selectedAction]);
 
     useEffect(() => {
-        if (selectedStartDate && selectedEndDate && isBefore(selectedEndDate, selectedStartDate)) {
-            setSelectedEndDate(set(addDays(selectedStartDate, 1), {
-                hours: selectedEndDate.getHours(),
-                minutes: selectedEndDate.getMinutes(),
-                seconds: selectedEndDate.getSeconds(),
-            }));
+        if (isHabit) {
+
+            if (selectedAction && selectedAction.suggested_frequency && isHabit) {
+                setSelectedType(UserActionType.REMINDER);
+                setIsHabit(true);
+                setSelectedFrequency(selectedAction.suggested_frequency);
+            } else {
+                setSelectedFrequency({
+                    frequency: 1,
+                    frequency_type: FrequencyType.DAY,
+                });
+            }
         }
-    }, [selectedStartDate, selectedEndDate]);
-
-    const groupedItemTemplate = (option: { label: Category }) => {
-        const Icon = getColoredIcon(option.label);
-        return (
-            <div className="flex align-items-center gap-2 py-2 px-1 border-b border-pink-100 text-pale-400">
-                <Icon className="max-w-7 max-h-7" />
-                <div>{option.label}</div>
-            </div>
-        );
-    };
-
-    const itemTemplate = (option: Action) => {
-        const Icon = getPlainIcon(option.category);
-        return (
-            <div className="flex items-center gap-2 py-2 px-1 border-b border-pink-100 text-pale-400">
-                <div className="w-7 h-7 flex items-center justify-center">
-                    <Icon className="max-w-full max-h-full" style={{ color: getEventColor(option.category) }} />
-                </div>
-                <div>{option.name}</div>
-                <Rating className="ml-auto text-pink-400" name="size-small" value={option.dificultity ?? 1} readOnly size="small" />
-            </div>
-        );
-    };
+    }, [isHabit]);
 
     const [createUserActionMutation] = useCreateUserActionMutation();
     const createUserAction = async (req: CreateUserAction): Promise<UserAction> =>
@@ -119,12 +132,13 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
 
         if (selectedStartDate && selectedAction?.id) {
             await createUserAction({
+                type: selectedType,
                 start_at: selectedStartDate,
-                end_at: selectedEndDate ?? selectedStartDate,
+                end_at: selectedType === UserActionType.TASK && selectedEndDate ? selectedStartDate : undefined,
                 action_id: selectedAction.id,
                 all_day: selectedAllDay,
-                reocurring: selectedReocurrence === "habit",
                 frequency: selectedFrequency,
+                recurrence: isHabit
             });
 
             setIsAddModalOpen(false);
@@ -136,8 +150,10 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
         deleteUserActionMutation(req).unwrap();
 
     const callDeleteUserAction = async () => {
-        await deleteUserAction(userAction.id!);
-        setIsAddModalOpen(false);
+        if (initialUserAction.id) {
+            await deleteUserAction(initialUserAction.id!);
+            setIsAddModalOpen(false);
+        }
     };
 
     const [updateUserActionMutation] = useUpdateUserActionMutation();
@@ -147,11 +163,11 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
     const callUpdateUserAction = async () => {
         if (!selectedStartDate) return;
 
-        if (selectedStartDate && selectedAction?.id) {
+        if (selectedStartDate && selectedAction?.id && initialUserAction.id) {
             await updateUserAction({
-                id: userAction.id!,
+                id: initialUserAction.id,
                 start_at: selectedStartDate,
-                end_at: selectedEndDate ?? selectedStartDate,
+                end_at: selectedType === UserActionType.TASK && selectedEndDate ? selectedStartDate : undefined,
                 action_id: selectedAction.id,
                 all_day: selectedAllDay
             });
@@ -160,7 +176,7 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
     };
 
     const handleSaveButton = async () => {
-        if (userAction?.id) await callUpdateUserAction();
+        if (initialUserAction?.id) await callUpdateUserAction();
         else await callCreateUserAction();
     }
 
@@ -169,11 +185,11 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
         setSelectedAllDay(checked);
     }
 
-    const handleReocurrenceChange = (
-        _1: React.MouseEvent<HTMLElement>,
-        reocurrence: string | undefined,
+    const handleRecurrenceChange = (
+        _: React.MouseEvent<HTMLElement>,
+        recurrence: UserActionType,
     ) => {
-        setSelectedReocurrence(reocurrence);
+        if (recurrence !== null) setSelectedType(recurrence);
         if (!selectedFrequency) {
             setSelectedFrequency({
                 frequency: 1,
@@ -181,40 +197,6 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
             })
         }
     };
-
-    const handleFrequencyChange = (path: string, value: any) => {
-        setSelectedFrequency((prev?: any) => {
-            const newItem = { ...prev };
-            setObj(newItem ?? {}, path, value);
-            return newItem;
-        });
-    }
-
-    const hasOnFrequency = (value: string) => {
-        return selectedFrequency?.on?.includes(value);
-    }
-
-    const toggleOnFrequency = (value: string) => {
-        let on = selectedFrequency?.on ?? [];
-        if (on?.includes(value)) {
-            on = without(on, value);
-        } else {
-            on = [...on, value];
-        }
-
-        setSelectedFrequency((prev?: any) => ({
-            ...prev,
-            on
-        }));
-    }
-
-    const SelectedActionIcon = useMemo(() => {
-        if (!selectedAction?.category) return <div></div>;
-
-        const Icon = getColoredIcon(selectedAction.category);
-        return (<Icon className="w-6 h-6 form-icon" />);
-    }, [selectedAction]);
-
     const disabledSave = useMemo(() => !selectedStartDate || !selectedEndDate || !selectedAction, [selectedStartDate, selectedEndDate, selectedAction]);
     return (
         <Modal
@@ -227,121 +209,74 @@ export default function UserActionModal({ setIsAddModalOpen, userAction }: AddNe
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
         >
-            <Box sx={style} className="rounded-xl bg-white">
-                <FormGroup>
+            <Box sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 550,
+                height: 500,
+                maxWidth: "95%",
+                boxShadow: 24,
+            }} className="rounded-xl bg-white">
+                <FormGroup className="h-full">
                     <div className="w-full rounded-t-xl bg-pale-50 flex px-4 py-2">
                         <span className="text-pale-500 font-bold uppercase">New Minder</span>
                         <div className="ml-auto flex gap-2">
-                            {!!userAction?.id && <DeleteOutline onClick={callDeleteUserAction} className="ml-auto cursor-pointer hover:text-red-600" />}
+                            {!!initialUserAction?.id && <DeleteOutline onClick={callDeleteUserAction} className="ml-auto cursor-pointer hover:text-red-600" />}
                             <CloseOutlined onClick={() => setIsAddModalOpen(false)} className="ml-auto cursor-pointer hover:text-red-200" />
                         </div>
                     </div>
-                    <div className="form p-4 grid grid-cols-[25px,calc(100%-25px-0.75rem)] grid-rows-[auto,auto,auto] items-center justify-start gap-x-2 gap-y-4">
-                        {SelectedActionIcon}
-                        <Dropdown
-                            value={selectedAction}
-                            onChange={(e) => setSelectedAction(e.value)}
-                            options={groupedActions}
-                            optionLabel="name"
-                            optionGroupLabel="label"
-                            optionGroupChildren="items"
-                            filterBy="name"
-                            filter
-                            loading={isLoading}
-                            filterInputAutoFocus
-                            itemTemplate={itemTemplate}
-                            optionGroupTemplate={groupedItemTemplate}
-                            className="w-full"
-                            placeholder="Select Minder" />
-                        {(selectedStartDate && selectedEndDate) ?
-                            <DurationColoredIconComponent className="w-6 h-6" />
-                            : <DurationIconComponent className="w-6 h-6" />}
-                        <div className="flex gap-2 dates items-center">
-                            <FocusDatePicker
-                                value={selectedStartDate}
-                                setValue={setSelectedStartDate}
-                            />
-                            {!selectedAllDay && <>
-                                <FocusTimePicker
-                                    value={selectedStartDate}
-                                    setValue={setSelectedStartDate} />
-                                —
-                                <FocusTimePicker
-                                    value={selectedEndDate}
-                                    setValue={setSelectedEndDate} />
-                            </>}
-                            <FocusDatePicker
-                                value={selectedEndDate}
-                                setValue={setSelectedEndDate}
-                            />
-                        </div>
-                        <div></div>
-                        <div className="flex">
+                    <div className="form p-4 content-start grid grid-cols-[25px,calc(100%-25px-0.75rem)] grid-rows-[auto,auto,auto,auto] items-center justify-start gap-x-2 gap-y-4">
+                        <ActionSelector
+                            action_id={initialUserAction.action_id}
+                            selectedAction={selectedAction}
+                            setSelectedAction={setSelectedAction}
+                        />
+                        <div className="flex col-start-2 flex-wrap">
+                            <ToggleButtonGroup
+                                exclusive
+                                aria-label="recurrence"
+                                value={selectedType}
+                                onChange={handleRecurrenceChange}
+                                className="grid grid-cols-2"
+                            >
+                                <ToggleButton value={UserActionType.REMINDER}>Reminder</ToggleButton>
+                                <ToggleButton value={UserActionType.TASK}>Task</ToggleButton>
+                            </ToggleButtonGroup>
                             <FormControlLabel
-                                className="mt-[-10px] max-w-fit text-primary"
+                                className="ml-auto max-w-fit text-primary"
                                 control={<Checkbox
                                     className="ml-1"
                                     checked={selectedAllDay}
                                     onChange={(event) => handleAllDayChange(event.target.checked)}
                                 />}
                                 label="All Day" />
+                        </div>
 
-                            <ToggleButtonGroup
-                                className="ml-auto"
-                                exclusive
-                                aria-label="roocurrence"
-                                value={selectedReocurrence}
-                                onChange={handleReocurrenceChange}
-                            >
-                                <ToggleButton value="task" aria-label="task">Task</ToggleButton>
-                                <ToggleButton value="habit" aria-label="habit">Habit</ToggleButton>
-                            </ToggleButtonGroup>
+                        <DurationIcon className="w-6 h-6 self-baseline" />
+                        <div className="flex gap-2 dates items-center">
+                            <EventTimeSelector
+                                type={selectedType}
+                                start={selectedStartDate}
+                                setStart={setSelectedStartDate}
+                                end={selectedEndDate}
+                                setEnd={setSelectedEndDate}
+                                allDay={selectedAllDay}
+                            />
                         </div>
-                        <div></div>
-                        {selectedReocurrence === "habit" &&
-                            <div className="mt-2">
-                                <div className=" text-pale-400 text-sm bg-white w-fit absolute top-[-10px] left-[10px] px-1">Reocurrence: </div>
-                                <div className="flex flex-col gap-3 px-2 py-3 border border-pale-300 rounded-md">
-                                    <div className="flex gap-2 items-center">
-                                        <span className=" text-pale-400">Every: </span>
-                                        <InputNumber
-                                            value={selectedFrequency?.frequency}
-                                            onValueChange={(e: InputNumberValueChangeEvent) => handleFrequencyChange('frequency', Number(e.value))}
-                                            mode="decimal"
-                                            showButtons
-                                            min={1}
-                                            max={999}
-                                        />
-                                        <Select
-                                            value={selectedFrequency?.frequency_type}
-                                            onChange={(event: SelectChangeEvent<FrequencyType>) => handleFrequencyChange('frequency_type', event.target.value as FrequencyType)}
-                                        >
-                                            <MenuItem value={FrequencyType.HOUR}>{pluralize("Hour", selectedFrequency?.frequency)}</MenuItem>
-                                            <MenuItem value={FrequencyType.DAY}>{pluralize("Day", selectedFrequency?.frequency)}</MenuItem>
-                                            <MenuItem value={FrequencyType.WEEK}>{pluralize("Week", selectedFrequency?.frequency)}</MenuItem>
-                                            <MenuItem value={FrequencyType.MONTH}>{pluralize("Month", selectedFrequency?.frequency)}</MenuItem>
-                                            <MenuItem value={FrequencyType.YEAR}>{pluralize("Year", selectedFrequency?.frequency)}</MenuItem>
-                                        </Select>
-                                    </div>
-                                    <div className="flex gap-3 items-center">
-                                        {(selectedFrequency?.frequency_type === FrequencyType.HOUR || selectedFrequency?.frequency_type === FrequencyType.DAY) && <>
-                                            <span className="text-pale-400">During: </span>
-                                            <div className="flex gap-2 cursor-pointer">
-                                                {hasOnFrequency("day")
-                                                    ? <DayIcon className="w-6 h-6" onClick={() => toggleOnFrequency("day")} />
-                                                    : <DayPlainIcon className="w-6 h-6" onClick={() => toggleOnFrequency("day")} />}
-                                                {hasOnFrequency("night")
-                                                    ? <NightIcon className="w-6 h-6" onClick={() => toggleOnFrequency("night")} />
-                                                    : <NightPlainIcon className="w-6 h-6" onClick={() => toggleOnFrequency("night")} />}
-                                            </div>
-                                        </>}
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                        <div className="flex items-end ml-auto col-span-2 mt-4">
-                            <Button disabled={disabledSave} variant="contained" onClick={handleSaveButton}>Save</Button>
-                        </div>
+                        <RecurrenceIcon className="w-6 h-6 self-baseline" />
+                        <FrequencySelector
+                            isHabit={isHabit}
+                            setIsHabit={setIsHabit}
+                            selectedStartDate={selectedStartDate}
+                            selectedEndDate={selectedEndDate}
+                            selectedFrequency={selectedFrequency}
+                            setSelectedFrequency={setSelectedFrequency}
+                        />
+                    </div>
+                    <div className="flex items-end ml-auto col-span-2 mt-auto p-6">
+                        <Button disabled={disabledSave} variant="contained" onClick={handleSaveButton}>Save</Button>
                     </div>
                 </FormGroup>
             </Box>

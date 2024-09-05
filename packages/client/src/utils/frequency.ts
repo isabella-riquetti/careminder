@@ -14,7 +14,7 @@ export function readableFrequency({ frequency, frequency_type, on, special }: Fr
         frequencyText.push(pluralize(frequency_type, frequency ?? 1));
     }
     if (on?.length) {
-        frequencyText.push(`${frequency_type === FrequencyType.HOUR || frequency_type === FrequencyType.DAY ? 'at' : 'on'}`);
+        frequencyText.push(`${frequency_type === FrequencyType.DAY ? 'at' : 'on'}`);
         frequencyText.push(joinWithCommaAnd(on));
     }
 

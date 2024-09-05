@@ -22,6 +22,14 @@ const theme: ThemeOptions = createTheme({
     fontFamily: '"Confortaa", Roboto, sans-serif',
   },
   components: {
+    MuiButtonBase: {
+      styleOverrides: {
+        root: {
+          height: 'fit-content',
+          padding: '3px 8px !important',
+        }
+      }
+    },
     MuiCssBaseline: {
       styleOverrides: {
         body: {
@@ -85,6 +93,20 @@ const theme: ThemeOptions = createTheme({
         },
       },
     },
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          '.MuiSvgIcon-root': {
+            color: colors.pale[400],
+          },
+          '&.Mui-checked': {
+            '.MuiSvgIcon-root, &~.MuiTypography-root': {
+              color: colors.primary,
+            }
+          }
+        }
+      }
+    },
     MuiToggleButton: {
       styleOverrides: {
         root: {
@@ -96,17 +118,27 @@ const theme: ThemeOptions = createTheme({
             backgroundColor: colors.pale[200],
           },
           '&.Mui-selected': {
-            backgroundColor: colors.pink[400],
+            backgroundColor: colors.primary,
             color: colors.white,
-            borderColor: colors.pink[400],
+            borderColor: colors.primary,
             '&:hover': {
-              backgroundColor: colors.pink[500],
-              borderColor: colors.pink[500],
+              backgroundColor: colors.primary,
+              borderColor: colors.primary,
             },
           },
         },
       },
     },
+    MuiSwitch: {
+      styleOverrides: {
+        root: {
+          padding: 0,
+        },
+        track: {
+          background: colors.pale[400]
+        }
+      }
+    }
   },
 });
 
