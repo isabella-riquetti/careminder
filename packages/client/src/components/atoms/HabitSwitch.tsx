@@ -8,15 +8,15 @@ import tailwindConfig from "../../../tailwind.config";
 const twConfig = resolveConfig(tailwindConfig);
 const colors = twConfig.theme.colors;
 export const SwitchTextTrack = styled(Switch)({
-    width: 100,
-    height: 32,
+    width: 80,
+    height: 28,
     padding: "0 4px",
     [`& .${switchClasses.switchBase}`]: {
         color: "#ff6a00",
     },
     [`& .${switchClasses.thumb}`]: {
-        width: 25,
-        height: 25,
+        width: 15,
+        height: 22,
         borderRadius: 4,
         backgroundColor: "#fff",
     },
@@ -49,7 +49,7 @@ export const SwitchTextTrack = styled(Switch)({
     [`& .${switchClasses.checked}`]: {
         [`&.${switchClasses.switchBase}`]: {
             color: "#185a9d",
-            transform: "translateX(67px)",
+            transform: "translateX(57px)",
             "&:hover": {
                 backgroundColor: "rgba(24,90,257,0.08)",
             },
@@ -58,7 +58,7 @@ export const SwitchTextTrack = styled(Switch)({
             backgroundColor: "#fff",
         },
         [`& + .${switchClasses.track}`]: {
-            background: colors.pink[400],
+            background: colors.pink[500],
             "&:before": {
                 opacity: 1,
             },

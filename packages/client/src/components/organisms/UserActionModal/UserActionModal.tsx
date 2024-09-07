@@ -30,8 +30,7 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
     const [frequency, setFrequency] = useState<UserActionFrequency>();
 
     useEffect(() => {
-        if (action && action.suggested_frequency) {
-            setType(UserActionType.REMINDER);
+        if (action?.suggested_frequency) {
             setIsHabit(true);
             setFrequency(action.suggested_frequency);
         }
@@ -39,17 +38,17 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
 
     useEffect(() => {
         if (isHabit) {
-            if (action && action.suggested_frequency) {
-                setType(UserActionType.REMINDER);
+            if (action?.suggested_frequency) {
                 setIsHabit(true);
                 setFrequency(action.suggested_frequency);
             } else if(!frequency) {
                 setFrequency({
                     frequency: 1,
-                    frequency_type: FrequencyType.DAY,
+                    frequency_type: FrequencyType.WEEK,
                 });
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isHabit]);
 
     const [createUserActionMutation] = useCreateUserActionMutation();
@@ -96,7 +95,7 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
             await updateUserAction({
                 id: initialUserAction.id,
                 start_at: startDate,
-                end_at: type === UserActionType.TASK && endDate ? startDate : undefined,
+                end_at: type === UserActionType.TASK ? endDate : undefined,
                 action_id: action.id,
                 all_day: isAllDay
             });
@@ -182,8 +181,9 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
                                 allDay={isAllDay}
                             />
                         </div>
-                        <RecurrenceIcon className="w-6 h-6 self-baseline mt-1" />
+                        <RecurrenceIcon className="w-6 h-6 self-baseline" />
                         <FrequencySelector
+                            type={type}
                             isHabit={isHabit}
                             setIsHabit={setIsHabit}
                             startDate={startDate}
