@@ -31,11 +31,11 @@ export default function FocusTimePicker({ value, setValue }: FocusDatePickerProp
             onOpen={() => setIsPickerOpen(true)}
             onClose={() => setIsPickerOpen(false)}
             slotProps={{
-                inputAdornment: {
-                    position: undefined
-                },
                 textField: {
                     onClick: () => setIsPickerOpen(true),
+                    InputProps: {
+                        endAdornment: null,
+                    }
                 },
             }}
             onChange={(newValue) => {

@@ -1,5 +1,5 @@
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 interface FocusDatePickerProps {
     setValue: (date: Date) => void;
@@ -21,11 +21,11 @@ export default function FocusDatePicker({ value, setValue }: FocusDatePickerProp
             onOpen={() => setIsPickerOpen(true)}
             onClose={() => setIsPickerOpen(false)}
             slotProps={{
-                inputAdornment: {
-                    position: undefined
-                },
                 textField: {
                     onClick: () => setIsPickerOpen(true),
+                    InputProps: {
+                        endAdornment: null,
+                    }
                 }
             }}
         />
