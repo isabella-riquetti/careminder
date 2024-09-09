@@ -1,12 +1,5 @@
 import { z } from "zod";
 
-export enum OnDayHour {
-    DAY = "day",
-    NIGHT = "night",
-}
-const OnDayHourEnum = z.nativeEnum(OnDayHour);
-type OnDayHourEnum = z.infer<typeof OnDayHourEnum>;
-
 export enum OnWeekDay {
     SUNDAY = 0,
     MONDAY = 1,
@@ -48,15 +41,24 @@ type CategoryEnum = z.infer<typeof CategoryEnum>;
 export const FrequencySchema = z.object({
     frequency: z.number(),
     frequency_type: FrequencyTypeEnum,
-    on: z.array(OnDayHourEnum).optional(),
     special: z.boolean().optional().default(false),
 });
 export type Frequency = z.infer<typeof FrequencySchema>;
 
+export const MontlyFrequencySchema = z.object({
+    title: z.string(),
+    day: z.number().optional(),
+    weekNumber: z.number().optional(),
+    weekDay: z.number().optional(),
+});
+export type MontlyFrequency = z.infer<typeof MontlyFrequencySchema>;
+
 export const UserActionFrequencySchema = z.object({
     frequency: z.number(),
     frequency_type: FrequencyTypeEnum,
-    on: z.array(OnDayHourEnum.or(OnWeekDayEnum).or(z.date())).optional(),
+    on_day: z.array(z.date()).optional(),
+    on_week: z.array(OnWeekDayEnum).optional(),
+    on_month: MontlyFrequencySchema.optional(),
     on_times: z.number().optional(),
     for: z.number().optional(),
     until: z.date().optional(),

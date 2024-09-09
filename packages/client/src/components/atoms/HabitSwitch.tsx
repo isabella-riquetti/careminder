@@ -8,7 +8,7 @@ import tailwindConfig from "../../../tailwind.config";
 const twConfig = resolveConfig(tailwindConfig);
 const colors = twConfig.theme.colors;
 export const SwitchTextTrack = styled(Switch)({
-    width: 80,
+    width: 70,
     height: 28,
     padding: "0 4px",
     [`& .${switchClasses.switchBase}`]: {
@@ -29,7 +29,7 @@ export const SwitchTextTrack = styled(Switch)({
             display: "inline-block",
             position: "absolute",
             top: "50%",
-            width: "50%",
+            width: "65%",
             transform: "translateY(-50%)",
             color: "#fff",
             textAlign: "center",
@@ -49,7 +49,7 @@ export const SwitchTextTrack = styled(Switch)({
     [`& .${switchClasses.checked}`]: {
         [`&.${switchClasses.switchBase}`]: {
             color: "#185a9d",
-            transform: "translateX(57px)",
+            transform: "translateX(47px)",
             "&:hover": {
                 backgroundColor: "rgba(24,90,257,0.08)",
             },
@@ -71,7 +71,7 @@ export const SwitchTextTrack = styled(Switch)({
 
 interface HabitSwitchProps {
     isHabit: boolean;
-    setIsHabit: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsHabit: (value: boolean) => void;
 }
 
 export default function HabitSwitch({ setIsHabit, isHabit }: HabitSwitchProps) {
