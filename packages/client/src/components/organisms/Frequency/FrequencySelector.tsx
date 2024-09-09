@@ -2,7 +2,7 @@ import { Action, FrequencyType, MontlyFrequency, OnWeekDay, UserActionFrequency,
 import { Button, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import cn from 'classnames';
 import { addDays, addMinutes, endOfDay, endOfMonth, format, getWeekOfMonth, isBefore, isSameDay, startOfMonth, startOfWeek } from 'date-fns';
-import { get, set as setObj, without } from "lodash";
+import { get, isEqual, set as setObj, without } from "lodash";
 import pluralize from "pluralize";
 import { InputNumber, InputNumberValueChangeEvent } from "primereact/inputnumber";
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -60,29 +60,35 @@ export default function FrequencySelector({ action, type, frequency, setFrequenc
         const lastWeekStart = addDays(lastDayMonth, -7);
         const currentWeek = getWeekOfMonth(startDate);
         const options: MontlyFrequency[] = [];
-        options.push({ title: `Montly on ${format(startDate, 'do')} day`, day: startDate.getDate() });
+        options.push({ title: `Monthly on ${format(startDate, 'do')} day`, day: startDate.getDate() });
         if (isSameDay(lastDayMonth, startDate)) options.push({ title: "Last day of the month", day: 31 });
 
         if (startDate < firstWeekEnd) options.push({ title: `Monthly on first ${weekDay}`, weekNumber: currentWeek });
         else if (startDate > lastWeekStart) options.push({ title: `Monthly on last ${weekDay}`, weekNumber: 6 });
-        else options.push({ title: `Montly on ${numberToOrdinal(currentWeek)} ${weekDay}`, weekNumber: currentWeek });
+        else options.push({ title: `Monthly on ${numberToOrdinal(currentWeek)} ${weekDay}`, weekNumber: currentWeek });
 
         return options;
     }, [startDate]);
 
+    useEffect(() => {
+        if (frequency?.frequency_type === FrequencyType.MONTH && !getMonthlyFrequencyOptions.some(g => isEqual(g, frequency?.on_month))) {
+            handleFrequencyChange('on_month', getMonthlyFrequencyOptions[frequency?.on_month?.day ? 0 : 1])
+        }
+    }, [getMonthlyFrequencyOptions]);
+
     const handleFrequencyTypeChange = (frequencyType: FrequencyType) => {
         const on_day = frequencyType === FrequencyType.DAY
-                ? [startDate]
-                : undefined;
+            ? [startDate]
+            : undefined;
         const on_week = frequencyType === FrequencyType.WEEK
             ? [startDate.getDay()]
             : undefined;
         const on_month = frequencyType === FrequencyType.MONTH
-                    ? getMonthlyFrequencyOptions[0]
-                    : undefined;
-        
-                    console.log(on_week)
-        setFrequency((prev?: UserActionFrequency)  => ({
+            ? getMonthlyFrequencyOptions[0]
+            : undefined;
+
+        console.log(on_week)
+        setFrequency((prev?: UserActionFrequency) => ({
             ...(prev ?? defaultFrequency),
             frequency_type: frequencyType,
             on_day,
@@ -125,9 +131,9 @@ export default function FrequencySelector({ action, type, frequency, setFrequenc
             <HabitSwitch
                 isHabit={isHabit}
                 setIsHabit={toggleIsHabit} />
-            {isHabit && frequency && <div className='flex flex-col gap-4'>
-                <div className="flex gap-2 items-center">
-                    <span className=" text-pale-400">Every: </span>
+            {isHabit && frequency && <div className='grid grid-cols-[auto,auto] gap-4'>
+                <span className=" text-pale-400">Every: </span>
+                <div className='flex gap-4'>
                     <InputNumber
                         value={frequency?.frequency}
                         onValueChange={(e: InputNumberValueChangeEvent) => handleFrequencyChange('frequency', Number(e.value))}
@@ -148,7 +154,7 @@ export default function FrequencySelector({ action, type, frequency, setFrequenc
                 </div>
 
                 {frequency?.frequency_type === FrequencyType.DAY && !isAllDay &&
-                    <div className="flex gap-3 items-center">
+                    <>
                         <span className="text-pale-400 self-start">At: </span>
                         <div className="flex gap-2 cursor-pointer flex-wrap">
                             {timeIntervals.map((t) => (
@@ -163,11 +169,11 @@ export default function FrequencySelector({ action, type, frequency, setFrequenc
                                 </Button>
                             ))}
                         </div>
-                    </div>
+                    </>
                 }
 
                 {(frequency?.frequency_type === FrequencyType.WEEK) &&
-                    <div className="flex gap-3 items-center">
+                    <>
                         <span className="text-pale-400">On: </span>
                         <div className="flex gap-2 cursor-pointer">
                             {Array.from({ length: 7 }).map((_, i) => (
@@ -191,11 +197,11 @@ export default function FrequencySelector({ action, type, frequency, setFrequenc
                                 </Button>
                             ))}
                         </div>
-                    </div>}
+                    </>}
 
 
                 {(frequency?.frequency_type === FrequencyType.MONTH && !!getMonthlyFrequencyOptions?.length) &&
-                    <div className="flex gap-3 items-center">
+                    <>
                         <span className="text-pale-400 self-start">On: </span>
                         <div className="flex gap-2 cursor-pointer flex-wrap">
                             <Select
@@ -210,7 +216,7 @@ export default function FrequencySelector({ action, type, frequency, setFrequenc
                                 ))}
                             </Select>
                         </div>
-                    </div>
+                    </>
                 }
             </div>}
         </div>
