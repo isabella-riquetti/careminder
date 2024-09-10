@@ -3,14 +3,14 @@ import { CreateUserAction, UserAction, UserActionDisplay } from '@careminder/sha
 import { generateUniqueId } from "@careminder/shared/utils/id";
 
 export class UserActionDao {
-  async create(action: CreateUserAction, userId: string): Promise<UserAction | null> {
+  async createBatch(actions: CreateUserAction[], userId: string): Promise<UserAction | null> {
     const { data, error } = await supabase
       .from('user_actions')
-      .insert([{
-        ...action,
+      .insert(actions.map(a => ({
+        ...a,
         user_id: userId,
         group_id: generateUniqueId()
-      }])
+      })))
       .select();
 
     if (error) {

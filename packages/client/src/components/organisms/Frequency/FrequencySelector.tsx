@@ -111,7 +111,9 @@ export default function FrequencySelector({ action, type, frequency, setFrequenc
 
             setTimeIntervals(dates);
         }
-    }, [endDate, frequency?.frequency_type, handleFrequencyChange, startDate, type])
+    }, [endDate, frequency?.frequency_type, handleFrequencyChange, startDate, type]);
+
+    useEffect(() => console.log(frequency), [frequency])
 
     const toggleIsHabit = (isHabit: boolean) => {
         if (isHabit) {
