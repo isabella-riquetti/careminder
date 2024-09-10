@@ -134,7 +134,7 @@ describe('getMonthNextDate', () => {
                     ...baseMonthly,
                     on_month: { title: '', weekDay: OnWeekDay.TUESDAY, weekNumber: 5 },
 
-                }, firstOfSep);
+                }, new Date(2024,8,27));
                 expect(result).toStrictEqual(new Date(2024, 8, 24));
             });
         })
@@ -144,10 +144,7 @@ describe('getMonthNextDate', () => {
 describe("getReocurrences", () => {
     test('yearly', () => {
         const result = getReocurrences({
-            id: 1,
             action_id: 1,
-            user_id: "",
-            group_id: "",
             type: UserActionType.REMINDER,
             all_day: false,
             recurrence: true,
@@ -166,23 +163,42 @@ describe("getReocurrences", () => {
 
     test('montly', () => {
         const result = getReocurrences({
-            id: 1,
             action_id: 1,
-            user_id: "",
-            group_id: "",
             type: UserActionType.REMINDER,
             all_day: false,
             recurrence: true,
-            start_at: new Date(2024,0,1,12,10),
-            end_at: new Date(2024,0,1,12,20),
+            start_at: new Date(2024,7,27,12,10),
+            end_at: new Date(2024,7,27,12,20),
             frequency: {
                 frequency: 1,
                 frequency_type: FrequencyType.MONTH,
-                on_month: { title: '', day: 1 },
-                end_date: new Date(2025,5,31),
+                on_month: { title: '', weekNumber: 6, weekDay: OnWeekDay.TUESDAY },
+                end_date: new Date(2025,12,31),
             }
         });
         expect(result.length).toBe(18);
-        expect(last(result)?.start_at).toStrictEqual(new Date(2025,5,1,12,10));
+        const expectedDate = [
+            new Date(2024,7,27,12,10),
+            new Date(2024,8,24,12,10),
+            new Date(2024,9,29,12,10),
+            new Date(2024,10,26,12,10),
+            new Date(2024,11,31,12,10),
+            new Date(2025,0,28,12,10),
+            new Date(2025,1,25,12,10),
+            new Date(2025,2,25,12,10),
+            new Date(2025,3,29,12,10),
+            new Date(2025,4,27,12,10),
+            new Date(2025,5,24,12,10),
+            new Date(2025,6,29,12,10),
+            new Date(2025,7,26,12,10),
+            new Date(2025,8,30,12,10),
+            new Date(2025,9,28,12,10),
+            new Date(2025,10,25,12,10),
+            new Date(2025,11,30,12,10),
+        ];
+        expectedDate.forEach((item, i) => {
+            expect(result[i]?.start_at).toStrictEqual(item);
+
+        })
     });
 })
