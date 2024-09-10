@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { createActionsEndpoints } from './src/endpoints/actions';
 import { createUserActionsEndpoints } from './src/endpoints/userActions';
+import { ClerkExpressRequireAuth } from '@clerk/clerk-sdk-node';
 
 const app = express();
 const port = 3000;
@@ -28,6 +29,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use(ClerkExpressRequireAuth());
 
 createActionsEndpoints(app);
 createUserActionsEndpoints(app);

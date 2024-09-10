@@ -142,7 +142,29 @@ describe('getMonthNextDate', () => {
 });
 
 describe("getReocurrences", () => {
-    test('init', () => {
+    test('yearly', () => {
+        const result = getReocurrences({
+            id: 1,
+            action_id: 1,
+            user_id: "",
+            group_id: "",
+            type: UserActionType.REMINDER,
+            all_day: false,
+            recurrence: true,
+            start_at: new Date(2024,2,28,12,10),
+            end_at: new Date(2024,2,28,12,20),
+            frequency: {
+                frequency: 1,
+                frequency_type: FrequencyType.YEAR,
+                end_date: new Date(2033,2,28,12,10),
+            }
+        });
+        expect(result.length).toBe(10);
+        expect(result[1]?.start_at).toStrictEqual(new Date(2025,2,28,12,10));
+        expect(last(result)?.start_at).toStrictEqual(new Date(2033,2,28,12,10));
+    });
+
+    test('montly', () => {
         const result = getReocurrences({
             id: 1,
             action_id: 1,
@@ -157,10 +179,10 @@ describe("getReocurrences", () => {
                 frequency: 1,
                 frequency_type: FrequencyType.MONTH,
                 on_month: { title: '', day: 1 },
-                end_date: new Date(2024,11,31),
+                end_date: new Date(2025,5,31),
             }
         });
-        expect(result.length).toBe(12);
-        expect(last(result)?.start_at).toStrictEqual(new Date(2024,11,1,12,10));
-    })
+        expect(result.length).toBe(18);
+        expect(last(result)?.start_at).toStrictEqual(new Date(2025,5,1,12,10));
+    });
 })

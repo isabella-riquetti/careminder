@@ -5,16 +5,15 @@ export function getReocurrences(userAction: UserAction): UserAction[] {
 
     const allReocurrences = [userAction];
     if (userAction.recurrence && userAction.frequency) {
-        const minutesStart = differenceInMinutes(userAction.start_at, startOfDay(userAction.start_at)); 
-        const minutesDiff = userAction.end_at ? minutesStart + differenceInMinutes(userAction.end_at, userAction.start_at) : 0; 
+       const minutesDiff = userAction.end_at ? differenceInMinutes(userAction.end_at, userAction.start_at) : 0; 
         let nextStart = getNextOcurrence(userAction.frequency, userAction.start_at);
-        while(nextStart < userAction.frequency.end_date) {
+        while(nextStart <= userAction.frequency.end_date) {
             const newDates = getOnNextDates(userAction.frequency, nextStart);
             newDates.forEach((newDate) => {
-                if(newDate < userAction.frequency!.end_date) {
+                if(newDate <= userAction.frequency!.end_date) {
                     allReocurrences.push({
                         ...userAction,
-                        start_at: addMinutes(newDate, minutesStart),
+                        start_at: newDate,
                         ...(minutesDiff ? { end_at: addMinutes(newDate, minutesDiff) } : {})
 
                     })
@@ -36,7 +35,7 @@ function getNextOcurrence(frequency: UserActionFrequency, currentDate: Date): Da
         return addWeeks(currentDate, frequency.frequency);
     }
     if (frequency.frequency_type === FrequencyType.MONTH) {
-        return addMonths(startOfMonth(currentDate), frequency.frequency);
+        return addMonths(currentDate, frequency.frequency);
     }
     if (frequency.frequency_type === FrequencyType.YEAR) {
         return addYears(currentDate, frequency.frequency);
@@ -46,6 +45,9 @@ function getNextOcurrence(frequency: UserActionFrequency, currentDate: Date): Da
 }
 
 function getOnNextDates(frequency: UserActionFrequency, initialDate: Date): Date[] {
+    if (frequency.frequency_type === FrequencyType.YEAR) {
+        return [initialDate];
+    }
     if (frequency.frequency_type === FrequencyType.MONTH) {
         return [getMonthNextDate(frequency, initialDate)];
     }
@@ -76,13 +78,5 @@ export function getMonthNextDate(frequency: UserActionFrequency, initialDate: Da
     }
 
 
-    return initialDate;
-}
-
-function getNextWeekDayOcurrence(initialDate: Date, desiredWeekDay: OnWeekDay) {
-    const weekDay = initialDate.getDay();
-    const weekDayDiff = desiredWeekDay - weekDay;
-    if (weekDayDiff > 0) return addDays(initialDate, weekDayDiff);
-    if (weekDayDiff < 0) return addDays(initialDate, 7 + weekDayDiff);
     return initialDate;
 }
