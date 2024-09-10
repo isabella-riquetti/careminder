@@ -62,13 +62,13 @@ export default function FrequencySelector({ action, type, frequency, setFrequenc
         const lastDayMonth = endOfMonth(startDate);
         const lastWeekStart = addDays(lastDayMonth, -7);
         const currentWeek = getWeekOfMonth(startDate);
+        const weekIndex = firstDayMonth.getDay() > startDate.getDay() ? currentWeek - 1 : currentWeek;
         const options: MontlyFrequency[] = [];
         options.push({ title: `Monthly on ${format(startDate, 'do')} day`, day: startDate.getDate() });
         if (isSameDay(lastDayMonth, startDate)) options.push({ title: "Last day of the month", day: 31 });
-
         if (startDate < firstWeekEnd) options.push({ title: `Monthly on first ${weekDayName}`, weekNumber: currentWeek, weekDay: weekDay });
-        else if (startDate > lastWeekStart) options.push({ title: `Monthly on last ${weekDayName}`, weekNumber: 6, weekDay: weekDay });
-        else options.push({ title: `Monthly on ${numberToOrdinal(currentWeek)} ${weekDayName}`, weekNumber: currentWeek, weekDay: weekDay });
+        if (getWeekOfMonth(lastDayMonth) < 6) options.push({ title: `Monthly on ${numberToOrdinal(weekIndex)} ${weekDayName}`, weekNumber: weekIndex, weekDay: weekDay });
+        if (startDate > lastWeekStart) options.push({ title: `Monthly on last ${weekDayName}`, weekNumber: 6, weekDay: weekDay });
 
         return options;
     }, [startDate]);
