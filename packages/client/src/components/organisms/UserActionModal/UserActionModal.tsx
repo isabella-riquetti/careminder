@@ -9,6 +9,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useCreateUserActionMutation, useDeleteUserActionMutation, useUpdateUserActionMutation } from "@/api/userActions";
 import ActionSelector from "@/components/atoms/ActionSelector";
 import EventTimeSelector from "@/components/molecules/EventTimeSelector";
+import { calcMaxEndDate } from "@/utils/date";
 
 import { DurationIcon, RecurrenceIcon } from '../../../assets/icons/form';
 import FrequencySelector from "../Frequency/FrequencySelector";
@@ -36,7 +37,7 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
             setIsHabit(true);
             setFrequency({
                 ...action.suggested_frequency,
-                end_date: addYears(startDate, 1)
+                end_date: calcMaxEndDate(action.suggested_frequency.frequency_type, startDate)
             });
         }
     }, [action, isHabit, frequency, startDate]);
@@ -112,7 +113,7 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
             setFrequency({
                 frequency: 1,
                 frequency_type: FrequencyType.DAY,
-                end_date: addYears(startDate, 1)
+                end_date: calcMaxEndDate(FrequencyType.DAY, startDate)
             })
         }
     };

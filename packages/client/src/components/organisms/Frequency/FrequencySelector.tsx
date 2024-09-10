@@ -1,7 +1,7 @@
 import { Action, FrequencyType, MontlyFrequency, OnWeekDay, UserActionFrequency, UserActionType } from '@careminder/shared/types';
 import { Button, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import cn from 'classnames';
-import { addDays, addMinutes, addYears, endOfDay, endOfMonth, format, getWeekOfMonth, isBefore, isSameDay, startOfMonth, startOfWeek } from 'date-fns';
+import { addDays, addMinutes, endOfDay, endOfMonth, format, getWeekOfMonth, isBefore, isSameDay, startOfMonth, startOfWeek } from 'date-fns';
 import { get, isEqual, set as setObj, without } from "lodash";
 import pluralize from "pluralize";
 import { InputNumber, InputNumberValueChangeEvent } from "primereact/inputnumber";
@@ -9,6 +9,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import FocusDatePicker from '@/components/atoms/FocusDatePicker';
 import HabitSwitch from '@/components/atoms/HabitSwitch';
+import { calcMaxEndDate } from '@/utils/date';
 import { numberToOrdinal } from '@/utils/number';
 
 interface FrequencySelectorProps {
@@ -28,7 +29,7 @@ export default function FrequencySelector({ action, type, frequency, setFrequenc
     const defaultFrequency: UserActionFrequency = useMemo(() => ({
         frequency: 1,
         frequency_type: FrequencyType.DAY,
-        end_date: addYears(startDate, 1)
+        end_date: calcMaxEndDate(FrequencyType.DAY, startDate)
     }), []);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -122,12 +123,12 @@ export default function FrequencySelector({ action, type, frequency, setFrequenc
                     frequency: 1,
                     frequency_type: FrequencyType.WEEK,
                     on_week: [startDate.getDay()],
-                    end_date: addYears(startDate, 1)
+                    end_date: calcMaxEndDate(FrequencyType.WEEK, startDate)
                 });
             } else if (action?.suggested_frequency) {
                 setFrequency({
                     ...action.suggested_frequency,
-                    end_date: addYears(startDate, 1)
+                    end_date: calcMaxEndDate(action.suggested_frequency.frequency_type, startDate)
                 });
             }
         }
