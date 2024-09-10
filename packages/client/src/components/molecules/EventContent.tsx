@@ -36,8 +36,8 @@ export default function EventContent({ isSmallScreen, eventInfo, allEvents }: Ev
       backgroundColor: getEventColor(actions.category),
       color: "#4c4c4c"
     }}>
-      {!isSmallScreen && <Icon className='w-5 h-5 mr-1' />}
-      <span className="text-md truncate" title={actions.name}>{others?.length ? `${others.length+1}x ` : ""}{actions.name}</span>
+      {!isSmallScreen && <Icon className='w-5 h-5 min-w-5 min-h-5 mr-1' />}
+      <span className="text-md truncate" title={actions.name}>{others?.length ? `${others.length + 1}x ` : ""}{actions.name}</span>
     </div>);
 
     return !others?.some(o => o.start_at < start_at) ? content : undefined;
@@ -45,35 +45,46 @@ export default function EventContent({ isSmallScreen, eventInfo, allEvents }: Ev
 
   const renderWeekView = () => {
     return (
-    <div className="flex gap-1 items-start overflow-hidden w-full" style={{
-      backgroundColor: getEventColor(actions.category),
-      color: "#4c4c4c"
-    }}>
-      {!isSmallScreen && !hideIcon && <Icon className='min-w-7 min-h-7 max-w-7 max-h-7 mr-1' />}
-      <div className={cn('flex  overflow-hidden', {
-        'flex-row-reverse items-center gap-2': !timeView || smallText || dayView,
-        'flex-col': timeView && !smallText && !dayView
-      })}>
-        <span className={cn("font-bold", {
-          "text-[10px] leading-3 truncate": smallText,
-          "text-wrap": !smallText,
-          "text-xs": !smallText && isSmallScreen,
-          "text-md": !smallText && !isSmallScreen
-        })} title={actions.name}>{actions.name}</span>
-        <span className={cn({
-          'text-[10px] leading-3 whitespace-nowrap': smallText,
-          'text-xs': !smallText,
-        })}>{date.join(" - ")}</span>
-      </div>
-    </div>)
+      <div className="flex gap-1 items-start overflow-hidden w-full" style={{
+        backgroundColor: getEventColor(actions.category),
+        color: "#4c4c4c"
+      }}>
+        {!isSmallScreen && !hideIcon && <Icon className='min-w-7 min-h-7 max-w-7 max-h-7 mr-1' />}
+        <div className={cn('flex  overflow-hidden', {
+          'flex-row-reverse items-center gap-2': !timeView || smallText || dayView,
+          'flex-col': timeView && !smallText && !dayView
+        })}>
+          <span className={cn("font-bold", {
+            "text-[10px] leading-3 truncate": smallText,
+            "text-wrap": !smallText,
+            "text-xs": !smallText && isSmallScreen,
+            "text-md": !smallText && !isSmallScreen
+          })} title={actions.name}>{actions.name}</span>
+          <span className={cn({
+            'text-[10px] leading-3 whitespace-nowrap': smallText,
+            'text-xs': !smallText,
+          })}>{date.join(" - ")}</span>
+        </div>
+      </div>);
   }
 
+  const rendedListView = () => {
+    return (
+      <div className="flex gap-1 items-start overflow-hidden w-full">
+        {!isSmallScreen && <Icon className='w-5 h-5 min-w-5 min-h-5 mr-1' />}
+        <span className="text-md truncate" title={actions.name}>{actions.name}</span>
+      </div>);
+  }
+
+  console.log(type)
   switch (type) {
     case 'dayGridMonth':
       return renderMonthView();
     case 'timeGridWeek':
     case 'timeGridDay':
       return renderWeekView();
+    case 'listWeek':
+      return rendedListView();
     default:
       return actions.name;
   }

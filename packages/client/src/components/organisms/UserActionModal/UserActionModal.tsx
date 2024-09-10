@@ -4,7 +4,7 @@ import { Action, CreateUserAction, FrequencyType, UserAction, UserActionFrequenc
 import { CloseOutlined, DeleteOutline } from "@mui/icons-material";
 import { Box, Button, Checkbox, FormControlLabel, FormGroup, Modal, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { addDays, addMonths, addYears, differenceInDays, differenceInMonths, differenceInYears, endOfDay, isEqual } from "date-fns";
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { useCreateUserActionMutation, useDeleteUserActionMutation, useUpdateUserActionMutation } from "@/api/userActions";
 import ActionSelector from "@/components/atoms/ActionSelector";
@@ -42,7 +42,7 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
             await createUserAction({
                 type: type,
                 start_at: startDate,
-                end_at: type === UserActionType.TASK && endDate ? startDate : undefined,
+                end_at: type === UserActionType.TASK && endDate ? endDate : undefined,
                 action_id: action.id,
                 all_day: isAllDay,
                 frequency: frequency,
@@ -186,11 +186,9 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
                         <RecurrenceIcon className="w-6 h-6 self-baseline" />
                         <FrequencySelector
                             action={action}
-                            type={type}
                             isHabit={isHabit}
                             setIsHabit={setIsHabit}
                             startDate={startDate}
-                            endDate={endDate}
                             frequency={frequency}
                             isAllDay={isAllDay}
                             setFrequency={setFrequency}

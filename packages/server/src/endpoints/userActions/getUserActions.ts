@@ -1,4 +1,4 @@
-import { CreateUserAction, GetUserActionsSchema, UserAction } from '@careminder/shared/types';
+import { GetUserActionsSchema, UserAction } from '@careminder/shared/types';
 import { Request, Response } from 'express';
 import { BadRequestError, NotFoundError, UnauthorizedError} from '@careminder/shared/error';
 import { UserActionDao } from '../../db/dao/UserActionDao';

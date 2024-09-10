@@ -8,7 +8,7 @@ export const tasksApiSlice = api.injectEndpoints({
             query: ({ start, end }) => ({
                 url: `/actions/user?start=${start}&end=${end}`,
             }),
-            providesTags: ["actions"],
+            providesTags: (result, error, { start, end }) => [{ type: 'userActions', start, end }],
         }),
         createUserAction: builder.mutation<UserAction, CreateUserAction>({
             query: (body) => ({
@@ -16,22 +16,22 @@ export const tasksApiSlice = api.injectEndpoints({
                 method: "POST",
                 body,
             }),
-            invalidatesTags: ["actions"]
+            invalidatesTags: [{ type: 'userActions' }],
         }),
         deleteUserAction: builder.mutation<void, number>({
             query: (id) => ({
                 url: `/actions/user/${id}`,
                 method: "DELETE",
             }),
-            invalidatesTags: ["actions"]
+            invalidatesTags: [{ type: 'userActions' }],
         }),
         updateUserAction: builder.mutation<UserAction, Partial<UserAction>>({
-            query: ({ id, ...body}) => ({
+            query: ({ id, ...body }) => ({
                 url: `/actions/user/${id}`,
                 method: "PATCH",
-                body
+                body,
             }),
-            invalidatesTags: ["actions"]
+            invalidatesTags: [{ type: 'userActions' }],
         }),
     }),
 });

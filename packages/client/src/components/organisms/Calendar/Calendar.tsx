@@ -18,7 +18,7 @@ import { getEventColor } from '@/utils/category';
 
 interface CalendarProps {
   setIsAddModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setUserAction:  React.Dispatch<React.SetStateAction<Partial<UserAction>>>;
+  setUserAction: React.Dispatch<React.SetStateAction<Partial<UserAction>>>;
 }
 export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarProps) {
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 768);
@@ -26,13 +26,14 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
   const [viewEnd, setViewEnd] = useState<Date | null>(null);
   const [currentView, setCurrentView] = useState<string>('timeGridDay');
 
-  const { data: userActions } = useGetUserActionsQuery({ 
+  const { data: userActions } = useGetUserActionsQuery({
     start: (viewStart ?? startOfDay(new Date())).getTime(),
     end: (viewEnd ?? endOfDay(new Date())).getTime()
   }, {
-    skip: !viewStart || !viewEnd
+    skip: !viewStart || !viewEnd,
+    refetchOnMountOrArgChange: true,
   });
-  
+
   const parsedEvents = useMemo(() => {
     const parsedUserActions = (userActions || []).map(u => ({
       id: u.id.toString(),
@@ -52,10 +53,10 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
           isSameDay(new Date(a.start), new Date(b.start)) &&
           ((!a.end && !b.end) || (!!a.end && !!b.end && isSameDay(new Date(a.end), new Date(b.end))))
       );
-    } 
+    }
     return parsedUserActions;
   }, [userActions, currentView]);
-  
+
   useEffect(() => {
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth <= 768);
@@ -77,7 +78,7 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
   };
 
   const handleDateRangeSelect = (arg: DateSelectArg) => {
-    if(arg?.jsEvent?.target) {
+    if (arg?.jsEvent?.target) {
       const targetElement = arg.jsEvent.target as HTMLElement;
       if (targetElement?.classList.contains("fc-daygrid-day-number")) {
         const calendarApi = arg.view.calendar;
@@ -86,10 +87,10 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
       }
     }
 
-    const expectedClickDifference = arg.view.type === "dayGridMonth" ? (24*60) : 10;
-    const expectedAllDayDifference = 24*60;
+    const expectedClickDifference = arg.view.type === "dayGridMonth" ? (24 * 60) : 10;
+    const expectedAllDayDifference = 24 * 60;
     const isSimpleClick = differenceInMinutes(arg.end, arg.start) === expectedClickDifference
-     || (arg.allDay && differenceInMinutes(arg.end, arg.start) === expectedAllDayDifference);
+      || (arg.allDay && differenceInMinutes(arg.end, arg.start) === expectedAllDayDifference);
 
     setUserAction({
       start_at: arg.start,
@@ -112,13 +113,13 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
     const { start, end } = arg;
     setViewStart(start);
     setViewEnd(end);
-    setCurrentView(arg.view.type); 
+    setCurrentView(arg.view.type);
   };
 
   function handleEventClick(arg: EventClickArg): void {
     const { start, end } = arg.event;
 
-    if(!start) return;
+    if (!start) return;
 
     const props = arg.event.extendedProps;
     // eslint-disable-next-line react/prop-types
@@ -131,7 +132,7 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
         ...frequency,
         end_date: new Date(frequency.end_date)
       } : {}
-   });
+    });
     setTimeout(() => setIsAddModalOpen(true), 200);
   }
   const [updateUserActionMutation] = useUpdateUserActionMutation();
@@ -206,7 +207,7 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
       dayHeaderContent={renderDayHeader}
       eventContent={renderEventContent}
       eventClick={handleEventClick}
-      datesSet={handleDatesSet} 
+      datesSet={handleDatesSet}
     />
   )
 }

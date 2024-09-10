@@ -1,8 +1,9 @@
-import { Action, FrequencyType, MontlyFrequency, OnWeekDay, UserActionFrequency, UserActionType } from '@careminder/shared/types';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Action, FrequencyType, MontlyFrequency, OnWeekDay, UserActionFrequency } from '@careminder/shared/types';
 import { Button, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import cn from 'classnames';
 import { addDays, addMinutes, endOfDay, endOfMonth, format, getWeekOfMonth, isBefore, isSameDay, startOfMonth, startOfWeek } from 'date-fns';
-import { get, isEqual, set as setObj, uniqBy } from "lodash";
+import { get, isEqual, remove, set as setObj } from "lodash";
 import pluralize from "pluralize";
 import { InputNumber, InputNumberValueChangeEvent } from "primereact/inputnumber";
 import React, { useCallback, useEffect, useMemo } from 'react';
@@ -14,11 +15,9 @@ import { numberToOrdinal } from '@/utils/number';
 
 interface FrequencySelectorProps {
     action?: Action;
-    type: UserActionType;
     isHabit: boolean;
     setIsHabit: React.Dispatch<React.SetStateAction<boolean>>;
     startDate: Date;
-    endDate?: Date;
     frequency?: UserActionFrequency;
     setFrequency: React.Dispatch<React.SetStateAction<UserActionFrequency | undefined>>;
     isAllDay: boolean;
@@ -46,10 +45,12 @@ export default function FrequencySelector({ action, frequency, setFrequency, isH
     }
 
     const toggleOnFrequency = (path: string, value: OnWeekDay | Date) => {
-        const curr = get(frequency, path);
-        console.log(curr, path, value)
-        const newValue = uniqBy([...curr ?? [], value], item => item.toString());
-        handleFrequencyChange(path, newValue);
+        const curr: (OnWeekDay | Date)[] = get(frequency, path);
+        if (curr.some(c => c.toString() === value.toString())) {
+            handleFrequencyChange(path, remove(curr, c => c.toString() !== value.toString()))
+        } else {
+            handleFrequencyChange(path, [...curr ?? [], value]);
+        }
     }
 
     const getMonthlyFrequencyOptions = useMemo(() => {
@@ -73,7 +74,7 @@ export default function FrequencySelector({ action, frequency, setFrequency, isH
         if (frequency?.frequency_type === FrequencyType.MONTH && !getMonthlyFrequencyOptions.some(g => isEqual(g, frequency?.on_month))) {
             handleFrequencyChange('on_month', getMonthlyFrequencyOptions[frequency?.on_month?.day ? 0 : 1])
         }
-    }, [getMonthlyFrequencyOptions]);
+    }, [frequency?.frequency_type, frequency?.on_month, getMonthlyFrequencyOptions, handleFrequencyChange]);
 
     const getDefaultFrequencyValue = (frequencyType: FrequencyType) => {
         const on_day = frequencyType === FrequencyType.DAY
@@ -112,7 +113,7 @@ export default function FrequencySelector({ action, frequency, setFrequency, isH
         return dates;
     }, [frequency?.frequency_type, startDate]);
 
-    const toggleIsHabit = (isHabit: boolean) => {
+    const handleToggleIsHabit = (isHabit: boolean) => {
         if (isHabit) {
             if (!frequency) {
                 setFrequency({
@@ -144,13 +145,11 @@ export default function FrequencySelector({ action, frequency, setFrequency, isH
         }
     }, [action, isHabit, frequency, startDate]);
 
-    useEffect(() => console.log(frequency), [frequency])
-
     return (
         <div className="flex gap-3 ">
             <HabitSwitch
                 isHabit={isHabit}
-                setIsHabit={toggleIsHabit} />
+                setIsHabit={handleToggleIsHabit} />
             {isHabit && frequency && <div className='grid grid-cols-[auto,auto] gap-4'>
                 <span className=" text-pale-400">Every: </span>
                 <div className='flex gap-4'>
