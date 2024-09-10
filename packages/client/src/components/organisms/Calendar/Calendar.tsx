@@ -149,7 +149,7 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
       headerToolbar={{
         left: 'title today',
         center: 'prev,next',
-        right: 'multiMonthYear,dayGridMonth,timeGridWeek,timeGridDay,listWeek',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
       }}
       timeZone={timeZone}
       views={{
