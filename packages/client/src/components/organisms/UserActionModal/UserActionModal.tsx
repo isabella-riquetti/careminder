@@ -117,7 +117,7 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
             })
         }
     };
-    const disabledSave = useMemo(() => !startDate || !endDate || !action, [startDate, endDate, action]);
+
     function handleStartDateChange(value: Date): void {
         if(isHabit && frequency?.end_date) {
             const yearsAppart = differenceInYears(frequency?.end_date, startDate);
@@ -138,6 +138,7 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
         setStartDate(value);
     }
 
+    const disabledSave = useMemo(() => !startDate || !endDate || !action, [startDate, endDate, action]);
     return (
         <Modal
             open={true}
