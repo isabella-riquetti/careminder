@@ -1,5 +1,5 @@
 import { UserActionType } from '@careminder/shared/types';
-import { addMinutes, differenceInMinutes, isAfter, isBefore } from 'date-fns';
+import { addMinutes, differenceInMinutes, isBefore } from 'date-fns';
 import React from 'react';
 
 import FocusDatePicker from "@/components/atoms/FocusDatePicker";

@@ -5,7 +5,7 @@ import { addDays, addMinutes, endOfDay, endOfMonth, format, getWeekOfMonth, isBe
 import { get, isEqual, set as setObj, without } from "lodash";
 import pluralize from "pluralize";
 import { InputNumber, InputNumberValueChangeEvent } from "primereact/inputnumber";
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import FocusDatePicker from '@/components/atoms/FocusDatePicker';
 import HabitSwitch from '@/components/atoms/HabitSwitch';
@@ -25,7 +25,6 @@ interface FrequencySelectorProps {
 }
 
 export default function FrequencySelector({ action, type, frequency, setFrequency, isHabit, setIsHabit, startDate, endDate, isAllDay }: FrequencySelectorProps) {
-    const [timeIntervals, setTimeIntervals] = useState<Date[]>([]);
     const defaultFrequency: UserActionFrequency = useMemo(() => ({
         frequency: 1,
         frequency_type: FrequencyType.DAY,
@@ -100,19 +99,19 @@ export default function FrequencySelector({ action, type, frequency, setFrequenc
         }))
     }
 
-    useEffect(() => {
+    const timeIntervals = useMemo(() => {
+        const dates: Date[] = [];
         if (frequency?.frequency_type === FrequencyType.DAY) {
-            const dates: Date[] = [];
             const end = endDate && type === UserActionType.TASK ? endDate : endOfDay(startDate);
             let current = startDate;
             while (isBefore(current, end) || current.getTime() === end.getTime()) {
                 dates.push(current);
                 current = addMinutes(current, 60);
             }
-
-            setTimeIntervals(dates);
         }
-    }, [endDate, frequency?.frequency_type, handleFrequencyChange, startDate, type]);
+
+        return dates;
+    }, [endDate, frequency?.frequency_type, startDate, type]);
 
     const toggleIsHabit = (isHabit: boolean) => {
         if (isHabit) {

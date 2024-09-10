@@ -73,7 +73,7 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
 
     setUserAction({
       start_at: arg.start,
-      end_at: arg.end,
+      end_at: arg.allDay ? addMinutes(arg.start, 10) : arg.end,
       all_day: arg.allDay,
       type: isSimpleClick ? UserActionType.REMINDER : UserActionType.TASK,
     });
@@ -99,7 +99,7 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
     setUserAction({
       ...props,
       start_at: start,
-      end_at: end ?? start,
+      end_at: !end ? undefined : end,
       frequency: frequency ? {
         ...frequency,
         end_date: new Date(frequency.end_date)
