@@ -56,7 +56,7 @@ export type MontlyFrequency = z.infer<typeof MontlyFrequencySchema>;
 export const UserActionFrequencySchema = z.object({
     frequency: z.number(),
     frequency_type: FrequencyTypeEnum,
-    on_day: z.array(z.date()).optional(),
+    on_day: z.array(z.coerce.date()).optional(),
     on_week: z.array(OnWeekDayEnum).optional(),
     on_month: MontlyFrequencySchema.optional(),
     end_date: z.coerce.date(),

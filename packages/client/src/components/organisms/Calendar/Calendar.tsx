@@ -167,8 +167,8 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
         }
       }}
       firstDay={1}
-      defaultTimedEventDuration='00:10'
-      slotDuration='00:10'
+      defaultTimedEventDuration='00:15'
+      slotDuration='00:30'
       nowIndicator={true}
       selectable={true}
       editable={true}

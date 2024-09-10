@@ -1,8 +1,8 @@
-import { getMonthNextDate, getReocurrences } from "./event";
+import { getNextDayOfTheMonth, getReocurrences } from "./event";
 import { FrequencyType, OnWeekDay, UserActionType } from "@careminder/shared/types";
 import { last } from "lodash";
 
-describe('getMonthNextDate', () => {
+describe('getNextDayOfTheMonth', () => {
     const baseMonthly = {
         frequency: 1,
         frequency_type: FrequencyType.MONTH,
@@ -15,7 +15,7 @@ describe('getMonthNextDate', () => {
     describe('weekly-based', () => {
         test('first day', () => {
 
-            const result = getMonthNextDate({
+            const result = getNextDayOfTheMonth({
                 ...baseMonthly,
                 on_month: { title: '', day: 1 },
 
@@ -24,7 +24,7 @@ describe('getMonthNextDate', () => {
         });
 
         test('mid month', () => {
-            const result = getMonthNextDate({
+            const result = getNextDayOfTheMonth({
                 ...baseMonthly,
                 on_month: { title: '', day: 16 },
 
@@ -33,7 +33,7 @@ describe('getMonthNextDate', () => {
         });
 
         test('match last day', () => {
-            const result = getMonthNextDate({
+            const result = getNextDayOfTheMonth({
                 ...baseMonthly,
                 on_month: { title: '', day: 29 },
 
@@ -42,7 +42,7 @@ describe('getMonthNextDate', () => {
         });
 
         test('over last day day', () => {
-            const result = getMonthNextDate({
+            const result = getNextDayOfTheMonth({
                 ...baseMonthly,
                 on_month: { title: '', day: 31 },
 
@@ -54,7 +54,7 @@ describe('getMonthNextDate', () => {
     describe('weekly-based', () => {
         describe('first week', () => {
             test('on first day', () => {
-                const result = getMonthNextDate({
+                const result = getNextDayOfTheMonth({
                     ...baseMonthly,
                     on_month: { title: '', weekDay: OnWeekDay.THURSDAY, weekNumber: 1 },
 
@@ -63,7 +63,7 @@ describe('getMonthNextDate', () => {
             });
 
             test('after, same next week', () => {
-                const result = getMonthNextDate({
+                const result = getNextDayOfTheMonth({
                     ...baseMonthly,
                     on_month: { title: '', weekDay: OnWeekDay.SATURDAY, weekNumber: 1 },
 
@@ -72,7 +72,7 @@ describe('getMonthNextDate', () => {
             });
 
             test('after, on next week', () => {
-                const result = getMonthNextDate({
+                const result = getNextDayOfTheMonth({
                     ...baseMonthly,
                     on_month: { title: '', weekDay: OnWeekDay.TUESDAY, weekNumber: 1 },
 
@@ -83,7 +83,7 @@ describe('getMonthNextDate', () => {
 
         describe('mid week', () => {
             test('same weekday', () => {
-                const result = getMonthNextDate({
+                const result = getNextDayOfTheMonth({
                     ...baseMonthly,
                     on_month: { title: '', weekDay: OnWeekDay.THURSDAY, weekNumber: 2 },
 
@@ -92,7 +92,7 @@ describe('getMonthNextDate', () => {
             });
 
             test('after first weekday', () => {
-                const result = getMonthNextDate({
+                const result = getNextDayOfTheMonth({
                     ...baseMonthly,
                     on_month: { title: '', weekDay: OnWeekDay.THURSDAY, weekNumber: 3 },
 
@@ -101,7 +101,7 @@ describe('getMonthNextDate', () => {
             });
 
             test('before first weekday', () => {
-                const result = getMonthNextDate({
+                const result = getNextDayOfTheMonth({
                     ...baseMonthly,
                     on_month: { title: '', weekDay: OnWeekDay.TUESDAY, weekNumber: 4 },
 
@@ -112,7 +112,7 @@ describe('getMonthNextDate', () => {
 
         describe('last week', () => {
             test('same weekday', () => {
-                const result = getMonthNextDate({
+                const result = getNextDayOfTheMonth({
                     ...baseMonthly,
                     on_month: { title: '', weekDay: OnWeekDay.SUNDAY, weekNumber: 5 },
 
@@ -121,7 +121,7 @@ describe('getMonthNextDate', () => {
             });
 
             test('after initial weekday', () => {
-                const result = getMonthNextDate({
+                const result = getNextDayOfTheMonth({
                     ...baseMonthly,
                     on_month: { title: '', weekDay: OnWeekDay.MONDAY, weekNumber: 5 },
 
@@ -130,7 +130,7 @@ describe('getMonthNextDate', () => {
             });
 
             test('before initial weekday', () => {
-                const result = getMonthNextDate({
+                const result = getNextDayOfTheMonth({
                     ...baseMonthly,
                     on_month: { title: '', weekDay: OnWeekDay.TUESDAY, weekNumber: 5 },
 
@@ -139,6 +139,18 @@ describe('getMonthNextDate', () => {
             });
         })
     })
+});
+
+describe('getNextDaysOfTheWeek', () => {
+    const baseMonthly = {
+        frequency: 1,
+        frequency_type: FrequencyType.WEEK,
+        end_date: new Date(2024, 11, 31),
+    };
+    
+    test('sunday - multi string', () => {
+
+    });
 });
 
 describe("getReocurrences", () => {

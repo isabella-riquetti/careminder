@@ -145,7 +145,7 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
         >
-            <Box className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] max-w-[95%] shadow-2xl rounded-xl bg-white">
+            <Box className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] max-w-[95%] shadow-2xl rounded-xl bg-white">
                 <FormGroup className="h-full">
                     <div className="w-full rounded-t-xl bg-pale-50 flex px-4 py-2">
                         <span className="text-pale-500 font-bold uppercase">New Minder</span>

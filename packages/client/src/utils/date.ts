@@ -15,7 +15,7 @@ export function weekDayHasPassed(date: Date, dayOfTheWeek: number) {
 export function calcMaxEndDate(frequencyType: FrequencyType, date: Date) {
     if(frequencyType === FrequencyType.YEAR) return addYears(date, 100);
     if(frequencyType === FrequencyType.MONTH) return addYears(date, 10);
-    if(frequencyType === FrequencyType.WEEK) return addYears(date, 5);
+    if(frequencyType === FrequencyType.WEEK) return addYears(date, 2);
     if(frequencyType === FrequencyType.DAY) return addYears(date, 1);
     return date;
 }

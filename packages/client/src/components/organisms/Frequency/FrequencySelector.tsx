@@ -93,6 +93,7 @@ export default function FrequencySelector({ action, type, frequency, setFrequenc
         setFrequency((prev?: UserActionFrequency) => ({
             ...(prev ?? defaultFrequency),
             frequency_type: frequencyType,
+            end_date: calcMaxEndDate(frequencyType, startDate),
             on_day,
             on_week,
             on_month

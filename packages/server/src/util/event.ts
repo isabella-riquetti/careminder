@@ -44,12 +44,12 @@ function getNextStart(frequency: UserActionFrequency, currentDate: Date): Date {
 }
 
 function getOnNextDates(userAction: CreateUserAction, initialDate: Date): Date[] {
-    const { frequency, start_at } = userAction;
+    const { frequency } = userAction;
     if (frequency?.frequency_type === FrequencyType.YEAR) {
         return [initialDate];
     }
     if (frequency?.frequency_type === FrequencyType.MONTH) {
-        const nextDate = getMonthNextDate(frequency, initialDate);
+        const nextDate = getNextDayOfTheMonth(frequency, initialDate);
         return [nextDate];
     }
     if (frequency?.frequency_type === FrequencyType.WEEK) {
@@ -63,7 +63,7 @@ function getOnNextDates(userAction: CreateUserAction, initialDate: Date): Date[]
     return [];
 }
 
-export function getMonthNextDate(frequency: UserActionFrequency, initialDate: Date): Date {
+export function getNextDayOfTheMonth(frequency: UserActionFrequency, initialDate: Date): Date {
     const time = differenceInMinutes(initialDate, startOfDay(initialDate));
     const montlySettings = frequency.on_month;
     if (montlySettings?.day) {
