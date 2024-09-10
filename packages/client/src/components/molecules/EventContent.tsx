@@ -1,3 +1,4 @@
+import { UserAction } from '@careminder/shared/types';
 import { EventContentArg } from '@fullcalendar/core';
 import cn from "classnames";
 import { differenceInMinutes, format, isSameDay } from 'date-fns';
@@ -7,11 +8,12 @@ import { getColoredIcon, getEventColor } from '@/utils/category';
 interface EventContentProps {
   eventInfo: EventContentArg;
   isSmallScreen: boolean;
+  allEvents?: UserAction[];
 }
 
-export default function EventContent({ isSmallScreen, eventInfo }: EventContentProps) {
+export default function EventContent({ isSmallScreen, eventInfo, allEvents }: EventContentProps) {
   const { view: { type }, event } = eventInfo;
-  const { actions, start_at, end_at, all_day } = event.extendedProps;
+  const { actions, start_at, end_at, all_day, action_id, id } = event.extendedProps;
   const dayView = type === "timeGridDay";
   const timeView = type === "timeGridDay" || type === "timeGridWeek";
 
@@ -28,15 +30,18 @@ export default function EventContent({ isSmallScreen, eventInfo }: EventContentP
 
   const Icon = getColoredIcon(actions.category);
 
-  const renderMonthView = () => (
-    <div className="flex items-center gap-1 overflow-hidden shadow-sm w-full" style={{
+  const renderMonthView = () => {
+    const others = allEvents?.filter(a => a.action_id === action_id && id !== a.id && isSameDay(a.start_at, start_at) && ((end_at === null && a.end_at === null) || isSameDay(a.end_at, end_at)));
+    const content = (<div className="flex items-center gap-1 overflow-hidden shadow-sm w-full" style={{
       backgroundColor: getEventColor(actions.category),
       color: "#4c4c4c"
     }}>
       {!isSmallScreen && <Icon className='w-5 h-5 mr-1' />}
-      <span className="text-md truncate" title={actions.name}>{actions.name}</span>
-    </div>
-  )
+      <span className="text-md truncate" title={actions.name}>{others?.length ? `${others.length+1}x ` : ""}{actions.name}</span>
+    </div>);
+
+    return !others?.some(o => o.start_at < start_at) ? content : undefined;
+  }
 
   const renderWeekView = () => {
     return (

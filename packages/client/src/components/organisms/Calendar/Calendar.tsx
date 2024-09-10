@@ -1,13 +1,14 @@
 import './Calendar.scss';
 
 import { UserAction, UserActionType } from '@careminder/shared/types';
-import { DateSelectArg, DayHeaderContentArg, EventClickArg, EventContentArg, EventDropArg } from '@fullcalendar/core';
+import { DateSelectArg, DatesSetArg, DayHeaderContentArg, EventClickArg, EventContentArg, EventDropArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin, { DateClickArg, EventResizeDoneArg } from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import { addMinutes, differenceInMinutes, format, startOfDay } from 'date-fns';
+import { addMinutes, differenceInMinutes, endOfDay, format, isSameDay, startOfDay } from 'date-fns';
+import { uniqWith } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { useGetUserActionsQuery, useUpdateUserActionMutation } from '@/api/userActions';
@@ -20,27 +21,42 @@ interface CalendarProps {
   setUserAction:  React.Dispatch<React.SetStateAction<Partial<UserAction>>>;
 }
 export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarProps) {
-  const [timeZone, setTimeZone] = useState('local');
-  const { data: userActions } = useGetUserActionsQuery();
-
-  const parsedEvents = useMemo(() => userActions?.map(u => ({
-    id: u.id.toString(),
-    title: u.actions.name,
-    start: u.start_at,
-    end: u.end_at,
-    textColor: "#4c4c4c",
-    allDay: u.all_day,
-    backgroundColor: getEventColor(u.actions.category),
-    borderColor: getEventColor(u.actions.category),
-    extendedProps: u
-  })), [userActions]);
-
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 768);
+  const [viewStart, setViewStart] = useState<Date | null>(null);
+  const [viewEnd, setViewEnd] = useState<Date | null>(null);
+  const [currentView, setCurrentView] = useState<string>('timeGridDay');
 
+  const { data: userActions } = useGetUserActionsQuery({ 
+    start: (viewStart ?? startOfDay(new Date())).getTime(),
+    end: (viewEnd ?? endOfDay(new Date())).getTime()
+  }, {
+    skip: !viewStart || !viewEnd
+  });
+  
+  const parsedEvents = useMemo(() => {
+    const parsedUserActions = (userActions || []).map(u => ({
+      id: u.id.toString(),
+      title: u.actions.name,
+      start: u.start_at,
+      end: u.end_at,
+      textColor: "#4c4c4c",
+      allDay: u.all_day,
+      backgroundColor: getEventColor(u.actions.category),
+      borderColor: getEventColor(u.actions.category),
+      extendedProps: u
+    }));
+    if (currentView === 'dayGridMonth') {
+      return uniqWith(parsedUserActions,
+        (a, b) =>
+          a.extendedProps.action_id === b.extendedProps.action_id &&
+          isSameDay(new Date(a.start), new Date(b.start)) &&
+          ((!a.end && !b.end) || (!!a.end && !!b.end && isSameDay(new Date(a.end), new Date(b.end))))
+      );
+    } 
+    return parsedUserActions;
+  }, [userActions, currentView]);
+  
   useEffect(() => {
-    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    setTimeZone(userTimeZone);
-
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth <= 768);
     };
@@ -57,7 +73,7 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
   };
 
   const renderEventContent = (eventInfo: EventContentArg) => {
-    return <EventContent isSmallScreen={isSmallScreen} eventInfo={eventInfo} />;
+    return <EventContent isSmallScreen={isSmallScreen} eventInfo={eventInfo} allEvents={userActions} />;
   };
 
   const handleDateRangeSelect = (arg: DateSelectArg) => {
@@ -90,6 +106,13 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
       const calendarApi = arg.view.calendar;
       calendarApi.changeView('timeGridDay', arg.dateStr);
     }
+  };
+
+  const handleDatesSet = (arg: DatesSetArg) => {
+    const { start, end } = arg;
+    setViewStart(start);
+    setViewEnd(end);
+    setCurrentView(arg.view.type); 
   };
 
   function handleEventClick(arg: EventClickArg): void {
@@ -151,7 +174,6 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
         center: 'prev,next',
         right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
       }}
-      timeZone={timeZone}
       views={{
         dayGridMonth: {
           buttonText: 'Month'
@@ -166,7 +188,7 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
           buttonText: 'List'
         }
       }}
-      firstDay={1}
+      firstDay={0}
       defaultTimedEventDuration='00:15'
       slotDuration='00:30'
       nowIndicator={true}
@@ -184,6 +206,7 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
       dayHeaderContent={renderDayHeader}
       eventContent={renderEventContent}
       eventClick={handleEventClick}
+      datesSet={handleDatesSet} 
     />
   )
 }

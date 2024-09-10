@@ -4,7 +4,7 @@ import { Action, CreateUserAction, FrequencyType, UserAction, UserActionFrequenc
 import { CloseOutlined, DeleteOutline } from "@mui/icons-material";
 import { Box, Button, Checkbox, FormControlLabel, FormGroup, Modal, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { addDays, addMonths, addYears, differenceInDays, differenceInMonths, differenceInYears, endOfDay, isEqual } from "date-fns";
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { useCreateUserActionMutation, useDeleteUserActionMutation, useUpdateUserActionMutation } from "@/api/userActions";
 import ActionSelector from "@/components/atoms/ActionSelector";
@@ -30,15 +30,6 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
 
     const [frequency, setFrequency] = useState<UserActionFrequency | undefined>(initialUserAction.frequency);
 
-    useEffect(() => {
-        if (action?.suggested_frequency && !isHabit && !frequency) {
-            setIsHabit(true);
-            setFrequency({
-                ...action.suggested_frequency,
-                end_date: calcMaxEndDate(action.suggested_frequency.frequency_type, startDate)
-            });
-        }
-    }, [action, isHabit, frequency, startDate]);
 
     const [createUserActionMutation] = useCreateUserActionMutation();
     const createUserAction = async (req: CreateUserAction): Promise<UserAction> =>

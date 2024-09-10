@@ -51,7 +51,7 @@ export class UserActionDao {
     return data;
   }
 
-  async getAllFromUser(user_id: string): Promise<UserActionDisplay[]> {
+  async getAllFromUser(user_id: string, start: Date, end: Date): Promise<UserActionDisplay[]> {
     const { data, error } = await supabase
       .from('user_actions')
       .select(`
@@ -61,7 +61,10 @@ export class UserActionDao {
         category
       )
     `)
-      .eq('user_id', user_id);
+      .eq('user_id', user_id)
+      .or(
+        `and(start_at.gte.${start.toISOString()},start_at.lte.${end.toISOString()}),and(end_at.not.is.null,end_at.gte.${start.toISOString()},end_at.lte.${end.toISOString()})`
+      );
 
     if (error) {
       console.error('Error fetching actions:', error.message);

@@ -111,3 +111,9 @@ export const UserActionDisplaySchema = z.object({
     ...UserActionSchema.shape
 });
 export type UserActionDisplay = z.infer<typeof UserActionDisplaySchema>;
+
+export const GetUserActionsSchema = z.object({
+    start: z.coerce.number(),
+    end: z.coerce.number(),
+});
+export type GetUserActionsQuery = z.infer<typeof GetUserActionsSchema>;

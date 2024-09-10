@@ -4,10 +4,10 @@ import { api } from "./index";
 
 export const tasksApiSlice = api.injectEndpoints({
     endpoints: builder => ({
-        getUserActions: builder.query<UserActionDisplay[], void>({
-            query: () => {
-                return "/actions/user";
-            },
+        getUserActions: builder.query<UserActionDisplay[], { start: number, end: number }>({
+            query: ({ start, end }) => ({
+                url: `/actions/user?start=${start}&end=${end}`,
+            }),
             providesTags: ["actions"],
         }),
         createUserAction: builder.mutation<UserAction, CreateUserAction>({
