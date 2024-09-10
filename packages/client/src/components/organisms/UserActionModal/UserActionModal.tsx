@@ -4,7 +4,7 @@ import { Action, CreateUserAction, FrequencyType, UserAction, UserActionFrequenc
 import { CloseOutlined, DeleteOutline } from "@mui/icons-material";
 import { Box, Button, Checkbox, FormControlLabel, FormGroup, Modal, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { addDays, addMonths, addYears, differenceInDays, differenceInMonths, differenceInYears, endOfDay, isEqual } from "date-fns";
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { useCreateUserActionMutation, useDeleteUserActionMutation, useUpdateUserActionMutation } from "@/api/userActions";
 import ActionSelector from "@/components/atoms/ActionSelector";
@@ -54,12 +54,12 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
     }
 
     const [deleteUserActionMutation] = useDeleteUserActionMutation();
-    const deleteUserAction = async (req: number): Promise<void> =>
+    const deleteUserAction = async (req: string): Promise<void> =>
         deleteUserActionMutation(req).unwrap();
 
     const callDeleteUserAction = async () => {
-        if (initialUserAction.id) {
-            await deleteUserAction(initialUserAction.id!);
+        if (initialUserAction.group_id) {
+            await deleteUserAction(initialUserAction.group_id!);
             setIsAddModalOpen(false);
         }
     };

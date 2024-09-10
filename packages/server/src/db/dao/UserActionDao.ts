@@ -4,12 +4,13 @@ import { generateUniqueId } from "@careminder/shared/utils/id";
 
 export class UserActionDao {
   async createBatch(actions: CreateUserAction[], userId: string): Promise<UserAction | null> {
+    const group_id = generateUniqueId();
     const { data, error } = await supabase
       .from('user_actions')
       .insert(actions.map(a => ({
         ...a,
         user_id: userId,
-        group_id: generateUniqueId()
+        group_id
       })))
       .select();
 
