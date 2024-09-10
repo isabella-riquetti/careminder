@@ -165,7 +165,7 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
   const scrollTime = now.getHours() > 1 ? addMinutes(new Date(), -30) : startOfDay(now);
   return (
     <FullCalendar
-      height={"calc(100vh - 24px)"}
+      height={"calc(100vh - 90px)"}
       plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
       initialView="listWeek"
       scrollTime={format(scrollTime, 'p')}

@@ -14,7 +14,7 @@ const AuthWrapper = () => {
   const { isSignedIn } = useAuth();
   if (!isSignedIn) return <RedirectToSignIn />
 
-  return <div className='flex bg-pale-50 h-screen p-3 gap-3'>
+  return <div className='flex flex-col bg-pale-50 h-screen p-3 gap-3'>
     <Menu />
     <Box className="main w-full">
       <Outlet /> 
