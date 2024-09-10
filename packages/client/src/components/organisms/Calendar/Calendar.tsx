@@ -67,12 +67,14 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
     }
 
     const expectedClickDifference = arg.view.type === "dayGridMonth" ? (24*60) : 10;
-    const isSimpleClick = differenceInMinutes(arg.end, arg.start) === expectedClickDifference;
+    const expectedAllDayDifference = 24*60;
+    const isSimpleClick = differenceInMinutes(arg.end, arg.start) === expectedClickDifference
+     || (arg.allDay && differenceInMinutes(arg.end, arg.start) === expectedAllDayDifference);
 
     setUserAction({
       start_at: arg.start,
       end_at: arg.end,
-      all_day: arg.view.type === "dayGridMonth",
+      all_day: arg.allDay,
       type: isSimpleClick ? UserActionType.REMINDER : UserActionType.TASK,
     });
     setIsAddModalOpen(true);
@@ -159,6 +161,7 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
           buttonText: 'List'
         }
       }}
+      firstDay={1}
       defaultTimedEventDuration='00:10'
       slotDuration='00:10'
       nowIndicator={true}

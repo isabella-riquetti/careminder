@@ -30,8 +30,6 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
 
     const [frequency, setFrequency] = useState<UserActionFrequency | undefined>(initialUserAction.frequency);
 
-    useEffect(() => console.log(frequency), [frequency])
-
     useEffect(() => {
         if (action?.suggested_frequency && !isHabit && !frequency) {
             setIsHabit(true);

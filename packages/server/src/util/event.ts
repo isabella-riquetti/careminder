@@ -1,7 +1,7 @@
-import { FrequencyType, OnWeekDay, UserAction, UserActionFrequency } from "@careminder/shared/types";
+import { CreateUserAction, FrequencyType, OnWeekDay, UserAction, UserActionFrequency } from "@careminder/shared/types";
 import { addDays, addMinutes, addMonths, addWeeks, addYears, differenceInMinutes, endOfMonth, getWeekOfMonth, isSameMonth, lastDayOfMonth, setDate, setDay, startOfDay, startOfMonth, startOfWeek } from "date-fns";
 
-export function getReocurrences(userAction: UserAction): UserAction[] {
+export function getReocurrences(userAction: CreateUserAction): CreateUserAction[] {
 
     const allReocurrences = [userAction];
     if (userAction.recurrence && userAction.frequency) {
@@ -51,6 +51,8 @@ function getOnNextDates(frequency: UserActionFrequency, initialDate: Date): Date
     if (frequency.frequency_type === FrequencyType.MONTH) {
         return [getMonthNextDate(frequency, initialDate)];
     }
+
+    // TODO: WEEKLY AND DAILY
 
     return [];
 }

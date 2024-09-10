@@ -18,7 +18,7 @@ export default function EventTimeSelector({ type, start, setStart, end, setEnd, 
     const hasEnd = type !== UserActionType.REMINDER;
     
     const handleStartChange = (newDate: Date) => {
-        if(end && isAfter(newDate, end)) {
+        if(end) {
             const difference = differenceInMinutes(end, start);
             setEnd(addMinutes(newDate, difference));
         }

@@ -59,7 +59,7 @@ export const UserActionFrequencySchema = z.object({
     on_day: z.array(z.date()).optional(),
     on_week: z.array(OnWeekDayEnum).optional(),
     on_month: MontlyFrequencySchema.optional(),
-    end_date: z.date(),
+    end_date: z.coerce.date(),
 });
 export type UserActionFrequency = z.infer<typeof UserActionFrequencySchema>;
 
@@ -82,8 +82,8 @@ export type Action = z.infer<typeof ActionSchema>;
 export const CreateUserActionSchema = z.object({
     action_id: z.number(),
     type: UserActionTypeEnum,
-    start_at: z.date(),
-    end_at: z.date().optional(),
+    start_at: z.coerce.date(),
+    end_at: z.coerce.date().optional(),
     all_day: z.boolean(),
     recurrence: z.boolean(),
     frequency: UserActionFrequencySchema.optional(),

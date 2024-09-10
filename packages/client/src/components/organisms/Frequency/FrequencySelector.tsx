@@ -56,7 +56,8 @@ export default function FrequencySelector({ action, type, frequency, setFrequenc
     }
 
     const getMonthlyFrequencyOptions = useMemo(() => {
-        const weekDay = format(startDate, "eeee");
+        const weekDay = startDate.getDay();
+        const weekDayName = format(startDate, "eeee");
         const firstDayMonth = startOfMonth(startDate);
         const firstWeekEnd = addDays(firstDayMonth, 7);
         const lastDayMonth = endOfMonth(startDate);
@@ -66,9 +67,9 @@ export default function FrequencySelector({ action, type, frequency, setFrequenc
         options.push({ title: `Monthly on ${format(startDate, 'do')} day`, day: startDate.getDate() });
         if (isSameDay(lastDayMonth, startDate)) options.push({ title: "Last day of the month", day: 31 });
 
-        if (startDate < firstWeekEnd) options.push({ title: `Monthly on first ${weekDay}`, weekNumber: currentWeek });
-        else if (startDate > lastWeekStart) options.push({ title: `Monthly on last ${weekDay}`, weekNumber: 6 });
-        else options.push({ title: `Monthly on ${numberToOrdinal(currentWeek)} ${weekDay}`, weekNumber: currentWeek });
+        if (startDate < firstWeekEnd) options.push({ title: `Monthly on first ${weekDayName}`, weekNumber: currentWeek, weekDay: weekDay });
+        else if (startDate > lastWeekStart) options.push({ title: `Monthly on last ${weekDayName}`, weekNumber: 6, weekDay: weekDay });
+        else options.push({ title: `Monthly on ${numberToOrdinal(currentWeek)} ${weekDayName}`, weekNumber: currentWeek, weekDay: weekDay });
 
         return options;
     }, [startDate]);
@@ -90,7 +91,6 @@ export default function FrequencySelector({ action, type, frequency, setFrequenc
             ? getMonthlyFrequencyOptions[0]
             : undefined;
 
-        console.log(on_week)
         setFrequency((prev?: UserActionFrequency) => ({
             ...(prev ?? defaultFrequency),
             frequency_type: frequencyType,
@@ -113,8 +113,6 @@ export default function FrequencySelector({ action, type, frequency, setFrequenc
             setTimeIntervals(dates);
         }
     }, [endDate, frequency?.frequency_type, handleFrequencyChange, startDate, type]);
-
-    useEffect(() => console.log(frequency), [frequency])
 
     const toggleIsHabit = (isHabit: boolean) => {
         if (isHabit) {

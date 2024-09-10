@@ -1,4 +1,4 @@
-import { CreateUserAction, UserAction, UserActionSchema } from '@careminder/shared/types';
+import { CreateUserAction, CreateUserActionSchema, UserAction, UserActionSchema } from '@careminder/shared/types';
 import { Request, Response } from 'express';
 import { BadRequestError, NotFoundError, UnauthorizedError} from '@careminder/shared/error';
 import { UserActionDao } from '../../db/dao/UserActionDao';
@@ -10,11 +10,10 @@ export const createUserAction = async (req: Request<{}, {}, CreateUserAction>, r
     const userId = req.auth?.userId;
     if (!userId) throw new UnauthorizedError();
 
-    const newUserAction = UserActionSchema.safeParse(req.body);
+    const newUserAction = CreateUserActionSchema.safeParse(req.body);
     if (newUserAction.error) throw new BadRequestError('Invalid User Action');
 
     const allReocurrences = getReocurrences(newUserAction.data);
-
     const createdAction = await dao.createBatch(allReocurrences, userId);
     if (!createdAction) throw new NotFoundError("UserAction");
 

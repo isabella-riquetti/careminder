@@ -9,6 +9,7 @@ export const updateUserAction = async (req: Request<{ id: number}, {}, CreateUse
     const userId = req.auth?.userId;
     if (!userId) throw new UnauthorizedError();
 
+    // TODO: Update previous gropu end date + change group id if changing something from the future
     const updatedAction = await dao.update(req.params.id, req.body);
     if (!updatedAction) throw new NotFoundError("UserAction");
 
