@@ -17,6 +17,7 @@
     "@emotion/styled": "^11.13.0",
     "@fullcalendar/core": "^6.1.15",
     "@fullcalendar/interaction": "^6.1.15",
+    "@fullcalendar/multimonth": "^6.1.15",
     "@fullcalendar/react": "^6.1.15",
     "@mui/icons-material": "^5.16.7",
     "@mui/material": "^5.16.7",

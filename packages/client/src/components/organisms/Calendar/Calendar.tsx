@@ -20,6 +20,7 @@ interface CalendarProps {
   setUserAction:  React.Dispatch<React.SetStateAction<Partial<UserAction>>>;
 }
 export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarProps) {
+  const [timeZone, setTimeZone] = useState('local');
   const { data: userActions } = useGetUserActionsQuery();
 
   const parsedEvents = useMemo(() => userActions?.map(u => ({
@@ -37,6 +38,9 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    setTimeZone(userTimeZone);
+
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth <= 768);
     };
@@ -145,8 +149,9 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
       headerToolbar={{
         left: 'title today',
         center: 'prev,next',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
+        right: 'multiMonthYear,dayGridMonth,timeGridWeek,timeGridDay,listWeek',
       }}
+      timeZone={timeZone}
       views={{
         dayGridMonth: {
           buttonText: 'Month'

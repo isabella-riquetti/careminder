@@ -1,6 +1,5 @@
 import { DayHeaderContentArg } from '@fullcalendar/core';
 import cn from "classnames";
-import { toZonedTime } from 'date-fns-tz';
 
 interface CalendarHeaderProps {
   dayHeaderContent: DayHeaderContentArg;
@@ -9,7 +8,6 @@ interface CalendarHeaderProps {
 
 export default function CalendarHeader({ isSmallScreen, dayHeaderContent }: CalendarHeaderProps) {
   const { view: { type }, date, dateStr, text } = dayHeaderContent;
-  const utcDate = toZonedTime(date, 'UTC');
 
   const goToDay = () => {
     const calendarApi = dayHeaderContent.view.calendar;
@@ -22,9 +20,9 @@ export default function CalendarHeader({ isSmallScreen, dayHeaderContent }: Cale
     fontSize = 'small'
   ) => {
     const contents = [
-      (<span key="top" className={isSmallScreen && showDayNumber ? 'w-[25px] h-[25px] rounded-full p-1 bg-pink-200 text-sm' : 'large'}>{utcDate.getDate()}</span>),
+      (<span key="top" className={isSmallScreen && showDayNumber ? 'w-[25px] h-[25px] rounded-full p-1 bg-pink-200 text-sm' : 'large'}>{date.getDate()}</span>),
       (<span key="bottom" className={fontSize}>
-        {utcDate.toLocaleDateString('en-US', { weekday: formatKey })}
+        {date.toLocaleDateString('en-US', { weekday: formatKey })}
       </span>)
 
     ];

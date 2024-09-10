@@ -84,4 +84,18 @@ export class UserActionDao {
 
     return true;
   }
+
+  async deleteByGroup(group_id: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('user_actions')
+      .delete()
+      .eq('group_id', group_id);
+
+    if (error) {
+      console.error('Error deleting action:', error.message);
+      return false;
+    }
+
+    return true;
+  }
 }

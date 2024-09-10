@@ -1,16 +1,16 @@
 import { CreateUserAction, FrequencyType, OnWeekDay, UserAction, UserActionFrequency } from "@careminder/shared/types";
-import { addDays, addMinutes, addMonths, addWeeks, addYears, differenceInMinutes, endOfMonth, getWeekOfMonth, isSameMonth, lastDayOfMonth, setDate, setDay, startOfDay, startOfMonth, startOfWeek } from "date-fns";
+import { add, addDays, addMinutes, addMonths, addWeeks, addYears, differenceInMinutes, endOfMonth, getWeekOfMonth, isSameMonth, lastDayOfMonth, setDate, setDay, startOfDay, startOfMonth, startOfWeek } from "date-fns";
 
 export function getReocurrences(userAction: CreateUserAction): CreateUserAction[] {
-    const allReocurrences = [userAction];
+    const allReocurrences: CreateUserAction[] = [];
 
     if (userAction.recurrence && userAction.frequency) {
-       const minutesDiff = userAction.end_at ? differenceInMinutes(userAction.end_at, userAction.start_at) : 0; 
-        let nextStart = getNextOcurrence(userAction.frequency, userAction.start_at);
-        while(nextStart <= userAction.frequency.end_date) {
+        const minutesDiff = userAction.end_at ? differenceInMinutes(userAction.end_at, userAction.start_at) : 0;
+        let nextStart = userAction.start_at;
+        while (nextStart <= userAction.frequency.end_date) {
             const newDates = getOnNextDates(userAction, nextStart);
             newDates.forEach((newDate) => {
-                if(newDate <= userAction.frequency!.end_date) {
+                if (newDate <= userAction.frequency!.end_date) {
                     allReocurrences.push({
                         ...userAction,
                         start_at: newDate,
@@ -18,7 +18,7 @@ export function getReocurrences(userAction: CreateUserAction): CreateUserAction[
                     })
                 }
             })
-            nextStart = getNextOcurrence(userAction.frequency, nextStart);
+            nextStart = getNextStart(userAction.frequency, nextStart);
         }
     }
 
@@ -26,9 +26,9 @@ export function getReocurrences(userAction: CreateUserAction): CreateUserAction[
     return allReocurrences;
 }
 
-function getNextOcurrence(frequency: UserActionFrequency, currentDate: Date): Date {
+function getNextStart(frequency: UserActionFrequency, currentDate: Date): Date {
     if (frequency.frequency_type === FrequencyType.DAY) {
-        return addDays(currentDate, frequency.frequency);
+        return addDays(startOfDay(currentDate), frequency.frequency);
     }
     if (frequency.frequency_type === FrequencyType.WEEK) {
         return addWeeks(currentDate, frequency.frequency);
@@ -49,16 +49,22 @@ function getOnNextDates(userAction: CreateUserAction, initialDate: Date): Date[]
         return [initialDate];
     }
     if (frequency?.frequency_type === FrequencyType.MONTH) {
-        const time = differenceInMinutes(start_at, startOfDay(start_at));
-        return [addMinutes(getMonthNextDate(frequency, initialDate), time)];
+        const nextDate = getMonthNextDate(frequency, initialDate);
+        return [nextDate];
+    }
+    if (frequency?.frequency_type === FrequencyType.WEEK) {
+        return getNextDaysOfTheWeek(frequency, initialDate);
     }
 
-    // TODO: WEEKLY AND DAILY
+    if (frequency?.frequency_type === FrequencyType.DAY) {
+        return getNextDayTimes(frequency, initialDate);
+    }
 
     return [];
 }
 
-export function getMonthNextDate(frequency: UserActionFrequency, initialDate: Date) {
+export function getMonthNextDate(frequency: UserActionFrequency, initialDate: Date): Date {
+    const time = differenceInMinutes(initialDate, startOfDay(initialDate));
     const montlySettings = frequency.on_month;
     if (montlySettings?.day) {
         const day = montlySettings.day;
@@ -74,14 +80,40 @@ export function getMonthNextDate(frequency: UserActionFrequency, initialDate: Da
         let firstOccurrence = setDay(firstDayOfMonth, montlySettings.weekDay, { weekStartsOn: 0 });
         if (firstOccurrence < firstDayOfMonth) firstOccurrence = addDays(firstOccurrence, 7);
 
-        let lastOcurrence = setDay(lastDayOfMonth, montlySettings.weekDay, { weekStartsOn: 0 }); 
+        let lastOcurrence = setDay(lastDayOfMonth, montlySettings.weekDay, { weekStartsOn: 0 });
         if (lastOcurrence > lastDayOfMonth) lastOcurrence = addDays(lastOcurrence, -7);
 
-        const targetDate = addDays(firstOccurrence, weeks * 7);
-        if (targetDate > lastOcurrence) return lastOcurrence;
-        return targetDate;
+        const targetDate = addWeeks(firstOccurrence, weeks);
+        if (targetDate > lastOcurrence) return addMinutes(lastOcurrence, time);
+        return addMinutes(targetDate, time);;
     }
 
 
     return initialDate;
+}
+
+export function getNextDaysOfTheWeek(frequency: UserActionFrequency, initialDate: Date): Date[] {
+    const validWeekDays = frequency?.on_week;
+    const endDate = addWeeks(initialDate, 1);
+    let newDate = initialDate;
+    const newDates: Date[] = [];
+    while (newDate < endDate) {
+        if (validWeekDays?.includes(newDate.getDay())) newDates.push(newDate);
+        newDate = addDays(newDate, 1);
+    }
+    return newDates;
+}
+
+export function getNextDayTimes(frequency: UserActionFrequency, initialDate: Date): Date[] {
+    const validTimes = frequency?.on_day;
+    if(!validTimes) return [initialDate];
+
+    let newDate = startOfDay(initialDate);
+    const newDates: Date[] = validTimes?.map(v => {
+        return add(newDate, {
+            hours: v.getHours(),
+            minutes: v.getMinutes(),
+        });
+    })
+    return newDates.filter(f => f >= initialDate);
 }

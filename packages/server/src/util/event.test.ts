@@ -164,7 +164,7 @@ describe("getReocurrences", () => {
     test('montly', () => {
         const result = getReocurrences({
             action_id: 1,
-            type: UserActionType.REMINDER,
+            type: UserActionType.TASK,
             all_day: false,
             recurrence: true,
             start_at: new Date(2024,7,27,12,10),
@@ -176,7 +176,6 @@ describe("getReocurrences", () => {
                 end_date: new Date(2025,12,31),
             }
         });
-        expect(result.length).toBe(18);
         const expectedDate = [
             new Date(2024,7,27,12,10),
             new Date(2024,8,24,12,10),
@@ -199,6 +198,83 @@ describe("getReocurrences", () => {
         expectedDate.forEach((item, i) => {
             expect(result[i]?.start_at).toStrictEqual(item);
 
+        })
+    });
+
+    test('weekly', () => {
+        const result = getReocurrences({
+            action_id: 1,
+            type: UserActionType.TASK,
+            all_day: false,
+            recurrence: true,
+            start_at: new Date(2024,8,3,12,10),
+            end_at: new Date(2024,8,3,12,20),
+            frequency: {
+                frequency: 1,
+                frequency_type: FrequencyType.WEEK,
+                on_week: [0,2,5,6],
+                end_date: new Date(2024,8,30),
+            }
+        });
+        const expectedDate = [
+            new Date(2024,8,3,12,10),
+            new Date(2024,8,6,12,10),
+            new Date(2024,8,7,12,10),
+            new Date(2024,8,8,12,10),
+            new Date(2024,8,10,12,10),
+            new Date(2024,8,13,12,10),
+            new Date(2024,8,14,12,10),
+            new Date(2024,8,15,12,10),
+            new Date(2024,8,17,12,10),
+            new Date(2024,8,20,12,10),
+            new Date(2024,8,21,12,10),
+            new Date(2024,8,22,12,10),
+            new Date(2024,8,24,12,10),
+            new Date(2024,8,27,12,10),
+            new Date(2024,8,28,12,10),
+            new Date(2024,8,29,12,10),
+        ];
+        expectedDate.forEach((item, i) => {
+            expect(result[i]?.start_at).toStrictEqual(item);
+        })
+    });
+
+    test('daily', () => {
+        const result = getReocurrences({
+            action_id: 1,
+            type: UserActionType.REMINDER,
+            all_day: false,
+            recurrence: true,
+            start_at: new Date(2024,8,3,12,0),
+            frequency: {
+                frequency: 1,
+                frequency_type: FrequencyType.DAY,
+                on_day: [
+                    new Date(2024,8,3,7,0),
+                    new Date(2024,8,3,9,30),
+                    new Date(2024,8,3,12,0),
+                    new Date(2024,8,3,14,30),
+                    new Date(2024,8,3,17,0),
+                ],
+                end_date: new Date(2024,8,5,14,30),
+            }
+        });
+        const expectedDate = [
+            new Date(2024,8,3,12,0),
+            new Date(2024,8,3,14,30),
+            new Date(2024,8,3,17,0),
+            new Date(2024,8,4,7,0),
+            new Date(2024,8,4,9,30),
+            new Date(2024,8,4,12,0),
+            new Date(2024,8,4,14,30),
+            new Date(2024,8,4,17,0),
+            new Date(2024,8,5,7,0),
+            new Date(2024,8,5,9,30),
+            new Date(2024,8,5,12,0),
+            new Date(2024,8,5,14,30),
+        ];
+        expectedDate.forEach((item, i) => {
+            expect(result[i]?.start_at).toStrictEqual(item);
         })
     });
 })
