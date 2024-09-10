@@ -49,7 +49,7 @@ export const MontlyFrequencySchema = z.object({
     title: z.string(),
     day: z.number().optional(),
     weekNumber: z.number().optional(),
-    weekDay: z.number().optional(),
+    weekDay: OnWeekDayEnum.optional(),
 });
 export type MontlyFrequency = z.infer<typeof MontlyFrequencySchema>;
 
@@ -59,8 +59,7 @@ export const UserActionFrequencySchema = z.object({
     on_day: z.array(z.date()).optional(),
     on_week: z.array(OnWeekDayEnum).optional(),
     on_month: MontlyFrequencySchema.optional(),
-    on_times: z.number().optional(),
-    endDate: z.date(),
+    end_date: z.date(),
 });
 export type UserActionFrequency = z.infer<typeof UserActionFrequencySchema>;
 

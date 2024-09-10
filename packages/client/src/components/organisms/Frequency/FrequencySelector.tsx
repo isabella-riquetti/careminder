@@ -28,7 +28,7 @@ export default function FrequencySelector({ action, type, frequency, setFrequenc
     const defaultFrequency: UserActionFrequency = useMemo(() => ({
         frequency: 1,
         frequency_type: FrequencyType.DAY,
-        endDate: addYears(startDate, 1)
+        end_date: addYears(startDate, 1)
     }), []);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -122,12 +122,12 @@ export default function FrequencySelector({ action, type, frequency, setFrequenc
                     frequency: 1,
                     frequency_type: FrequencyType.WEEK,
                     on_week: [startDate.getDay()],
-                    endDate: addYears(startDate, 1)
+                    end_date: addYears(startDate, 1)
                 });
             } else if (action?.suggested_frequency) {
                 setFrequency({
                     ...action.suggested_frequency,
-                    endDate: addYears(startDate, 1)
+                    end_date: addYears(startDate, 1)
                 });
             }
         }
@@ -228,8 +228,8 @@ export default function FrequencySelector({ action, type, frequency, setFrequenc
                 }
                 <span className="text-pale-400 self-start">Until: </span>
                 <FocusDatePicker
-                    value={frequency.endDate}
-                    setValue={(val: Date) => handleFrequencyChange('endDate', val)}
+                    value={frequency.end_date}
+                    setValue={(val: Date) => handleFrequencyChange('end_date', val)}
                 />
             </div>}
         </div>

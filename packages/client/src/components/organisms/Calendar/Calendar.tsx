@@ -100,7 +100,7 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
       end_at: end ?? start,
       frequency: frequency ? {
         ...frequency,
-        endDate: new Date(frequency.endDate)
+        end_date: new Date(frequency.end_date)
       } : {}
    });
     setTimeout(() => setIsAddModalOpen(true), 200);

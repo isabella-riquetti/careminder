@@ -36,7 +36,7 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
             setIsHabit(true);
             setFrequency({
                 ...action.suggested_frequency,
-                endDate: addYears(startDate, 1)
+                end_date: addYears(startDate, 1)
             });
         }
     }, [action, isHabit, frequency, startDate]);
@@ -112,21 +112,21 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
             setFrequency({
                 frequency: 1,
                 frequency_type: FrequencyType.DAY,
-                endDate: addYears(startDate, 1)
+                end_date: addYears(startDate, 1)
             })
         }
     };
     const disabledSave = useMemo(() => !startDate || !endDate || !action, [startDate, endDate, action]);
     function handleStartDateChange(value: Date): void {
-        if(isHabit && frequency?.endDate) {
-            const yearsAppart = differenceInYears(frequency?.endDate, startDate);
-            const monthsAppart = differenceInMonths(frequency?.endDate, startDate);
-            const daysAppart = differenceInDays(frequency?.endDate, startDate);
+        if(isHabit && frequency?.end_date) {
+            const yearsAppart = differenceInYears(frequency?.end_date, startDate);
+            const monthsAppart = differenceInMonths(frequency?.end_date, startDate);
+            const daysAppart = differenceInDays(frequency?.end_date, startDate);
             setFrequency(prev => {
                 if(!prev) return undefined;
                 return {
                     ...prev,
-                    endDate: yearsAppart > 0 && yearsAppart % 1 === 0
+                    end_date: yearsAppart > 0 && yearsAppart % 1 === 0
                         ? addYears(value, yearsAppart)
                         : monthsAppart > 0 && monthsAppart % 1 === 0
                             ? addMonths(value, monthsAppart)
