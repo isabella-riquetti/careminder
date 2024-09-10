@@ -135,7 +135,6 @@ export default function FrequencySelector({ action, frequency, setFrequency, isH
     
     useEffect(() => {
         if (action?.suggested_frequency && !isHabit && !frequency) {
-            console.log('A->', action, isHabit, frequency)
             setIsHabit(true);
             setFrequency({
                 ...action.suggested_frequency,
