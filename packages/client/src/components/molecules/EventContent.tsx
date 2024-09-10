@@ -76,7 +76,6 @@ export default function EventContent({ isSmallScreen, eventInfo, allEvents }: Ev
       </div>);
   }
 
-  console.log(type)
   switch (type) {
     case 'dayGridMonth':
       return renderMonthView();
