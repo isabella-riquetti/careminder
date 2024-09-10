@@ -8,9 +8,9 @@ import FocusTimePicker from "@/components/atoms/FocusTimePicker";
 interface EventTimeSelectorProps {
     type: UserActionType;
     start: Date;
-    setStart: React.Dispatch<React.SetStateAction<Date>>;
+    setStart: (value: Date) => void;
     end?: Date;
-    setEnd: React.Dispatch<React.SetStateAction<Date | undefined>>;
+    setEnd: (value: Date) => void;
     allDay: boolean;
 }
 

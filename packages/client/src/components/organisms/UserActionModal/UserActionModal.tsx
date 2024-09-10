@@ -3,7 +3,7 @@ import "./UserActionModal.scss";
 import { Action, CreateUserAction, FrequencyType, UserAction, UserActionFrequency, UserActionType } from '@careminder/shared/types';
 import { CloseOutlined, DeleteOutline } from "@mui/icons-material";
 import { Box, Button, Checkbox, FormControlLabel, FormGroup, Modal, ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { endOfDay, isEqual } from "date-fns";
+import { addDays, addMonths, addYears, differenceInDays, differenceInMonths, differenceInYears, endOfDay, isEqual } from "date-fns";
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { useCreateUserActionMutation, useDeleteUserActionMutation, useUpdateUserActionMutation } from "@/api/userActions";
@@ -27,14 +27,19 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
     const [startDate, setStartDate] = useState<Date>(initialUserAction.start_at ?? new Date());
     const [endDate, setEndDate] = useState<Date | undefined>(initialUserAction.end_at);
 
-    const [frequency, setFrequency] = useState<UserActionFrequency>();
+    const [frequency, setFrequency] = useState<UserActionFrequency | undefined>(initialUserAction.frequency);
+
+    useEffect(() => console.log(frequency), [frequency])
 
     useEffect(() => {
         if (action?.suggested_frequency && !isHabit && !frequency) {
             setIsHabit(true);
-            setFrequency(action.suggested_frequency);
+            setFrequency({
+                ...action.suggested_frequency,
+                endDate: addYears(startDate, 1)
+            });
         }
-    }, [action, isHabit, frequency]);
+    }, [action, isHabit, frequency, startDate]);
 
     const [createUserActionMutation] = useCreateUserActionMutation();
     const createUserAction = async (req: CreateUserAction): Promise<UserAction> =>
@@ -107,10 +112,31 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
             setFrequency({
                 frequency: 1,
                 frequency_type: FrequencyType.DAY,
+                endDate: addYears(startDate, 1)
             })
         }
     };
     const disabledSave = useMemo(() => !startDate || !endDate || !action, [startDate, endDate, action]);
+    function handleStartDateChange(value: Date): void {
+        if(isHabit && frequency?.endDate) {
+            const yearsAppart = differenceInYears(frequency?.endDate, startDate);
+            const monthsAppart = differenceInMonths(frequency?.endDate, startDate);
+            const daysAppart = differenceInDays(frequency?.endDate, startDate);
+            setFrequency(prev => {
+                if(!prev) return undefined;
+                return {
+                    ...prev,
+                    endDate: yearsAppart > 0 && yearsAppart % 1 === 0
+                        ? addYears(value, yearsAppart)
+                        : monthsAppart > 0 && monthsAppart % 1 === 0
+                            ? addMonths(value, monthsAppart)
+                            : addDays(value, daysAppart),
+                }
+            })
+        }
+        setStartDate(value);
+    }
+
     return (
         <Modal
             open={true}
@@ -160,7 +186,7 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
                             <EventTimeSelector
                                 type={type}
                                 start={startDate}
-                                setStart={setStartDate}
+                                setStart={handleStartDateChange}
                                 end={endDate}
                                 setEnd={setEndDate}
                                 allDay={isAllDay}

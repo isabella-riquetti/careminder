@@ -60,8 +60,7 @@ export const UserActionFrequencySchema = z.object({
     on_week: z.array(OnWeekDayEnum).optional(),
     on_month: MontlyFrequencySchema.optional(),
     on_times: z.number().optional(),
-    for: z.number().optional(),
-    until: z.date().optional(),
+    endDate: z.date(),
 });
 export type UserActionFrequency = z.infer<typeof UserActionFrequencySchema>;
 

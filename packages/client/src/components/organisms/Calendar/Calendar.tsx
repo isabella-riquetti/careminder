@@ -91,10 +91,17 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
 
     if(!start) return;
 
+    const props = arg.event.extendedProps;
+    // eslint-disable-next-line react/prop-types
+    const frequency = props?.["frequency"];
     setUserAction({
-      ...arg.event.extendedProps,
+      ...props,
       start_at: start,
       end_at: end ?? start,
+      frequency: frequency ? {
+        ...frequency,
+        endDate: new Date(frequency.endDate)
+      } : {}
    });
     setTimeout(() => setIsAddModalOpen(true), 200);
   }
