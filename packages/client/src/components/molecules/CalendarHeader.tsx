@@ -28,9 +28,9 @@ export default function CalendarHeader({ isSmallScreen, dayHeaderContent }: Cale
       </span>)
 
     ];
-    const contentOrders = isSmallScreen && showDayNumber ? contents.reverse() : contents;
+    const contentOrders = isSmallScreen && showDayNumber ? contents.toReversed() : contents;
     return (
-      <div onClick={goToDay} className={cn("flex flex-col curor-pointer text-pale-400", {
+      <div role="tab" onClick={goToDay} className={cn("flex flex-col curor-pointer text-pale-400", {
         "text-pale-400": isSmallScreen
       })}>
         {showDayNumber && contentOrders[0]}
@@ -43,7 +43,7 @@ export default function CalendarHeader({ isSmallScreen, dayHeaderContent }: Cale
       return renderDateInfo(isSmallScreen ? 'narrow' : 'short', false, 'medium');
     case 'timeGridWeek':
     case 'timeGridDay':
-      return renderDateInfo(isSmallScreen ? 'short' : 'short', true);
+      return renderDateInfo('short', true);
     default:
       return text;
   }

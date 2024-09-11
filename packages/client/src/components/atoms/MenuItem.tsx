@@ -3,19 +3,17 @@ import { FunctionComponent, ReactNode, SVGProps } from 'react';
 interface MenuItemProps {
     href?: string;
     text?: string;
-    mobileText?: string;
     children?: ReactNode;
     icon?: FunctionComponent<SVGProps<SVGSVGElement> & { title?: string }>;
     className?: string;
 }
 
-function MenuItem({ href, text, mobileText, icon: Icon, children, className }: MenuItemProps) {
+function MenuItem({ href, text, icon: Icon, children, className }: MenuItemProps) {
     const content = (
         <>
             {Icon && <Icon className='w-[30px] h-[30px]' />}
             {children}
-            {text && <div className='truncate max-w-full hidden md:block'>{text}</div>}
-            {(mobileText || text) && <div className='truncate max-w-full block md:hidden'>{mobileText ?? text}</div>}
+            {text && <div className='truncate max-w-full'>{text}</div>}
         </>
     );
 

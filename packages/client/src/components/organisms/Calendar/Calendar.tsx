@@ -167,7 +167,7 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
     <FullCalendar
       height={"calc(100vh - 90px)"}
       plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
-      initialView="listWeek"
+      initialView="dayGridMonth"
       scrollTime={format(scrollTime, 'p')}
       fixedWeekCount={false}
       headerToolbar={{
