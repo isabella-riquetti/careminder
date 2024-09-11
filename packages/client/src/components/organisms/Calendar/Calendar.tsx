@@ -12,6 +12,7 @@ import { uniqWith } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { useGetUserActionsQuery, useUpdateUserActionMutation } from '@/api/userActions';
+import SpinnerOverlay from '@/components/atoms/SpinnerOverlay/SpinnerOverlay';
 import CalendarHeader from '@/components/molecules/CalendarHeader';
 import EventContent from '@/components/molecules/EventContent';
 import { getEventColor } from '@/utils/category';
@@ -26,7 +27,7 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
   const [viewEnd, setViewEnd] = useState<Date | null>(null);
   const [currentView, setCurrentView] = useState<string>('timeGridDay');
 
-  const { data: userActions } = useGetUserActionsQuery({
+  const { data: userActions, isLoading, isFetching } = useGetUserActionsQuery({
     start: (viewStart ?? startOfDay(new Date())).getTime(),
     end: (viewEnd ?? endOfDay(new Date())).getTime()
   }, {
@@ -164,50 +165,53 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
   const now = new Date();
   const scrollTime = now.getHours() > 1 ? addMinutes(new Date(), -30) : startOfDay(now);
   return (
-    <FullCalendar
-      height={"calc(100vh - 90px)"}
-      plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
-      initialView="dayGridMonth"
-      scrollTime={format(scrollTime, 'p')}
-      fixedWeekCount={false}
-      headerToolbar={{
-        left: 'title today',
-        center: 'prev,next',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
-      }}
-      views={{
-        dayGridMonth: {
-          buttonText: 'Month'
-        },
-        timeGridWeek: {
-          buttonText: 'Week'
-        },
-        timeGridDay: {
-          buttonText: 'Day'
-        },
-        listWeek: {
-          buttonText: 'List'
-        }
-      }}
-      firstDay={0}
-      defaultTimedEventDuration='00:15'
-      slotDuration='00:30'
-      nowIndicator={true}
-      selectable={true}
-      editable={true}
-      droppable={true}
-      eventStartEditable={true}
-      eventResizableFromStart={true}
-      eventDurationEditable={true}
-      events={parsedEvents}
-      dateClick={handleDateClick}
-      eventDrop={handleEventDrop}
-      eventResize={handleEventResize}
-      select={handleDateRangeSelect}
-      dayHeaderContent={renderDayHeader}
-      eventContent={renderEventContent}
-      eventClick={handleEventClick}
-      datesSet={handleDatesSet}
-    />
+    <>
+      <SpinnerOverlay loading={isLoading || isFetching} />
+      <FullCalendar
+        height={"calc(100vh - 90px)"}
+        plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
+        initialView="dayGridMonth"
+        scrollTime={format(scrollTime, 'p')}
+        fixedWeekCount={false}
+        headerToolbar={{
+          left: 'title today',
+          center: 'prev,next',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
+        }}
+        views={{
+          dayGridMonth: {
+            buttonText: 'Month'
+          },
+          timeGridWeek: {
+            buttonText: 'Week'
+          },
+          timeGridDay: {
+            buttonText: 'Day'
+          },
+          listWeek: {
+            buttonText: 'List'
+          }
+        }}
+        firstDay={0}
+        defaultTimedEventDuration='00:15'
+        slotDuration='00:30'
+        nowIndicator={true}
+        selectable={true}
+        editable={true}
+        droppable={true}
+        eventStartEditable={true}
+        eventResizableFromStart={true}
+        eventDurationEditable={true}
+        events={isLoading || isFetching ? [] : parsedEvents}
+        dateClick={handleDateClick}
+        eventDrop={handleEventDrop}
+        eventResize={handleEventResize}
+        select={handleDateRangeSelect}
+        dayHeaderContent={renderDayHeader}
+        eventContent={renderEventContent}
+        eventClick={handleEventClick}
+        datesSet={handleDatesSet}
+      />
+    </>
   )
 }

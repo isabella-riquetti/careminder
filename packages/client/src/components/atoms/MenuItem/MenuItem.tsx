@@ -8,25 +8,19 @@ interface MenuItemProps {
     className?: string;
 }
 
-function MenuItem({ href, text, icon: Icon, children, className }: MenuItemProps) {
-    const content = (
-        <>
-            {Icon && <Icon className='w-[30px] h-[30px]' />}
-            {children}
-            {text && <div className='truncate max-w-full'>{text}</div>}
-        </>
-    );
-
+const MenuItem: FunctionComponent<MenuItemProps> = ({ href, text, icon: Icon, children, className }) => {
     const Wrapper = href ? 'a' : 'div';
     const wrapperProps = href ? { href } : {};
 
     return (
-        <div className={`${className ?? ""}`}>
+        <div className={className ?? ""}>
             <Wrapper {...wrapperProps} className="flex flex-row items-center px-2 gap-3">
-                {content}
+                {Icon && <Icon className="w-8 h-8" />}
+                {children}
+                {text && <div className="truncate max-w-full">{text}</div>}
             </Wrapper>
         </div>
     );
-}
+};
 
 export default MenuItem;

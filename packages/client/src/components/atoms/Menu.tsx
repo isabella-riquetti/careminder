@@ -2,7 +2,7 @@ import { UserButton } from '@clerk/clerk-react';
 import { Box } from '@mui/material';
 
 import Icon from "../../assets/icons/sidebar/icon.svg?react";
-import MenuItem from './MenuItem';
+import MenuItem from './MenuItem/MenuItem';
 
 function Menu() {
     return (
