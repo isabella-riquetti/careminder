@@ -3,7 +3,7 @@ import { Action, FrequencyType, MontlyFrequency, OnWeekDay, UserActionFrequency 
 import { Button, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import cn from 'classnames';
 import { addDays, addMinutes, endOfDay, endOfMonth, format, getWeekOfMonth, isBefore, isSameDay, startOfMonth, startOfWeek } from 'date-fns';
-import { get, isEqual, remove, set as setObj } from "lodash";
+import { filter, get, isEqual, remove, set as setObj, uniqBy } from "lodash";
 import pluralize from "pluralize";
 import { InputNumber, InputNumberValueChangeEvent } from "primereact/inputnumber";
 import React, { useCallback, useEffect, useMemo } from 'react';
@@ -39,9 +39,14 @@ export default function FrequencySelector({ action, frequency, setFrequency, isH
         });
     }, [defaultFrequency, setFrequency]);
 
-    const hasOnFrequency = (path: string, value: OnWeekDay | Date) => {
-        const curr: (OnWeekDay | Date)[] = get(frequency, path, []);
+    const hasOnWeeklyFrequency = (value: OnWeekDay) => {
+        const curr: OnWeekDay[] = get(frequency, 'on_week', []);
         return curr?.includes(value);
+    }
+
+    const hasOnDailyFrequency = (value: Date) => {
+        const curr: Date[] = get(frequency, 'on_day', []);
+        return curr?.some(v => isEqual(v, value));
     }
 
     const toggleOnFrequency = (path: string, value: OnWeekDay | Date) => {
@@ -113,6 +118,15 @@ export default function FrequencySelector({ action, frequency, setFrequency, isH
         return dates;
     }, [frequency?.frequency_type, startDate]);
 
+    useEffect(() => {
+        if (frequency?.frequency_type === FrequencyType.DAY) {
+            const newOnDay = uniqBy([startDate, ...filter(frequency.on_day, (onDay) =>
+                timeIntervals.some(timeInterval => isEqual(onDay, timeInterval))
+            )], (v) => v.toString());
+            if (!isEqual(newOnDay, frequency.on_day)) handleFrequencyChange('on_day', newOnDay)
+        }
+    }, [startDate]);
+
     const handleToggleIsHabit = (isHabit: boolean) => {
         if (isHabit) {
             if (!frequency) {
@@ -132,7 +146,7 @@ export default function FrequencySelector({ action, frequency, setFrequency, isH
         }
         setIsHabit(isHabit);
     }
-    
+
     useEffect(() => {
         if (action?.suggested_frequency && !isHabit && !frequency) {
             setIsHabit(true);
@@ -180,7 +194,7 @@ export default function FrequencySelector({ action, frequency, setFrequency, isH
                                     disabled={t === startDate}
                                     className="cursor-default disabled:bg-pink-400 disabled:text-white w-[80px]"
                                     key={t.toString()}
-                                    variant={hasOnFrequency('on_day', t) ? 'contained' : 'outlined'}
+                                    variant={hasOnDailyFrequency(t) ? 'contained' : 'outlined'}
                                     onClick={() => toggleOnFrequency('on_day', t)}
                                 >
                                     {format(t, 'hh:mm a')}
@@ -208,7 +222,7 @@ export default function FrequencySelector({ action, frequency, setFrequency, isH
                                     }}
                                     key={i.toString()}
                                     className={cn('rounded-full border border-pale-400 min-w-0 w-6 h-6 justify-center items-center flex', {
-                                        'bg-pink-500 text-white': hasOnFrequency('on_week', i as OnWeekDay)
+                                        'bg-pink-500 text-white': hasOnWeeklyFrequency(i as OnWeekDay)
                                     })}
                                     onClick={() => toggleOnFrequency('on_week', i as OnWeekDay)} >
                                     <span>{format(addDays(startOfWeek(new Date(), { weekStartsOn: 0 }), Number(i)), 'EEEEE')}</span>

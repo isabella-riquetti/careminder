@@ -5,6 +5,7 @@ import { CloseOutlined, DeleteOutline } from "@mui/icons-material";
 import { Box, Button, Checkbox, FormControlLabel, FormGroup, Modal, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { addDays, addMonths, addYears, differenceInDays, differenceInMonths, differenceInYears, endOfDay, isEqual } from "date-fns";
 import React, { useMemo, useState } from 'react';
+import { toast } from "react-toastify";
 
 import { useCreateUserActionMutation, useDeleteUserActionMutation, useUpdateUserActionMutation } from "@/api/userActions";
 import ActionSelector from "@/components/atoms/ActionSelector";
@@ -39,7 +40,7 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
         if (!startDate) return;
 
         if (startDate && action?.id) {
-            await createUserAction({
+            const createPromise = createUserAction({
                 type: type,
                 start_at: startDate,
                 end_at: type === UserActionType.TASK && endDate ? endDate : undefined,
@@ -48,7 +49,15 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
                 frequency: frequency,
                 recurrence: isHabit
             });
-
+            toast.promise(
+                createPromise,
+                {
+                    pending: 'Creating your reminder',
+                    success: 'Reminder created',
+                    error: 'Issue creating reminder'
+                }
+            )
+            await createPromise;
             setIsAddModalOpen(false);
         }
     }
@@ -59,7 +68,16 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
 
     const callDeleteUserAction = async () => {
         if (initialUserAction.group_id) {
-            await deleteUserAction(initialUserAction.group_id!);
+            const createPromise = deleteUserAction(initialUserAction.group_id!);
+            toast.promise(
+                createPromise,
+                {
+                    pending: 'Deleting your reminder',
+                    success: 'Reminder updated',
+                    error: 'Issue removing reminder'
+                }
+            )
+            await createPromise;
             setIsAddModalOpen(false);
         }
     };
@@ -72,13 +90,22 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
         if (!startDate) return;
 
         if (startDate && action?.id && initialUserAction.id) {
-            await updateUserAction({
+            const createPromise = updateUserAction({
                 id: initialUserAction.id,
                 start_at: startDate,
                 end_at: type === UserActionType.TASK ? endDate : undefined,
                 action_id: action.id,
                 all_day: isAllDay
             });
+            toast.promise(
+                createPromise,
+                {
+                    pending: 'Updating your reminder',
+                    success: 'Reminder updated',
+                    error: 'Issue updating reminder'
+                }
+            )
+            await createPromise;
             setIsAddModalOpen(false);
         }
     };
@@ -108,12 +135,12 @@ export default function UserActionModal({ setIsAddModalOpen, initialUserAction }
     };
 
     function handleStartDateChange(value: Date): void {
-        if(isHabit && frequency?.end_date) {
+        if (isHabit && frequency?.end_date) {
             const yearsAppart = differenceInYears(frequency?.end_date, startDate);
             const monthsAppart = differenceInMonths(frequency?.end_date, startDate);
             const daysAppart = differenceInDays(frequency?.end_date, startDate);
             setFrequency(prev => {
-                if(!prev) return undefined;
+                if (!prev) return undefined;
                 return {
                     ...prev,
                     end_date: yearsAppart > 0 && yearsAppart % 1 === 0
