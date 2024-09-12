@@ -1,14 +1,17 @@
-import { CreateUserAction, CreateUserActionSchema, UserAction, UserActionSchema } from '@careminder/shared/types';
+import { CreateUserAction, CreateUserActionSchema, UserAction } from '@careminder/shared/types';
 import { Request, Response } from 'express';
-import { BadRequestError, NotFoundError, UnauthorizedError} from '@careminder/shared/error';
+import { BadRequestError, NotFoundError, TooManyRequestsError, UnauthorizedError } from '@careminder/shared/error';
 import { UserActionDao } from '../../db/dao/UserActionDao';
 import { getReocurrences } from '../../../src/util/event';
 
 export const createUserAction = async (req: Request<{}, {}, CreateUserAction>, res: Response<UserAction>) => {
     const dao = new UserActionDao();
-    
+
     const userId = req.auth?.userId;
     if (!userId) throw new UnauthorizedError();
+
+    const recentlyCreated = await dao.getRecentUniqueGroupCount(userId);
+    if (recentlyCreated > 10 || userId) throw new TooManyRequestsError("new reminders");
 
     const newUserAction = CreateUserActionSchema.safeParse(req.body);
     if (newUserAction.error) throw new BadRequestError('Invalid User Action');

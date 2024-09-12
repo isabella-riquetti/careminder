@@ -3,6 +3,7 @@ import cors from 'cors';
 import { createActionsEndpoints } from './src/endpoints/actions';
 import { createUserActionsEndpoints } from './src/endpoints/userActions';
 import { ClerkExpressRequireAuth } from '@clerk/clerk-sdk-node';
+import errorHandler from './src/handlers/errorHandler';
 
 const app = express();
 const port = 3000;
@@ -33,6 +34,8 @@ app.use(ClerkExpressRequireAuth());
 
 createActionsEndpoints(app);
 createUserActionsEndpoints(app);
+
+app.use(errorHandler);
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);

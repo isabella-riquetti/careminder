@@ -102,4 +102,27 @@ export class UserActionDao {
 
     return true;
   }
+
+  async getRecentUniqueGroupCount(userId: string): Promise<number> {
+    const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+  
+    const { data, error } = await supabase
+      .from('user_actions')
+      .select('group_id')
+      .eq('user_id', userId)
+      .gt('created_at', tenMinutesAgo)
+      .neq('group_id', null);
+  
+    if (error) {
+      console.error('Error fetching data:', error);
+      return 0;
+    }
+  
+    if (!data) {
+      return 0;
+    }
+  
+    const uniqueGroupIds = new Set(data.map((item: { group_id: any }) => item.group_id));
+    return uniqueGroupIds.size;
+  }
 }
