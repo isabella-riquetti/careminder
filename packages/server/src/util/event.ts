@@ -1,5 +1,5 @@
 import { CreateUserAction, FrequencyType, UserActionFrequency } from "@careminder/shared/types";
-import { add, addDays, addMinutes, addMonths, addWeeks, addYears, differenceInMinutes, endOfMonth, lastDayOfMonth, setDate, setDay, startOfDay, startOfMonth } from "date-fns";
+import { add, addDays, addMinutes, addMonths, addWeeks, addYears, differenceInMinutes, endOfDay, endOfMonth, lastDayOfMonth, setDate, setDay, startOfDay, startOfMonth } from "date-fns";
 
 export function getReocurrences(userAction: CreateUserAction): CreateUserAction[] {
     const allReocurrences: CreateUserAction[] = [];
@@ -7,10 +7,11 @@ export function getReocurrences(userAction: CreateUserAction): CreateUserAction[
     if (userAction.recurrence && userAction.frequency) {
         const minutesDiff = userAction.end_at ? differenceInMinutes(userAction.end_at, userAction.start_at) : 0;
         let nextStart = userAction.start_at;
-        while (nextStart <= userAction.frequency.end_date) {
+        const end = endOfDay(userAction.frequency.end_date);
+        while (nextStart <= end) {
             const newDates = getOnNextDates(userAction, nextStart);
             newDates.forEach((newDate) => {
-                if (newDate <= userAction.frequency!.end_date) {
+                if (newDate <= end) {
                     allReocurrences.push({
                         ...userAction,
                         start_at: newDate,

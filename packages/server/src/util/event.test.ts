@@ -1,4 +1,4 @@
-import { getNextDayOfTheMonth, getReocurrences } from "./event";
+import { getNextDayOfTheMonth, getNextDaysOfTheWeek, getReocurrences } from "./event";
 import { FrequencyType, OnWeekDay, UserActionType } from "@careminder/shared/types";
 import { last } from "lodash";
 
@@ -148,8 +148,51 @@ describe('getNextDaysOfTheWeek', () => {
         end_date: new Date(2024, 11, 31),
     };
     
-    test('sunday - multi string', () => {
+    test('thursday - multi days of the week', () => {
+        const result = getNextDaysOfTheWeek({
+            ...baseMonthly,
+            on_week: [0,2,3,5],
+            end_date: new Date(2024, 2, 6),
 
+        }, new Date(2024,1,22,13,45));
+        expect(result).toStrictEqual([
+            new Date(2024,1,23,13,45),
+            new Date(2024,1,25,13,45),
+            new Date(2024,1,27,13,45),
+            new Date(2024,1,28,13,45),
+        ]);
+    });
+
+    test('sunday - single day of the week', () => {
+        const result = getNextDaysOfTheWeek({
+            ...baseMonthly,
+            on_week: [5],
+            end_date: new Date(2024, 2, 6),
+
+        }, new Date(2024,1,25,13,45));
+
+        expect(result).toStrictEqual([
+            new Date(2024,2,1,13,45),
+        ]);
+    });
+
+    test('saturday - all days of the week', () => {
+        const result = getNextDaysOfTheWeek({
+            ...baseMonthly,
+            on_week: [0,1,2,3,4,5,6],
+            end_date: new Date(2024, 2, 6),
+
+        }, new Date(2024,1,24,13,45));
+
+        expect(result).toStrictEqual([
+            new Date(2024,1,24,13,45),
+            new Date(2024,1,25,13,45),
+            new Date(2024,1,26,13,45),
+            new Date(2024,1,27,13,45),
+            new Date(2024,1,28,13,45),
+            new Date(2024,1,29,13,45),
+            new Date(2024,2,1,13,45),
+        ]);
     });
 });
 

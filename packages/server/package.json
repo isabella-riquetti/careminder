@@ -7,7 +7,8 @@
     "build": "npm run build -w @careminder/shared && tsc",
     "dev": "nodemon --watch './' --exec 'ts-node' ./index.ts",
     "migrate": "npx ts-node src/scripts/runMigrations.ts",
-    "test": "jest --watch"
+    "test": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "keywords": [],
   "author": "",
