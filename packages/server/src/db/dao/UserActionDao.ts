@@ -10,7 +10,7 @@ export class UserActionDao {
       .insert(actions.map(a => ({
         ...a,
         user_id: userId,
-        group_id
+        group_id,
       })))
       .select();
 

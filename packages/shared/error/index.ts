@@ -4,6 +4,7 @@ import ForbiddenError from "./ForbiddenError"
 import NotFoundError from "./NotFoundError"
 import UnauthorizedError from "./UnauthorizedError"
 import WsError from "./WsError"
+import TooManyRequestsError from "./TooManyRequestsError";
 
 export {
     AbstractError,
@@ -11,5 +12,6 @@ export {
     ForbiddenError,
     NotFoundError,
     UnauthorizedError,
-    WsError
+    WsError,
+    TooManyRequestsError
 }

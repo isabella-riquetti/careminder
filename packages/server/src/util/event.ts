@@ -4,23 +4,23 @@ import { add, addDays, addMinutes, addMonths, addWeeks, addYears, differenceInMi
 export function getReocurrences(userAction: CreateUserAction): CreateUserAction[] {
     const allReocurrences: CreateUserAction[] = [];
 
-    if (userAction.recurrence && userAction.frequency) {
-        const minutesDiff = userAction.end_at ? differenceInMinutes(userAction.end_at, userAction.start_at) : 0;
-        let nextStart = userAction.start_at;
-        const end = endOfDay(userAction.frequency.end_date);
-        while (nextStart <= end) {
-            const newDates = getOnNextDates(userAction, nextStart);
-            newDates.forEach((newDate) => {
-                if (newDate <= end) {
-                    allReocurrences.push({
-                        ...userAction,
-                        start_at: newDate,
-                        ...(minutesDiff ? { end_at: addMinutes(newDate, minutesDiff) } : {})
-                    })
-                }
-            })
-            nextStart = getNextStart(userAction.frequency, nextStart);
-        }
+    if (!userAction.recurrence || !userAction.frequency) return [userAction];
+
+    const minutesDiff = userAction.end_at ? differenceInMinutes(userAction.end_at, userAction.start_at) : 0;
+    let nextStart = userAction.start_at;
+    const end = endOfDay(userAction.frequency.end_date);
+    while (nextStart <= end) {
+        const newDates = getOnNextDates(userAction, nextStart);
+        newDates.forEach((newDate) => {
+            if (newDate <= end) {
+                allReocurrences.push({
+                    ...userAction,
+                    start_at: newDate,
+                    ...(minutesDiff ? { end_at: addMinutes(newDate, minutesDiff) } : {})
+                })
+            }
+        })
+        nextStart = getNextStart(userAction.frequency, nextStart);
     }
 
 
@@ -107,7 +107,7 @@ export function getNextDaysOfTheWeek(frequency: UserActionFrequency, initialDate
 
 export function getNextDayTimes(frequency: UserActionFrequency, initialDate: Date): Date[] {
     const validTimes = frequency?.on_day;
-    if(!validTimes) return [initialDate];
+    if (!validTimes) return [initialDate];
 
     let newDate = startOfDay(initialDate);
     const newDates: Date[] = validTimes?.map(v => {

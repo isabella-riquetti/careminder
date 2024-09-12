@@ -99,6 +99,7 @@ export const UserActionSchema = CreateUserActionSchema.extend({
     id: z.number(),
     user_id: z.string(),
     group_id: z.string(),
+    created_at: z.coerce.date(),
 });
 export type UserAction = z.infer<typeof UserActionSchema>;
 

@@ -1,4 +1,5 @@
 import "./index.css";
+import 'react-toastify/dist/ReactToastify.css';
 
 import { ClerkProvider } from "@clerk/clerk-react";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -8,6 +9,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { PrimeReactProvider } from 'primereact/api';
 import ReactDOM from "react-dom/client";
 import { Provider } from 'react-redux';
+import { ToastContainer } from 'react-toastify';
 
 import { api } from "./api";
 import App from "./App";
@@ -46,6 +48,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <CssBaseline />
         <PrimeReactProvider>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <ToastContainer />
             <App />
           </LocalizationProvider>
         </PrimeReactProvider>

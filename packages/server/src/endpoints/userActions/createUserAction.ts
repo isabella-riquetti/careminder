@@ -11,7 +11,7 @@ export const createUserAction = async (req: Request<{}, {}, CreateUserAction>, r
     if (!userId) throw new UnauthorizedError();
 
     const recentlyCreated = await dao.getRecentUniqueGroupCount(userId);
-    if (recentlyCreated > 10 || userId) throw new TooManyRequestsError("new reminders");
+    if (recentlyCreated >= 5) throw new TooManyRequestsError("new reminders");
 
     const newUserAction = CreateUserActionSchema.safeParse(req.body);
     if (newUserAction.error) throw new BadRequestError('Invalid User Action');

@@ -166,7 +166,7 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
   const scrollTime = now.getHours() > 1 ? addMinutes(new Date(), -30) : startOfDay(now);
   return (
     <>
-      <SpinnerOverlay loading={isLoading || isFetching} />
+      <SpinnerOverlay isLoading={isLoading} isFetching={isFetching} />
       <FullCalendar
         height={"calc(100vh - 90px)"}
         plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
