@@ -25,7 +25,7 @@ jobs:
       run: npm install
 
     - name: Run client unit tests
-      run: npm run test -w client
+      run: npm run test:unit -w client
 
     - name: Run server unit tests with coverage
       run: npm run test:coverage -w server
