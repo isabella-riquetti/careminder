@@ -21,8 +21,8 @@ export default function EventContent({ isSmallScreen, eventInfo, allEvents }: Ev
   const durationInMinutes = !all_day && !end_at ? 0 : differenceInMinutes(end_at, start_at);
   const smallTextDuration = timeView ? 15 : 5;
   const hideIconDuration = timeView ? 30 : 15;
-  const smallText = durationInMinutes < smallTextDuration;
-  const hideIcon = durationInMinutes < hideIconDuration;
+  const smallText = durationInMinutes <= smallTextDuration;
+  const hideIcon = durationInMinutes <= hideIconDuration;
 
   const date: string[] = [];
   if (!all_day) date.push(format(start_at, 'p'));
