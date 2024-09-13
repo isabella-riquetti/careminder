@@ -10,6 +10,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import { addMinutes, differenceInMinutes, endOfDay, format, isSameDay, startOfDay } from 'date-fns';
 import { uniqWith } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
+import { toast } from 'react-toastify';
 
 import { useGetUserActionsQuery, useUpdateUserActionMutation } from '@/api/userActions';
 import SpinnerOverlay from '@/components/atoms/SpinnerOverlay/SpinnerOverlay';
@@ -36,6 +37,7 @@ export default function Calendar({ setIsAddModalOpen, setUserAction }: CalendarP
   });
 
   const parsedEvents = useMemo(() => {
+    if(userActions?.length) toast.dismiss("slow-loading");
     const parsedUserActions = (userActions || []).map(u => ({
       id: u.id.toString(),
       title: u.actions.name,
