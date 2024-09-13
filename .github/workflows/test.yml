@@ -24,21 +24,14 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    # Run unit tests with coverage
-    - name: Run unit tests with coverage
-      run: npm run test:coverage -w client
+    - name: Run client unit tests
+      run: npm run test -w client
+
+    - name: Run server unit tests with coverage
+      run: npm run test:coverage -w server
 
     - name: Install Playwright dependencies
       run: npx playwright install
 
     - name: Run E2E tests
       run: npm run test:e2e -w client
-
-    # Upload coverage report to Codecov
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }} # Add your Codecov token to GitHub secrets
-        files: ./coverage/lcov.info
-        flags: unittests
-        name: codecov-coverage-report
