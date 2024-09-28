@@ -5,7 +5,6 @@ import { Box } from '@mui/material';
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
 
 import Menu from './components/atoms/Menu';
-import Actions from './components/pages/Actions';
 import Login from './components/pages/Authentication/Login';
 import SignUp from './components/pages/Authentication/SignUp';
 import Dashboard from './components/pages/Dashboard';
@@ -30,7 +29,6 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route element={<AuthWrapper />}>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/actions" element={<Actions />} />
         </Route>
       </Routes>
     </BrowserRouter>

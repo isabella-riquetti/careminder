@@ -7,6 +7,9 @@ export default ({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd(), ["VITE", ""]) };
   
   return defineConfig({
+    optimizeDeps: {
+      include: ['@mui/icons-material']
+    },
     plugins: [react(), tsconfigPaths(), svgr()],
   })
 };
