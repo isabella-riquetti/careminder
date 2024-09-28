@@ -1,7 +1,8 @@
-import { describe, it, expect, vi } from 'vitest';
-import { getWeekOfMonth, weekDayHasPassed, calcMaxEndDate } from './date';
 import { FrequencyType } from '@careminder/shared/types';
 import { addYears, getDate, getDay } from 'date-fns';
+import { describe, expect, it, vi } from 'vitest';
+
+import { calcMaxEndDate,getWeekOfMonth, weekDayHasPassed } from './date';
 
 vi.mock('date-fns', () => ({
     addYears: vi.fn(),

@@ -1,10 +1,10 @@
-import { describe, it, expect, vi } from 'vitest';
+import { Category } from '@careminder/shared/types';
+import { describe, expect, it, vi } from 'vitest';
+
 import {
     getColoredIcon,
-    getPlainIcon,
-    getEventColor
-} from './category';
-import { Category } from '@careminder/shared/types';
+    getEventColor,
+    getPlainIcon} from './category';
 
 vi.mock('../assets/icons/categories', () => ({
     BodyCareIconComponent: 'BodyCareIconComponent',
