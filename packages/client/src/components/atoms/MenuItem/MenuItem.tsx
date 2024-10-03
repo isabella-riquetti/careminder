@@ -17,7 +17,7 @@ const MenuItem: FunctionComponent<MenuItemProps> = ({ href, text, icon: Icon, ch
             <Wrapper {...wrapperProps} className="flex flex-row items-center px-2 gap-3">
                 {Icon && <Icon className="w-8 h-8" />}
                 {children}
-                {text && <div className="truncate max-w-full">{text}</div>}
+                {text && <div className="truncate max-w-full mt-1">{text}</div>}
             </Wrapper>
         </div>
     );
