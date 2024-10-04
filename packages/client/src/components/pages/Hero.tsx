@@ -1,8 +1,12 @@
+import { useUser } from "@clerk/clerk-react";
+
 import Container from "../atoms/Container";
 import Header from "../atoms/Header";
 import Main from "../atoms/Main";
 
 export function Hero() {
+    const { user } = useUser();
+
     function Anchor({ text, href, dark = false }: {
         text: string,
         href: string,
@@ -25,10 +29,13 @@ export function Hero() {
         <div className='py-4 md:py-10 flex flex-col gap-8 sm:gap-12 text-pale-500'>
             <h1 className='text-4xl sm:text-5xl md:text-6xl text-center'><span className='text-pink-600'>CareMinder</span> helps you schedule <span className='text-pink-600'>selfcare</span> tasks and reminders, so you always look and feel your <span className="text-pink-600">best</span>!</h1>
             <p className='text-lg sm:text-xl md:text-2xl max-w-[80%] text-center text-pink-600 mx-auto'>Stay on top of your beauty and wellness routine with personalized reminders, helping you maintain your glow effortlessly.</p>
-            <div className='grid grid-cols-2 gap-4 w-fit mx-auto'>
+            {!user && <div className='grid grid-cols-2 gap-4 w-fit mx-auto'>
                 <Anchor text="Sing Up" href="/singup" />
                 <Anchor text="Login" dark href="/login" />
-            </div>
+            </div>}
+            {!!user && <div className='flex gap-4 w-fit mx-auto'>
+                <Anchor text="Go to dashboard" href="/dashboard" />
+            </div>}
         </div>
     );
 

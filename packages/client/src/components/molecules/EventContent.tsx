@@ -15,11 +15,12 @@ export default function EventContent({ isSmallScreen, eventInfo, allEvents }: Ev
   const { view: { type }, event } = eventInfo;
   const { actions, start_at, end_at, all_day, action_id, id } = event.extendedProps;
   const dayView = type === "timeGridDay";
-  const timeView = type === "timeGridDay" || type === "timeGridWeek";
+  const weekView = type === "timeGridWeek";
+  const timeView = dayView || weekView;
 
   const singleDay = isSameDay(start_at, end_at);
   const durationInMinutes = !all_day && !end_at ? 0 : differenceInMinutes(end_at, start_at);
-  const smallTextDuration = timeView ? 15 : 5;
+  const smallTextDuration = weekView ? 30 : dayView ? 15 : 5;
   const hideIconDuration = timeView ? 30 : 15;
   const smallText = durationInMinutes <= smallTextDuration;
   const hideIcon = durationInMinutes <= hideIconDuration;
